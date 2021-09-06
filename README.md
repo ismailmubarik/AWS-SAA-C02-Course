@@ -41,13 +41,10 @@ standard protocols and methods.
 
 - Public Cloud: using 1 public cloud such as AWS, Azure, Google Cloud.
 - Private Cloud: using on-premises real cloud. Must meet 5 requirements. Examples include AWS Outpost, Azure Stack, Anthos
-- Multi-Cloud: using more than 1 public cloud in one deployment.
-- Hybrid Cloud: using public and private clouds in one environment
+- Multi-Cloud: using more than 1 public cloud in one deployment. For example, deploying part of your system/web-application on say AWS and other on GCP. Another example is using a third-party application that provides single management window or "single pane of glass". This is not advisable as it abstracts away from invidual environments relying on lowest common feature set. So you lose makes each vendor unique.
+- Hybrid Cloud: using public and private clouds in one environment generally from the same vendor
   - This is **NOT** using Public Cloud and Legacy on-premises hardware. 
   - Hybrid Networking: Public Cloud + Traditional On-premise Networking Infrastructure
-
-
-
 
 ### 1.1.2. Cloud Service Models
 
