@@ -155,11 +155,10 @@ Region Code: ap-southeast-2
 AWS will provide between 2 and 6 AZs per region.
 AZs are isolated compute, storage, networking, power, and facilities.
 Components are allowed to distribute load and resilience by using multiple zones.
-
-AZs are connected to each other with high speed redundant networks.
+Availbility Zones doesnt mean a data center. An AZ can be a single data center or be part of multiple DCs. AWS does not provide that visibility of what an AZ is. Just that it is isolated from other AZs and AZs are connected to each other with high speed redundant networks.
 
 #### 1.2.3.1. Service Resilience
-
+Services can be placed multiple availibility zones to make them reselient. 
 1. Globally Resilient: IAM or Route 53. No way for them to go down. Data is
 replicated throughout multiple regions.
 2. Region Resilient: Operate as separate services in each region. Generally
