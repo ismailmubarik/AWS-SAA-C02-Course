@@ -41,7 +41,7 @@ standard protocols and methods.
 
 - Public Cloud: using 1 public cloud such as AWS, Azure, Google Cloud.
 - Private Cloud: using on-premises real cloud. Must meet 5 requirements. Examples include AWS Outpost, Azure Stack, Anthos
-- Multi-Cloud: using more than 1 public cloud in one deployment. For example, deploying part of your system/web-application on say AWS and other on GCP. Another example is using a third-party application that provides single management window or "single pane of glass". This is not advisable as it abstracts away from invidual environments relying on lowest common feature set. So you lose makes each vendor unique.
+- Multi-Cloud: using more than 1 public cloud in one deployment. For example, deploying part of your system/web-application on say AWS and other on GCP. Another example is using a third-party application that provides single management window or "single pane of glass". This is not advisable as it abstracts away from invidual environments relying on lowest common feature set. So you lose what makes each vendor unique.
 - Hybrid Cloud: using public and private clouds in one environment generally from the same vendor
   - This is **NOT** using Public Cloud and Legacy on-premises hardware. 
   - Hybrid Networking: Public Cloud + Traditional On-premise Networking Infrastructure
@@ -96,8 +96,8 @@ that does not mean you have permissions to access it.
 Zone and the public cloud unless this is configured for that service.
 This is done by taking a part of the private service and projecting it into the
 AWS public zone which allows public internet to make inbound or outbound
-connections. Means we can allow certain public connections to our AWS private cloud. THis has to be done explicitly as by default the AWS private as by default the only things that connect to the private cloud are entities that are in the same private network or other newtorks with which private networking links are created such as other On-Premise networks.
-Summary: AWS Public can be connected to over the public internet. AWS Public Services are not on the internet in fact they are hosted in a zone called AWS Public Cloud. THe private zone which is islated from the public internet and AWS public cloud can be sub divided using Virtual Private Clouds VPC. But private services running private services can be allowed outoging connections or in some cases outside connections can be also made through IP projection into the AWS  Public cloud.
+connections. Means we can allow certain public connections to our AWS private cloud. THis has to be done explicitly as by default the AWS private as by default the only things that connect to the private cloud are entities that are in the same private network or other newtorks with which private networking links are created such as other On-Premise networks within the private cloud.
+Summary: AWS Public can be connected to over the public internet. AWS Public Services are not on the internet in fact they are hosted in a zone called AWS Public Cloud. THe private zone which is islated from the public internet and AWS public cloud can be sub divided using Virtual Private Clouds VPC. But private running private services can be allowed outoging connections or in some cases outside connections can be also made through IP projection into the AWS  Public cloud.
 
 
 
@@ -171,7 +171,7 @@ not be relied on.
 
 VPC is a virtual network inside of AWS.
 A VPC is within 1 account and 1 region which makes it regionally resilient.
-A VPC is private and isolated until decided otherwise.
+A VPC is private and isolated until decided otherwise. Services deployed in a VPC can communicate with one another but they are isolated from other VPCs and from the AWS public zone and the public internet unless otherwise confugred. 
 
 One default VPC per region. Can have many custom VPCs which are all private
 by default.
