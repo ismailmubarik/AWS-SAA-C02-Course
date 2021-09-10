@@ -211,13 +211,13 @@ EC2 deploys into one AZ. If it fails, the instance fails.
 Different sizes and capabilities. All use On-Demand Billing - Per second.
 Only pay for what you consume.
 
-Local on-host storage or **Elastic Block Storage**
+Local on-host storage or **Elastic Block Storage** which network storage made available to the EC2 instance.
 
 Pricing based on:
 
 - CPU
-- Memory
-- Storage
+- Memory - Super fast memory to store data that is currently being worked omn like RAM I guess?
+- Storage - Provided by EBS for medium term data`
 - Networking
 
 Extra cost for any commercial software the instance deploys with.
@@ -281,6 +281,8 @@ AMI Types:
 Login to the instance using an SSH key pair.
 Private Key - Stored on local machine to initiate connection.
 Public Key - AWS places this key on the instance.
+
+Configurring Security Group: Think of them like mini firewalls. Thye are attached to the network interfaces of anything that goes inside of VPC. A security group can be connected to 1 EC2 instance, 2 or more Ec2 instances or zero instacnes
 
 ### 1.2.6. S3 (Default Storage Service)
 
