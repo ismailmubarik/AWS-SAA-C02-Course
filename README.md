@@ -287,16 +287,21 @@ Configurring Security Group: Think of them like mini firewalls. Thye are attache
 ### 1.2.6. S3 (Default Storage Service)
 
 Global Storage platform. Runs from all regions and is a public service.
-Can be accessed anywhere from the internet with an unlimited amount of users.
+Can be accessed anywhere from the internet with an unlimited amount of users. Offers unlimited data.
 
-This should be the default storage platform
+S3 service is regional based service because data never leaves that region unless otherwise configured to. S3 is regionally resilient because data is replicated across AZs. Meaning failure in an AZ can be tolerated because data will remain to be available.
+
+Economical and ideal for Movies, Audio, Photos, Text, Large Data Sets.
+
+Can be accessed via UI/CLI/API/HTTP. 
+This should be the default storage platform. S3 delivers two main things: Objects & Buckets.
 
 S3 is an object storage, not file, or block storage.
 You can't mount an S3 Bucket.
 
 #### 1.2.6.1. Objects
 
-Can be thought of a file. Two main components:
+Can be thought of a file. e.g movies, Big data, etc. Two main components:
 
 - Object Key: File name in a bucket
 - Value: Data or contents of the object
@@ -311,15 +316,32 @@ Other components:
 
 #### 1.2.6.2. Buckets
 
+Buckets are containers for objects.
+
 - Created in a specific AWS Region.
 - Data has a primary home region. Will not leave this region unless told.
-- Blast Radius = Region
+- Blast Radius = Region. That is if a disastor/emergency occurs due to which the service goes down or say data is corrupted the effect of that will be limited to the region.
 - Unlimited number of Objects
-- Name is globally unique
-- All objects are stored within the bucket at the same level.
+- Name is globally unique. e.g. name of bucket is koaladata means we can only use that name if nobody else is using it already.
+- All objects are stored within the bucket at the root level. Meaning it has flat structure. Meaning there are no folders within folders with file like a File System. But if we do listing on S3 bucket we will see what we think as Folders even though UI presents it like that but its not that case. For example, /old/Koala1.jpg, /old/koala2.jpg are basically named like that and as a result AWS presents it like the koala1 or koala2 is placed in a old folder. FOlders are actually referred to as prefixes in AWS S3 as they are part of the object name.
+
 
 If the objects name starts with a slash such as `/old/Koala1.jpg` the UI will
 present this as a folder. In actuality this is not true, there are no folders.
+
+#### Exam Power Up:
+Bucket names are globally unique.
+3-63 characters, all lower case no underscores
+Start with a lowercase letter or a number
+Can't be IP formatted e.g. 1.1.1.1
+Buckets- 100 soft limit in an AWS account. Not per region across all entire AWS account. Can be requested to be increased to 1000 but not more. So100 is a soft limit and  1000 is a Hard Limit
+Unlimited objsects in bucket, 0 bytes to 5TB
+Key= Name, Value= Data
+S3 is an object store - not file or block based storage.
+a. If you want to access the whole of something say an audio file, then its a candidate for S3 storage.
+b. Likewise its not block storage. Meaning you can't mount and S3 bucket as K:\ or /images. Block storages (virtual hardrives) are what you mount to VMs. in EC2 its the EBS that you mount to VMs. Only one instance can instance a block storage or EBS.
+S3 is great for offloading for example, blog with huge vidoes pictures instead of storing it on expensive compute instance you can configure your blog to point users to S3 directly.
+INPUT and/or OUTPUT to many AWS products.
 
 ### 1.2.7. CloudFormation Basics
 
