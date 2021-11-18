@@ -29,22 +29,21 @@
 
 Cloud computing provides
 
-1. On-Demand Self-Service: Provision and terminate using a UI/CLI without
-human interaction.
+1. On-Demand Self-Service: Provision and terminate capabilities as needed using a UI/CLI without human interaction. Capabilties mean virtual machines, databases, etc.
 2. Broad Network Access: Access services over any networks on any devices using
-standard protocols and methods.
-3. Resource Pooling: Economies of scale, cheaper service.
-4. Rapid Elasticity: Scale up and down automatically in response to system load.
-5. Measured Service: Usage is measured. Pay only for what you consume.
+standard protocols and methods (http(s), remote desktop, vpn, etc..)
+3. Resource Pooling (& Location Independence): Economies of scale, cheaper service. Resources are pooled to served multiple consumers using multi-tenant model...Furthermore, there is a sense of location independence...no contol or knowledge over the exact location of the resources.
+4. Rapid Elasticity: Scale up and down automatically in response to system load. Secondly, to the consumer the capabilities or resources available for provisioning should appear to be unlimited
+5. Measured Service: Usage can be monitored, controlled, reported and Billed. Pay only for what you consume. If its a truly cloud platform it shouldn't charge anything in advance.
 
 ### 1.1.1. Public vs Private vs Multi Cloud
 
 - Public Cloud: using 1 public cloud such as AWS, Azure, Google Cloud.
-- Private Cloud: using on-premises real cloud. Must meet 5 requirements. Examples include AWS Outpost, Azure Stack, Anthos
+- Private Cloud: using on-premises real cloud.  Examples include AWS Outpost, Azure Stack, Anthos. There is a difference between private cloud and having on premise infrastructure such as VmWare, HyperV or ZenServer. Private cloud must still meet 5 requirements but are just dedicated to a company.
 - Multi-Cloud: using more than 1 public cloud in one deployment. For example, deploying part of your system/web-application on say AWS and other on GCP. Another example is using a third-party application that provides single management window or "single pane of glass". This is not advisable as it abstracts away from invidual environments relying on lowest common feature set. So you lose what makes each vendor unique.
 - Hybrid Cloud: using public and private clouds in one environment generally from the same vendor
   - This is **NOT** using Public Cloud and Legacy on-premises hardware. 
-  - Hybrid Networking: Public Cloud + Traditional On-premise Networking Infrastructure
+  - Hybrid Networking or Hybrid Envirionment: Public Cloud + Traditional On-premise Networking Infrastructure
 
 ### 1.1.2. Cloud Service Models
 
@@ -56,12 +55,12 @@ are charged for is the **unit of consumption**
 1. On-Premises: The individual manages all components from data to facilities.
 Provides the most flexibility, but also most IT intensive.
 2. Data Center Hosting: Place equipment in a building managed by a vendor.
-You pay for the facilities only.
+You pay for the facilities only. Similar to On-Premise except the facility is managed by the vendor
 3. Infrastructure as a Service (IaaS): Vendor manages facilities and everything
 else related to servers up to the OS. You pay per second or minute for the OS
-used to the vendor. Lose some flexibility, but big risk reductions.
+used to the vendor. Lose some flexibility, but big risk reductions. e.g. AWS EC2
 4. Platform as a Service (PaaS): Good for running an application only. The
-unit of consumption is the runtime environment. You manage the application
+unit of consumption is the runtime environment 9e.g. python runtime environment). You manage the application
 and the data, but the vendor manges all else.
 5. Software as a Service (SaaS): You consume the software as a service. This
 can be Outlook or Netflix. There are almost no risks or additional costs, but
