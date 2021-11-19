@@ -98,6 +98,7 @@ AWS public zone which allows public internet to make inbound or outbound
 connections. Means we can allow certain public connections to our AWS private cloud. THis has to be done explicitly as by default the AWS private as by default the only things that connect to the private cloud are entities that are in the same private network or other newtorks with which private networking links are created such as other On-Premise networks within the private cloud.
 Summary: AWS Public can be connected to over the public internet. AWS Public Services are not on the internet in fact they are hosted in a zone called AWS Public Cloud. THe private zone which is islated from the public internet and AWS public cloud can be sub divided using Virtual Private Clouds VPC. But private running private services can be allowed outoging connections or in some cases outside connections can be also made through IP projection into the AWS  Public cloud.
 
+![image](https://user-images.githubusercontent.com/33827177/142623019-91c5f1a3-f314-4916-9d21-4f80bb40c914.png)
 
 
 ### 1.2.2. AWS Global Infrastructure
