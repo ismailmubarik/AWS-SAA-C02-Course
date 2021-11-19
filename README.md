@@ -158,24 +158,27 @@ AZs are isolated compute, storage, networking, power, and facilities.
 Components are allowed to distribute load and resilience by using multiple zones.
 Availbility Zones doesnt mean a data center. An AZ can be a single data center or be part of multiple DCs. AWS does not provide that visibility of what an AZ is. Just that it is isolated from other AZs and AZs are connected to each other with high speed redundant networks.
 
+![image](https://user-images.githubusercontent.com/33827177/142625055-16488b4b-4c88-4598-8544-2c1234af6961.png)
+
+Service can be placed across multiple availability zones to make them reselient. For example, VPC or Virtual Private Network which is a way to create a Private network. It can be placed across multiple AZs to provide reselience.
+
 #### 1.2.3.1. Service Resilience
 Services can be placed multiple availibility zones to make them reselient. 
 1. Globally Resilient: IAM or Route 53. No way for them to go down. Data is
 replicated throughout multiple regions.
 2. Region Resilient: Operate as separate services in each region. Generally
-replicate data to multiple AZs in that region.
-3. AZ Resilient: Run from a single AZ. It is possible for hardware to fail in an
-AZ and the service to keep running because of redundant equipment, but should
-not be relied on.
+replicate data to multiple AZs in that region meaning if an AZ fails a service can continue to operate in that region but if the whole region as a whole fails then the service cannot operate.
+3. AZ Resilient: Run from a single AZ. If an AZ fails then a service at that AZ may fail. It is possible for hardware to fail in an
+AZ and the service to keep running because of redundant equipment, but should not be relied on.
 
 ### 1.2.4. AWS Default VPC
 
 VPC is a virtual network inside of AWS.
-A VPC is within 1 account and 1 region which makes it regionally resilient.
+A VPC is within 1 account and 1 region which makes it regionally resilient. It runs from multiple availibility zones within within a region.
 A VPC is private and isolated until decided otherwise. Services deployed in a VPC can communicate with one another but they are isolated from other VPCs and from the AWS public zone and the public internet unless otherwise confugred. 
 
-One default VPC per region. Can have many custom VPCs which are all private
-by default.
+We can have only One default VPC per region. But can have many custom VPCs which are all private
+by default. Default VPC comes preconfigured in a very specific way. A custom VPC needs to be configured end to end and are 100% by default. They can be configured in anyways as long as we stay within the rules of VPC. Custom VPCs are flexibile then Deafault VPCs
 
 #### 1.2.4.1. Default VPC Facts
 
