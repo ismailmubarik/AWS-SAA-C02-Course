@@ -185,16 +185,19 @@ by default. Default VPC comes preconfigured in a very specific way. A custom VPC
 VPC CIDR - defines start and end ranges of the VPC.
 IP CIDR of a default VPC is always: **172.31.0.0/16**
 
-Configured to have one subnet in each AZ in the region by default.
+A region has multiple AZs and each of those is an independent pool of infrastructure. Since a VPC is regionally  reselient and the way it is done is by assigning each subnet to an AZ. This assignment of a subnet is set on creation and can never be changed. 
+
+The default VPC is always configured to have one subnet in each AZ in the region by default. If an AZ fails that subnet fails but the other subnets in other AZs continue to operate.
 
 Subnets are given one section of the IP ranges for the default service. 
 They are configured to provide anything that is deployed inside those subnets with public IPv4 addresses. 
 
+![image](https://user-images.githubusercontent.com/33827177/142739826-b2e13394-143b-42bb-bb88-e1d440684316.png)
+
 In general do not use the Default VPC in a region because it is not flexible.
 
 Default VPC is large because it uses the /16 range.
-A subnet is smaller such as /20
-The higher the / number is, the smaller the grouping.
+A subnet /20 is smaller because the higher the / number is, the smaller the grouping. A/17 is half the size of a /16 and that is why 2 /17 can fit in a /16.
 
 Two /17's will fit into a /16, sixteen /20 subnets can fit into one /16.
 
@@ -210,7 +213,7 @@ Private service by default, public access must be configured.
 The VPC needs to support public access. If you use a custom VPC then you must
 handle the networking on your own.
 
-EC2 deploys into one AZ. If it fails, the instance fails.
+EC2 deploys into one AZ meaning its only Az resilient. Thus, if it fails, the instance fails.
 
 Different sizes and capabilities. All use On-Demand Billing - Per second.
 Only pay for what you consume.
@@ -220,12 +223,11 @@ Local on-host storage or **Elastic Block Storage** which network storage made av
 Pricing based on:
 
 - CPU
-- Memory - Super fast memory to store data that is currently being worked omn like RAM I guess?
-- Storage - Provided by EBS for medium term data`
+- Memory - Super fast memory to store data that is currently being worked on like RAM I guess?
+- Storage - Local on-host storage or Elastic Block Storage (EBS) which is a network storage made available to the EC2 instance. It is for medium term data?
 - Networking
-
 Extra cost for any commercial software the instance deploys with.
-
+EC2 has an attribute called state
 #### 1.2.5.2. Running State
 
 Charged for all four categories.
@@ -248,6 +250,9 @@ Charged for EBS storage  only.
 
 No charges, deletes the disk and prevents all future charges.
 
+![image](https://user-images.githubusercontent.com/33827177/142740616-a070bb50-5ad2-46ae-a568-d6d13b4bab36.png)
+
+
 #### 1.2.5.5. AMI (Server Image)
 
 AMI can be used to create an instance or can be created from an instance.
@@ -255,7 +260,7 @@ AMIs in one region are not available from other regions.
 
 Contains:
 
-- Permissions: controls which accounts can and can't use the AMI.
+- Permissions: controls which accounts can and can't use the AMI and can be set to the following:
 
   - Public - Anyone can launch it.
 
@@ -263,7 +268,7 @@ Contains:
 
   - Explicit - Owner grants access to AMI for specific AWS accounts
 
-- Root Volume: contains the **Boot Volume**
+- Root Volume: contains the **Boot Volume** i.e. the C drive in windows or the root volume in Linux
 
 - Block Device Mapping: links the volumes that the AMI has and
 how they're presented to the operating system. Determines which volume is a
@@ -286,7 +291,7 @@ Login to the instance using an SSH key pair.
 Private Key - Stored on local machine to initiate connection.
 Public Key - AWS places this key on the instance.
 
-Configurring Security Group: Think of them like mini firewalls. Thye are attached to the network interfaces of anything that goes inside of VPC. A security group can be connected to 1 EC2 instance, 2 or more Ec2 instances or zero instacnes
+Configurring Security Group: Think of them like mini firewalls. They are attached to the network interfaces of anything that goes inside of VPC. A security group can be connected to 1 EC2 instance, 2 or more Ec2 instances or zero instacnes
 
 ### 1.2.6. S3 (Default Storage Service)
 
