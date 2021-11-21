@@ -472,6 +472,9 @@ AWS: Responsible for security **OF** the cloud
 
 Customer: Responsible for security **IN** the cloud
 
+![image](https://user-images.githubusercontent.com/33827177/142747146-b875c1a6-76a4-45ff-a9f2-e59de64fa26f.png)
+
+
 ### 1.2.11. High Availability (HA), Fault-Tolerance (FT) and Disaster Recovery (DR)
 
 #### 1.2.11.1. High Availability (HA)
