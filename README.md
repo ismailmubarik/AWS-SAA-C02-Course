@@ -343,14 +343,15 @@ Bucket names are globally unique.
 3-63 characters, all lower case no underscores
 Start with a lowercase letter or a number
 Can't be IP formatted e.g. 1.1.1.1
-Buckets- 100 soft limit in an AWS account. Not per region across all entire AWS account. Can be requested to be increased to 1000 but not more. So100 is a soft limit and  1000 is a Hard Limit
-Unlimited objsects in bucket, 0 bytes to 5TB
+Buckets- 100 soft limit in an AWS account. Not per region across all entire AWS account. Can be requested to be increased to 1000 but not more. So 100 is a soft limit and  1000 is a Hard Limit
+Unlimited objects in bucket, 0 bytes to 5TB
 Key= Name, Value= Data
-S3 is an object store - not file or block based storage.
+S3 is an object store - not file or block based storage. 
 a. If you want to access the whole of something say an audio file, then its a candidate for S3 storage.
-b. Likewise its not block storage. Meaning you can't mount and S3 bucket as K:\ or /images. Block storages (virtual hardrives) are what you mount to VMs. in EC2 its the EBS that you mount to VMs. Only one instance can instance a block storage or EBS.
+b. Likewise its not block storage. Meaning you can't mount and S3 bucket as K:\ or /images. Block storages (virtual hardrives) are what you mount to VMs. in EC2 its the EBS that you mount to VMs. Block storage is limited to only one entiy accessing it a time. Only one instance can access a block storage in EBS. Where is S3 which is an object storage can be accessed by  multiple entities.
 S3 is great for offloading for example, blog with huge vidoes pictures instead of storing it on expensive compute instance you can configure your blog to point users to S3 directly.
-INPUT and/or OUTPUT to many AWS products.
+
+We should use AWS S3 for INPUT and/or OUTPUT to many AWS products.
 
 ### 1.2.7. CloudFormation Basics
 
