@@ -360,16 +360,20 @@ CloudFormation templates can be used to create, update, modify, and delete infra
 They can be written in YAML or JSON. An example is provided below.
 
 ```YAML
-## This is not mandatory
+## This is not mandatory. The AWSTemplateFormatVersion section (optional) identifies the capabilities 
+## of the template. If you don't specify it, CloudFormation will use the latest version
 AWSTemplateFormatVersion: "version date"
 
 ## Give details as to what this template does.
-## If you are using bot the Description & AWSTemplateFormatVersion then the Description section, MUST immediately follow the AWSTemplateFormatVersion.
+## If you are using bot the Description & AWSTemplateFormatVersion then the Description section, 
+## MUST immediately follow the AWSTemplateFormatVersion.
 Description:
   A sample template
 
-## Can control the command line UI. The bigger your template, the more likely
-## this section is needed
+## It can control how the different things in CloudFormation template are  presented through the
+## the AWS console. You can specify grouping, control order, add descriptions ad labels. Its a way
+## you can force the UI presents the template.The bigger your template, the more likely
+## this section is needed. USed for other things as well.
 Metadata:
   template metadata
 
@@ -396,7 +400,7 @@ Resources:
   set of resources
 
 ## Once the template is finished it can return data or information.
-## Could return the admin or setup address of a word press blog.
+## Could return the instance ID or setup address of a word press blog.
 Outputs:
   set of outputs
 ```
@@ -415,15 +419,22 @@ Resources:
       KeyName: !Ref Keyname
 ```
 
+Resources inside a CloudFormation template are called logical resources in this case instance.
 Once a template is created, AWS will make a stack. This is a living and active
 representation of a template. One template can create infinite amount of stacks.
 
 For any **Logical Resources** in the stack,
 CF will make a corresponding **Physical Resources** in your AWS account.
 
+![image](https://user-images.githubusercontent.com/33827177/142791120-dda4104b-ba5f-4892-afe3-3516c6d030f6.png)
+
+
 It is cloud formations job to keep the logical and physical resources in sync.
 
 A template can be updated and then used to update the same stack.
+
+![image](https://user-images.githubusercontent.com/33827177/142791140-219c4b5d-58c2-4e17-beda-ff58754c9cd5.png)
+
 
 ### 1.2.9. CloudWatch Basics
 
