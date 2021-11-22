@@ -360,11 +360,11 @@ CloudFormation templates can be used to create, update, modify, and delete infra
 They can be written in YAML or JSON. An example is provided below.
 
 ```YAML
-## This is not mandatory unless a description is added
+## This is not mandatory
 AWSTemplateFormatVersion: "version date"
 
 ## Give details as to what this template does.
-## If you use this section, it MUST immediately follow the AWSTemplateFormatVersion.
+## If you are using bot the Description & AWSTemplateFormatVersion then the Description section, MUST immediately follow the AWSTemplateFormatVersion.
 Description:
   A sample template
 
