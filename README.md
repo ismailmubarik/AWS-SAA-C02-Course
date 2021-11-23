@@ -438,15 +438,17 @@ A template can be updated and then used to update the same stack.
 
 ### 1.2.9. CloudWatch Basics
 
-Collects and manages operational data on your behalf.
+CloudWatch is a support service used by almost all AWS services. It collects and manages operational data on your behalf. 
 
 Three products in one
 
 - Metrics: data relating to AWS products, apps, on-prem solutions
-- Logs: collection, monitoring
-- Events: event hub
+- CloudWatch Logs: AWS Products, Apps, on-premises
+- CloudWatch Events: event hub
   - If an AWS service does something, CW events can perform another action
   - Generate an event to do something at a certain time of day or time of week.
+
+![image](https://user-images.githubusercontent.com/33827177/142957124-66cb35f1-4150-4335-9109-b1f4d9920b5a.png)
 
 #### 1.2.9.1. Namespace
 
@@ -462,9 +464,13 @@ Time ordered set of data points such as:
 - Network IN/OUT
 - Disk IO
 
-This is not for a specific server. This could get things from different servers.
+![image](https://user-images.githubusercontent.com/33827177/142957240-8ba87758-18a4-4e1e-99ac-1577f002f20d.png)
 
-Anytime CPU Utilization is reported, the **datapoint** will report:
+All the above three data points are gathered natively by default
+
+CloudWatch is a public service and it can be used inside AWS, within on-premises envirionment and even in other cloud platforms (the last 2 can be done through Cloud Watch agent). Meaning it is not for a specific server. This could get things from different servers. 
+
+Anytime CPU Utilization is reported, the **Datapoint** will report:
 
 - Timestamp = 2019-12-03
 - Value = 98.3
@@ -472,9 +478,11 @@ Anytime CPU Utilization is reported, the **datapoint** will report:
 **Dimensions** could be used to get metrics for a specific instance or type of instance, among others. They separate data points for different **things** or
 **perspectives** within the same metric.
 
+![image](https://user-images.githubusercontent.com/33827177/142957459-4bb576a1-920d-4761-92b0-08f328cfadce.png)
+
 #### 1.2.9.3. Alarms
 
-Has two states `ok` or `alarm`. A notification could be sent to an SNS topic or an action could be performed based on an alarm state.
+Has two states `ok` or `alarm`. A notification could be sent to an SNS topic or an action could be performed based on an alarm state. For example, Billing Alarm.
 Third state can be insufficient data state. Not a problem, just wait.
 
 ### 1.2.10. Shared Responsibility Model
