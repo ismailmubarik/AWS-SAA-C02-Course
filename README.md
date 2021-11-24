@@ -740,12 +740,14 @@ Once authenticated, that identity is known as an **authenticated identity**
 - Explicit Deny: Denies access to a particular resource cannot be overruled.
 - Explicit Allow: Allows access so long there is not an explicit deny.
 - Default Deny (Implicit): IAM identities start off with no resource access.
+![image](https://user-images.githubusercontent.com/33827177/143322732-2112c2ab-0dc4-433f-b4e9-26768edd38af.png)
 
 #### 1.3.1.3. Inline Policies and Managed Policies
 
-- Inline Policy: grants access and assigned on each accounts individually.
-- Managed Policy (best practice): one policy is applied to all users at once.
+- Inline Policy: grants access and assigned on each accounts individually. This is done by assigning a policy to say each user invidually through a JSON file. The problem is that you would have to make changes to each manually if you want to say make changes to identical roles and their policies. Shpould be only used when want to assign Special or Exceptional Allow or Deny to an invidual identity
+- Managed Policy (best practice): one policy is applied to all users at once. Reusable --> can be assigned to multiple users and Low Management Overhead
 
+There are two main types of Managed Policies. AWS Managed policy which are created and managed policies. And Customer Managed policies tweaked to the exact need of the customer.
 ### 1.3.2. IAM Users
 
 Identity used for anything requiring **long-term** AWS access
