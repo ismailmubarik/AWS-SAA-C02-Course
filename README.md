@@ -765,9 +765,12 @@ identity which can be used in this way.
 There are two ways to authenticate:
 
 - Username and Password
-- Access Keys (CLI)
+- Access Keys (CLI) --> used both by humans and applications
 
-Once the **Principal** has authenticated, it becomes an **authenticated identity**
+Authentication: Once the **Principal** has authenticated, it becomes an **authenticated identity** 
+Authorization: Once authenticated, AWS knows which policy applies to that identity. AWS authorizes or denies access an identity by checking the policy that applies to that identity.
+
+![image](https://user-images.githubusercontent.com/33827177/143327442-80a5f35b-64dc-4afb-9f26-64f783c3d334.png)
 
 #### 1.3.2.1. Amazon Resource Name (ARN)
 
@@ -775,7 +778,7 @@ Uniquely identify resources within any AWS accounts.
 
 This allows you to refer to a single or group of resources.
 This prevents individual resources from the same account but in
-different regions from being confused.
+different regions from being confused as ARN can identify them individually...
 
 ARN generally follows the same format:
 
@@ -799,12 +802,13 @@ An example that leads to confusion:
 - arn:aws:s3:::catgifs/*
   - This refers to objects in that bucket, but not the bucket itself.
 
-These two ARNs do not overlap
+These two ARNs do not overlap.
 
 #### 1.3.2.2. IAM FACTS
 
 - 5,000 IAM users per account
-- IAM user can be a member of 10 groups
+- IAM user can be a member of a maximum 10 groups
+- ![image](https://user-images.githubusercontent.com/33827177/143328429-25b38b11-0bb1-4e0d-b19d-7a1dd9aef452.png)
 
 ### 1.3.3. IAM Groups
 
