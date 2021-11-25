@@ -846,6 +846,7 @@ A single thing that uses an identity is an IAM User.
 
 IAM Roles are also identities that are used by large groups of individuals.
 If have more than 5000 principals, it could be a candidate for an IAM Role.
+![image](https://user-images.githubusercontent.com/33827177/143505351-dc777af3-6415-4a81-ac1a-b47c765f5818.png)
 
 IAM Roles are **assumed** you become that role.
 
@@ -861,6 +862,8 @@ IAM Roles have two types of roles can be attached.
 - Trust Policy: Specifies which identities are allowed to assume the role.
 - Permissions Policy: Specifies what the role is allowed to do.
 
+Trust policy can reference different things. It can reference identities in the same account i.e other IAM users, other roles and even other AWs services such as EC2. The trust policy can even reference identities in other AWS accounts. It can allow anonymous usage of that account...
+
 If an identity is allowed on the **Trust Policy**, it is given a set
 of **Temporary Security Credentials**. Similar to access keys except they
 are time limited to expire. The identity will need to renew them by
@@ -870,13 +873,16 @@ Every time the **Temporary Security Credentials** are used, the access
 is checked against the **Permissions Policy**. If you change the policy, the
 permissions of the temp credentials also change.
 
+![image](https://user-images.githubusercontent.com/33827177/143505786-b37bc4dc-e08f-483c-96bd-80386de08d96.png)
+
 Roles are real identities and can be referenced within resource policies.
 
 Secure Token Service (sts:AssumeRole) this is what generates the temporary
 security credentials (TSC).
 
 ### 1.3.5. When to use IAM Roles
-
+Lambda functions as with most AWS things has no permission by default...
+Instead of hard coding access key to the Lambda function. We can create a role Lambda Execution role.
 Lambda Execution Role.
 For a given lambda function, you cannot determine the number of principals
 which suggested a Role might be the ideal identity to use.
@@ -884,8 +890,10 @@ which suggested a Role might be the ideal identity to use.
 - Trust Policy: to trust the Lambda Service
 - Permission Policy: to grant access to AWS services.
 
-When this is run, it uses the sts:AssumeRole to generate keys to
-CloudWatch and S3.
+When this is run, it uses the sts:AssumeRole to security credentials to access AWS resources. For example, when the code is
+running in run time environment, the run time environment assumes the roles and then the run time environment cana ccess say
+S3, etc.
+![image](https://user-images.githubusercontent.com/33827177/143506212-c037d6e3-7d19-4dee-b3d1-9d557cabb29b.png)
 
 It is better when possible to use an IAM Role versus attaching a policy.
 
@@ -896,6 +904,7 @@ normally have access to. When you break the glass, you must have a reason
 to do.
 A role can have an Emergency Role which will allow further access if
 its really needed.
+![image](https://user-images.githubusercontent.com/33827177/143506720-8efc56ef-2740-44f7-a1f6-ccc75fc7c8b4.png)
 
 #### 1.3.5.2. Adding AWS into existing corp environment
 
@@ -906,6 +915,7 @@ External accounts can't be used to access AWS directly.
 To solve this, you allow an IAM role in the AWS account to be assumed
 by one of the active directories.
 **ID Federation** allowing an external service the ability to assume a role.
+![image](https://user-images.githubusercontent.com/33827177/143506794-3c652927-2866-4609-8d64-f34da2254a9a.png)
 
 #### 1.3.5.3. Making an app with 1,000,000 users
 
@@ -916,11 +926,13 @@ We can trust these web identities and allow those identities to assume
 an IAM role to access web resources such as DynamoDB.
 No AWS Credentials are stored on the application.
 Can scale quickly and beyond.
+![image](https://user-images.githubusercontent.com/33827177/143506890-8c2cbf5b-a1ca-434f-bf81-fa08282a71db.png)
 
 #### 1.3.5.4. Cross Account Access
 
 You can use a role in the partner account and use that to upload objects
 to AWS resources.
+![image](https://user-images.githubusercontent.com/33827177/143506939-9055bc0d-3ab6-43f7-a8b9-b3edc5017423.png)
 
 ### 1.3.6. AWS Organizations
 
