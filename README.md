@@ -1062,9 +1062,10 @@ This allows to **store**, **monitor** and **access** logging data.
 - This is a piece of information data and a timestamp
 - Can be more fields, but at least these two
 
-Comes with some AWS Integrations.
-Security is provided with IAM roles or Service roles
+Comes with some builtin Integrations with AWS servies like EC2, VPC Flow Logs, Lambda, CloudTrail, R53 and more...
+Security is provided with IAM roles or Service roles. For services outside AWS to log data in CloudWatch Logs we will need unified CloudWatch agent.
 Can generate metrics based on logs **metric filter**
+![image](https://user-images.githubusercontent.com/33827177/143789983-e8634073-f59a-4380-abd5-90982dd07f61.png)
 
 #### 1.3.8.1. Architecture of CloudWatch Logs
 
