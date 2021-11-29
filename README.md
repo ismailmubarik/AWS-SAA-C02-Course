@@ -1242,6 +1242,7 @@ We could then change our DNS and move customers to a backup website on S3.
   - Can add up for static website hosting with many requests.
 
 ### 1.4.3. Object Versioning and MFA Delete
+![image](https://user-images.githubusercontent.com/33827177/143798619-79486e42-539a-4688-843c-d9329a748555.png)
 
 Without Versioning:
 
@@ -1259,5 +1260,13 @@ Versioning
 
 The latest or current version is always returned when an object version
 is not requested.
+![image](https://user-images.githubusercontent.com/33827177/143798993-96cb2fdd-d391-4099-9486-9bac2c127987.png)
+
+![image](https://user-images.githubusercontent.com/33827177/143799139-a6890c12-3b21-43be-b98d-efdc3588227f.png)
+
+![image](https://user-images.githubusercontent.com/33827177/143799222-8361ccc7-35a4-4672-a377-691c6f0d3d12.png)
+
+![image](https://user-images.githubusercontent.com/33827177/143799298-d38d602f-1d68-458f-8b7c-f269a7caaf15.png)
+
 
 When an object is deleted, AWS 
