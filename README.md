@@ -1171,13 +1171,16 @@ Different from an **identity policy**
   - no way of giving an identity in another account access to a bucket.
 
 Each bucket can only have one policy, but it can have multiple statements.
+I an identity inside one AWS account is accessing a bucket in the same account, then the effective access is the combination of all the applicable identiyt policies plus resource policy (in this case bucket policy)
+For anonymous principal only resource policy applies as it is an unauthenticated user and hence no identity policy applies
+Cross-Account Access: If an identity in an external policy tries to access a resource in your account, then your resource policy as well as their identity policy applies
 
 #### 1.4.1.2. ACLs (Legacy)
 
 A way to apply a subresource to objects and buckets.
 These are legacy and AWS does not recommend their use.
 They are inflexible and allow simple permissions.
-
+![image](https://user-images.githubusercontent.com/33827177/143794657-e309731d-9bde-4250-903b-0fa4b6c2177b.png)
 #### 1.4.1.3. S3 Exam PowerUp
 
 When to use Identity Policy or Bucket Policy:
