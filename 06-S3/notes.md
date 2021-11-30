@@ -403,6 +403,7 @@ a plaintext one.
 - The encrypted data encrypted key is stored along with the encrypted object.
 
 ###### Data encryption keys more than 4KB
+![image](https://user-images.githubusercontent.com/33827177/144134259-7fc59472-346b-4c16-81cf-f312a8e7b35b.png)
 
 Every object that is uploaded and encrypted with SSE-KMS requires
 a CMK. The CMK is used to generate one unique data encryption key for
@@ -423,6 +424,7 @@ The CMK is used to decrypt the data encryption key for that object.
 That decrypted data encryption key is used to decrypt the object itself.
 
 If you don't have access to KMS, you don't have access to the object.
+![image](https://user-images.githubusercontent.com/33827177/144134389-97869b7e-1044-4d10-86cb-69c634b5b409.png)
 
 ### S3 Object Storage Classes
 
