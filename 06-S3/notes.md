@@ -254,10 +254,11 @@ These are all backed by **physical** key material.
 You can generate or import the key material.
 
 CMKs can be used for up to **4KB of data**
+![image](https://user-images.githubusercontent.com/33827177/143969298-85208941-5017-4f08-a60f-3465c98f3083.png)
 
 #### Data Encryption Key (DEKs)
-
-Using the generate key and a customer master key, this generates a
+Another type of key KMS/ can generate. Generated using customer master key.
+Using the generate key operation and a customer master key, this generates a
 data encryption key that can be used to encrypt data larger than 4KB in size.
 
 KMS does not store the DEKs. Once it hands the keys over, it does not care.
@@ -291,17 +292,24 @@ CMKs support key rotation.
 
 CMK itself contains the current backing key, physical material used to encrypt
 and decrypt, as well as previous backing keys.
+It is to be noted that KMS itself doesnt perform encryption or decryption on data larger than 4 Kbyets using the DEK. You do or the service using KMS does.
+Keeping encrypted DEK and cyphertext lets you know which key to decrypt. To decrypt the cyperhtext, the encrypted key is given to KMS which decrypts it using CMS and then the plaintext version of the DEK is used to decrypt the cyphertext and lastly you discard the DEK.
+Services such as S3 when using KMS generates DEK for every single object.
 
-You can create an alias. This is also per region.
+![image](https://user-images.githubusercontent.com/33827177/143970137-bf1c9d13-7135-4269-9c81-dc45d703cea7.png)
 
+![image](https://user-images.githubusercontent.com/33827177/143970349-33b58d37-5b8f-4180-909e-5a245b42c4b2.png)
+
+You can create an alias. This is also per region so you can have multiple alias with same names across different regions pointing at different CMKs.
 #### Key Policy (resource policy)
 
 Every customer managed key (CMK) has one.
 
-Unlike other policies, the key must be told to trust the key.
+Unlike other policies, the KMS has to be explicitly told that keys trust the AWS account they are in.
 
 In order for IAM to work, IAM is trusted by the account, and the account
 must be trusted by the key.
+![image](https://user-images.githubusercontent.com/33827177/143970784-4958420c-97f4-4a6a-b7f6-2176fa53851c.png)
 
 ### KMS Key Demo
 
