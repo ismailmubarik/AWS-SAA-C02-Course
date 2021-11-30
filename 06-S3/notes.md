@@ -348,6 +348,7 @@ transit comes for free with S3
   the S3 endpoint, it is still plaintext. Only once it has hit S3 completely,
   S3 will then encrypt before storage.
   - AWS will handle some or all of these processes.
+![image](https://user-images.githubusercontent.com/33827177/143979592-688d6346-219a-4750-bdef-a5483c3164bf.png)
 
 #### Server Side Encryption
 
@@ -362,7 +363,9 @@ Three general types:
 - Once the key and object arrive, it is encrypted. A hash of the key is
 taken and attached to the object.
 - The hash can identify if the specific key was used to encrypt the object.
-- The key is then discarded after the hash is taken.
+- The key is then discarded after the hash is taken. Meaning once the hash and cypertext is stored on S3 the key is discarded.
+- To decrypt the cyperhtext a key needs to be provided to S3. Once decrypted the key is discarded
+![image](https://user-images.githubusercontent.com/33827177/143980041-17d779e1-1908-4594-9946-7518c858dfbf.png)
 
 ##### SSE-S3 AES256 (Server-side encryption w/ Amazon S3 managed keys)
 
@@ -379,6 +382,7 @@ object. It uses that key to encrypt that plaintext object.
   - Strong algorythm
   - Data encrypted at rest
   - Little admin overhead.
+![image](https://user-images.githubusercontent.com/33827177/143980554-5f68f323-d03c-4f19-b455-03406fb3a253.png)
 
 - THREE PROBLEMS:
   - Regulatory enviromment where the keys and access needs to be controlled.
