@@ -453,6 +453,7 @@ Offers low latency and high throughput.
 No **minimums** or **delays** or **penalties**
 
 All of the other storage classes trade some compromises for another.
+![image](https://user-images.githubusercontent.com/33827177/144151802-ba4ca7b9-1d77-4cb2-bba8-e392b9b21ae3.png)
 
 #### S3 Standard-IA
 
@@ -475,6 +476,7 @@ Also charged a retrival fee for every GB of data retrieved from this class.
 
 Designed for data that isn't accessed often, long term storage, backups,
 disaster recovery files. The requirement for data to be safe is most important.
+![image](https://user-images.githubusercontent.com/33827177/144152064-f357069c-f3e4-465a-a72e-7da985d66bf5.png)
 
 #### One Zone-IA
 
@@ -494,6 +496,7 @@ place to store the output from another data set.
 Designed for 99.5% availability.
 
 This storage class cannot withstand AZ failure.
+![image](https://user-images.githubusercontent.com/33827177/144152181-47d7906a-010a-4b2c-9f36-876872eaef94.png)
 
 #### S3 Glacier
 
@@ -523,7 +526,7 @@ This is good for backup data or original media if there was a mistake.
 
 Retrievals take 5 - 12 hours.
 Lowest cost and is used for large amounts of data.
-
+![image](https://user-images.githubusercontent.com/33827177/144152530-2ff62e94-2054-432c-8afa-1988899f2b5d.png)
 #### S3 Glacier Deep Archive
 
 Designed for long term backups and as a **tape-drive** replacement.
@@ -535,7 +538,7 @@ Currently 4.3% of S3-Standard.
 Standard Retrieval within 12 hours, bulk storage in 48 hours.
 
 Cannot use to make data public or download normally.
-
+![image](https://user-images.githubusercontent.com/33827177/144152647-7cfe0994-0b1d-406a-a5d1-7e9e985ed8d9.png)
 #### S3 Intelligent-Tiering
 
 Combination of standard and standard IA.
@@ -547,6 +550,7 @@ Charges $0.0025 per 1,000 objects.
 If an object is not accessed for 30 days, it will move into infrequent access.
 
 This is good for objects that are unknown their access pattern.
+![image](https://user-images.githubusercontent.com/33827177/144152925-f59960f6-3b90-4c87-a211-380d7c0adbd6.png)
 
 ### Object Lifecycle Management
 
@@ -568,6 +572,7 @@ An example is:
 - After one year move to Deep Archive
 
 Objects must flow downwards, they can't flow in the reverse direction.
+![image](https://user-images.githubusercontent.com/33827177/144158062-48bb95aa-bd32-4bd3-9065-1fbe2273e5dd.png)
 
 #### Expiration Actions
 
@@ -589,23 +594,27 @@ Two types of replication
 
 The role is configured to allow the S3 service to assume it based on
 its trust policy. The permission policy allows it to read objects on the
-source bucket and copy them to the destination bucket.
+source bucket and copy them to the destination bucket. In this case the IAM
+can access both source and destination S3 buckets
 
 When different accounts are used, the role is not by default trusted
-by the destination account. If configuring between accounts, you must
+by the destination account. In this case the IAM
+cannot by default access the destination S3 buckets as it is in a different
+AWS account. Thus if configuring between accounts, you must
 add a bucket policy on the destination account to allow the IAM role to
 access the bucket.
-
+![image](https://user-images.githubusercontent.com/33827177/144159691-402d0788-d4a6-4ec2-bcae-cd7663ae760e.png)
 #### S3 Replication Options
 
 - All objects or a subset of those objects
   - Filter can be defined to make the subset.
 - Select which storage class the destination bucket will use.
-  - The default is the same type of storage, but this can be changed.
+  - The default is the same type of storage, but this can be changed for lowering costs
 - Define the ownership of the objects.
-  - The default is the ownership will be the same as the source account.
+  - The default is the ownership will be the same as the source account. This is OK if the replication is within same account.
   - This is a problem if the buckets are in different accounts.
-  - The objects in the destination bucket are not owned by that account.
+  - The objects in the destination bucket are not owned by that account. But this can be overriden so that anything copied to
+  - a destination bucket is owned by the destination.
 - Replication Time Control (RTC)
   - Adds a guaranteed level of SLA within 15 minutes for extra cost.
   - This is useful for buckets that must be in sync the whole time.
@@ -630,9 +639,11 @@ Source bucket owner needs permissions to objects. If you grant cross-account
 access to a bucket. It is possible the source bucket account will not own
 some of those objects.
 
-Will not replicate system events, glacier, or glacier deep archive.
+Will not replicate system events, i.e.only user events replication.
 
-No deletes are replicated.
+In addition any objects in glacier, or glacier deep archive storage classes cannot be replicated.
+
+No deletes are replicated meaning anything deleted in Source bucket isn't replicated in destination
 
 #### Why use replication
 
