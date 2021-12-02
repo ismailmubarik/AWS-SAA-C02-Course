@@ -122,9 +122,9 @@ the prefix.
 
 Things to keep in mind
 
-- What size should the VPC be. This will limit the use
-- Are there any networks we can't use?
-- Be mindful of ranges other VPC's use or are used in other cloud environments
+- What size should the VPC be. This will limit the how many services can fit into that VPC because each service occupies one or more IPs and they occupy a space inside the VPC.
+- Are there any networks we can't use or we need to interact with and hence can't use?
+- Be mindful of ranges other VPC's use or are used in other cloud environments, On-premise, used by Partners and/or Vendors, etc.
 - Try to predict the future uses
 - VPC structure with tiers and resilience (availability) zones
 
@@ -144,8 +144,11 @@ An example:
 
 - 3 regions in US, Europe, Aus (5) x 2 - assume 4 AWS accounts
 - Total of 40 ranges
+![image](https://user-images.githubusercontent.com/33827177/144335118-d10a6837-5931-4e76-8a4f-164aa1301006.png)
 
 VPC services run from within subnets, not directly from the VPC
+![image](https://user-images.githubusercontent.com/33827177/144335320-88f68621-7c23-493a-aa5e-430fd640cfa2.png)
+![image](https://user-images.githubusercontent.com/33827177/144335864-2f049faf-ea91-463d-ab0c-3945c42ae755.png)
 
 #### How to size VPC
 
