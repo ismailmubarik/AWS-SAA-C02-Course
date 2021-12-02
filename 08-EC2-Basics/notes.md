@@ -207,7 +207,8 @@ Object Storage - It is a flat collection of objects. An object can be anything
 with or without attached metadata. To retrieve the object, you need to provide
 the key and then the value will be returned. This is not mountable or
 bootable. It scales very well and can have simultanious access.
-
+In general, if you want a storage to boot from or a high performance storage inside an OS it would be Block Storage. If you want to share a FIle system shared by multiple different servers or that can be access by different services then File Storage should be used. Lastly, if you want largescale read and writes or building a collection of 
+media then Object Storage is recommended.
 #### Storage Performance
 
 IO Block Size - size of the wheels. This determines how to split up the data.
@@ -226,8 +227,10 @@ size increases.
 ### Elastic Block Store (EBS)
 
 Allocate block storage **volumes** to instances.
-Volumes are isolated to one AZ.
+EBS Volumes are isolated to one AZ. EBS in one AZ is different then another AZ
 
+And EBS volume can be detached from one instance and then reattached to another. If an EC2 instance moves between different EC2 hosts then EBS volumes follows it. If an instances stops and restarts the volume is maintained.
+![image](https://user-images.githubusercontent.com/33827177/144427479-beaff6fe-b971-46f4-951b-e1dae26cff40.png)
 - The data is highly available and resilient for that AZ.
 - All of the data is replicated within that AZ. The entire AZ must have
 a major fault to go down.
@@ -236,6 +239,7 @@ a major fault to go down.
 - Billed as GB/month.
   - If you provision a 1TB for an entire month, you're billed as such.
   - If you have half of the data, you are billed for half of the month.
+![image](https://user-images.githubusercontent.com/33827177/144427927-9e3f2164-33ce-4153-982b-14e1df12c0a7.png)
 
 Four types of Volumes:
 
@@ -261,12 +265,15 @@ The capacity is filled back based upon the volume size.
 
 Min of 100 iops added back to the bucket per second.
 Above that, there are 3 IOPS/GiB of volume size. The max is 16,000 IOPS.
-
+![image](https://user-images.githubusercontent.com/33827177/144429766-a325db87-4625-4cbf-aedd-7d479cc878df.png)
 This is the **baseline performance**
 
 This should be the default for boot volumes and some data volumes.
 
 Can only be attached to one volume at a time.
+#### General Purpose SSD (gp3)
+Removes the credit bucket architecture of gp2 for sth simpler. Every gp3 volume regardless of size starts with 3000 IOPs and can transfer 125 MiB/s. Volume sizes can be 1 GB to 16 TB.
+![image](https://user-images.githubusercontent.com/33827177/144430447-c6f97513-7d2c-40c9-8172-73e53209443e.png)
 
 #### Provisioned IOPS SSD (io1)
 
