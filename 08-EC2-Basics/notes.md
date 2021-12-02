@@ -15,6 +15,9 @@ Servers are configured in three sections without virtualization
   - Can make a **system call** to the Kernel to interact with the hardware
   - If an app tries to interact with the hardware without a system call, it
   will cause a system error and can crash the server or at minimum the app
+![image](https://user-images.githubusercontent.com/33827177/144336308-f1399a9a-c8a9-4950-9f64-d01b84d865bf.png)
+
+![image](https://user-images.githubusercontent.com/33827177/144336426-24efa092-e4c5-4c78-86ab-6ab8e6aaf704.png)
 
 #### Emulated Virtualization - Software Virtualization
 
@@ -29,7 +32,7 @@ were all software emulated to allow the process to run properly.
 The guest OS still believed they were running on real hardware and tried
 to take control of the hardware. The areas were not real and only allocated
 space to them for the moment.
-
+![image](https://user-images.githubusercontent.com/33827177/144336607-1a46160f-c2a8-4b6b-a85f-07a9bbe27ec5.png)
 The hypervisor performs **binary translation**. Any calls attempted to make
 are intercepted and translated in software on the way. The guest OS needs no
 modification, but it slows the guest OS down a lot.
@@ -45,6 +48,7 @@ to be modified for the particular vendor peforming the para-virtualization.
 
 The OS becomes virtualization aware and got faster, but this was still a
 software trick.
+![image](https://user-images.githubusercontent.com/33827177/144336819-d12cb1b2-a819-4f58-9589-4110d6d6dce0.png)
 
 #### Hardware Assisted Virtualization
 
@@ -56,23 +60,25 @@ the process. They are redirected to the hypervisor from the hardware.
 What matters for a virtual machine is the input and output operations such
 as network transfer and disk IO. The problem is multiple OS try to access
 the same piece of hardware but they get caught up on sharing.
-
+![image](https://user-images.githubusercontent.com/33827177/144337006-922e5fd9-f6a0-4240-b93f-8e363850ef4b.png)
 #### SR-IOV (Singe Route IO virtualization)
-
+In this case the Network cards are aware of the virtualizations...
 Allows a network or any addon card to present itself as many mini cards.
 As far as the hardware is concerned, they are real dedicated cards for their
 use. No translation needs to be done by the hypervisor. The physical card
 handles their own process internally. In EC2 this feature is called
 **enchanced networking**. This means less CPU usage for the guest.
+![image](https://user-images.githubusercontent.com/33827177/144337253-c8ec071d-3935-44b5-9e36-9e85150dffbe.png)
 
 ### EC2 Architecture and Resilience
 
 - EC2 instances are virtual machines (OS+Resources)
 - Run on EC2 hosts
-- Shared hosts or dedicated hosts
+- Shared hosts 
   - Every customer is isolated even on the same shared hardware
+-  Dedicated hosts
   - Dedicated hosts pay for entire host, don't pay for instances
-- AZ resilient service. They run within only one AZ system.
+- AZ resilient service. They run within only one AZ system. If AZ fails, then Host Fails and the EC2 will fail
 
 Example AZ with an EC2 host
 
@@ -109,11 +115,13 @@ Instances stay on the host until either
 The instance will be relocated to another host in the same AZ. Instances
 cannot move to different AZs. Everything about their hardware is locked within
 one specific AZ.
-
+![image](https://user-images.githubusercontent.com/33827177/144338559-c51d025f-44df-4d07-abae-3f45b78e4753.png)
 A migration is taking a copy of an instance and moving it to a different AZ.
+![image](https://user-images.githubusercontent.com/33827177/144338718-98a00c1c-248b-4f7d-8678-448cfe05bf51.png)
 
-In general instances of the same type and generation will occupy the same host.
-The only difference will generally be their size.
+Instances of different size can share a host in general, instances of the same type and generation (version, year, etc.) will occupy the same host.
+The only difference will generally be their size. So in essence a host can have instances of different customers which are different in sizes
+So if we provision two different type of instances they may end up on different zones
 
 #### EC2 Strengths
 
@@ -127,7 +135,7 @@ Server style applications
 - things waiting for network response
 - burst or stead-load
 - monolithic application stack
-  - middle ware or specific run time components
+  - middle ware or specific run time components running on an operating system
 - migrating application workloads or disaster recovery
   - existing applications running on a server and a backup system to intervene
 
@@ -135,12 +143,12 @@ Server style applications
 
 Raw CPU, memory, local storage capacity, and type
 Resource ratios: Some might have more CPU while others have more storage.
-Storage and Data network Bandwidth
+Instance type will also influence Storage and Data network Bandwidth we get
 
-Influences the architecture and vendor.
+Instance type can influence the architecture and vendor.
 AMD CPU vs Intel CPU
 
-Influcences features and capabilities with that instance
+Influcences features and capabilities with that instance e.g. GPU or FPGAs
 
 #### EC2 Categories
 
@@ -165,6 +173,9 @@ full instance type
   - d: nvme storage
   - n: network optimized
   - e: extra capacity for ram or storage
+![image](https://user-images.githubusercontent.com/33827177/144341994-42b7c515-95df-48ed-bc5a-5180fa16ad2f.png)
+
+https://ec2instances.info/
 
 ### Storage Refresher
 
