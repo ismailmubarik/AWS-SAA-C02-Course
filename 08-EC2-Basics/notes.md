@@ -177,6 +177,8 @@ full instance type
 
 https://ec2instances.info/
 
+NOte: EC2 instant connect using GUI can only connect to instances which have public addressing. You can download EC2 instance connect CLI tool which has the capability to connect to private EC2 instances as long you have private connectivity using a VPN or directconnect. There is another connection method called "Session Manager" which can connect to both public and private EC2 instances
+
 ### Storage Refresher
 
 **Direct** local attached storage - these are physical disks on EC2
