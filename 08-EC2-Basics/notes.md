@@ -509,7 +509,7 @@ volume.
 When data is stored at rest, it is stored as **Ciphertext**.
 
 If the EBS volume is ever moved, the key is discarded.
-
+![image](https://user-images.githubusercontent.com/33827177/144686391-5dd8b130-490d-4316-a52d-a9a41c88c2a6.png)
 If a snapshot is made of an encrypted EBS volume, the same data encryption
 key is used for that snapshot. Anything made from this snapshot is also
 encrypted in the same way.
@@ -524,14 +524,15 @@ It will use the default CMK unless a different one is chosen.
 Each volume uses 1 unique DEK (data encryption key)
 Snapshots and future volume use the same DEK
 Can't change a volume to NOT be encrypted. You could mount an unencrypted
-volume and copy things over but you can't change the origina volume.
-The OS isn't aware of the encryption, there is no performance loss. The data
+volume and copy things over but you can't change the original volume.
+###The OS isn't aware of the encryption, there is no performance loss. The data
 uses AES256
 If an exam question does not use AES256, or it suggests you need an OS to
 encrypt or hold the keys, then you need to perform full disk encryption
 at the operating system level.
 You can perform full disk encryption on an unencrypted or encrypted EBS
-volume.
+volume. For Full Disk encryption which is done at the OS level there is 
+going to be a performance penalty for the encryption/decryption process.
 
 ### EC2 Network Interfaces, Instance IPs and DNS
 
