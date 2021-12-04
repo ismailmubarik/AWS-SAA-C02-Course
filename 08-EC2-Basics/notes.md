@@ -621,6 +621,12 @@ address in a VPC. If you have instance to instance communication within
 the VPC, it will never leave the VPC. It does not need to touch the internet
 gateway.
 
+#### Launching Manual Install of Wordpress on single EC2 instance
+This is going to be a working Wordpress website without High Availibility features because it will be running on a single EC2 instance and it is going to be architecturally
+monolithic i.e. both the application and the database
+We will have the A4L VPC and we will deploy the Wordpress in a single subnet WEBA public subnet.
+![image](https://user-images.githubusercontent.com/33827177/144689375-532f5e2f-5484-4487-b57a-587fd97c7477.png)
+
 ### Amazon Machine Image (AMI)
 
 Images of EC2.
@@ -631,19 +637,14 @@ AMI's can be used to launch EC2 instance.
 - Can be Amazon or community provided
 - Marketplace (can include commercial software)
   - Will charge you for the instance cost and an extra cost for the AMI
-- Regional, unique ID
-  - ami-`random set of chars`
+- Regional - Each individual region has it own set of AMIs and each AMI has a unique ID ami-0a3464564535nb6h4545bh56
+  - ami-`random set of chars` for the same distribution of AMI in different regions
+- An AMI can only be used in the region it is in
 - Controls permissions
   - Default only your account can use it
   - Can be set to be public
   - Can have specific AWS accounts on the AMI
 - Can create an AMI from an existing EC2 instance to capture the current config
-
-#### Launching Manual Install of Wordpress on single EC2 instance
-This is going to be a working Wordpress website without High Availibility features because it will be running on a single EC2 instance and it is going to be architecturally
-monolithic i.e. both the application and the database
-We will have the A4L VPC and we will deploy the Wordpress in a single subnet WEBA public subnet.
-![image](https://user-images.githubusercontent.com/33827177/144689375-532f5e2f-5484-4487-b57a-587fd97c7477.png)
 
 #### AMI Lifecycle
 
@@ -670,8 +671,10 @@ Create Image
 Launch
 
 When launching an instance, the snapshots are used to create new EBS
-volumes in the availability zone of the EC2 instance and contain the same
-block device mapping.
+volumes in the same AZ as that of the EC2 instance's image (or the instances within other AZs of that region) and contain the same block device mapping.
+
+An AMI itself doesn't contain any Data Volume. An AMI is a container, it references snapshot that are created from the original EBS volumes of an EC2 instance and so you can take them to provision new instances with the exactly same Data and configuration of volumes
+![image](https://user-images.githubusercontent.com/33827177/144692701-bf8c530f-ede1-46cf-b40d-bf1a576ba916.png)
 
 #### Exam Powerups
 
@@ -679,9 +682,10 @@ AMI can only be used in one region
 AMI Baking: creating an AMI from a configuration instance.
 An AMI cannot be edited. If you need to update an AMI, launch an instance,
 make changes, then make new AMI
-Can be copied between regions
+Can be copied between regions (includes its snapshots)
 Remember permissions by default are your account only
-Billing is for the storage capacity for the EBS snapshots the AMI references
+
+Billing: AMI contains snapshots so the Billing is for the storage capacity for the EBS snapshots that the AMI references
 
 ### EC2 Pricing Models
 
@@ -695,6 +699,7 @@ Billing is for the storage capacity for the EBS snapshots the AMI references
 - New or uncertain application requirements
 - Short-term, spiky, or unpredictable workloads which can't tolerate
 any disruption.
+![image](https://user-images.githubusercontent.com/33827177/144696299-1a67e4bb-c281-4420-a36c-a355e5e4b095.png)
 
 #### Spot Instances
 
@@ -703,11 +708,17 @@ Depends on the spare capacity
 You can set a maximum hourly rate in a certain AZ in a certain region.
 If the max size you set is above the spot price, you pay for the instance.
 As the spot price increases, you'll keep paying until the price increases.
-Once this price increases too much, it will terminate the instance.
-Great for data analytics when the process can occur later.
+![image](https://user-images.githubusercontent.com/33827177/144696412-92509c07-aa30-43f7-8dfc-d872c4d44714.png)
 
-#### Reserved Instance
+Once this price increases too much, it will terminate the instance. Therefore, Spot instances shouldn't be viewed as reliable
 
+![image](https://user-images.githubusercontent.com/33827177/144696432-c9a9bcf7-702f-4fdb-b361-a14fd95f5697.png)
+Never use SPOT for workload which can't tolerate interruptions. No matter how high you set your Spot price there is always a chance for your instance to be terminated. So domain controllers, mail servers, company websites, etc. shouldn't use Spot
+
+![image](https://user-images.githubusercontent.com/33827177/144696581-65549b40-ad7e-4a55-ac3c-c2c6b5c1e8eb.png)
+
+#### Reserved Instance (Now on as Standard Reserved)
+If you need access to the cheapest EC2 running 24/7 365 days an year then use this.
 Up to 75% off on-demand
 The trade off is commitment.
 You're buying capacity in advance for 1 or 3 years.
@@ -716,14 +727,37 @@ Flexibility on how to pay
 - All up front
 - Partial upfront
 - No upfront
-
+![image](https://user-images.githubusercontent.com/33827177/144696904-1ba1cfa2-cbdc-49c6-9ce2-d604d706a2c1.png)
 Best discounts are for 3 years all up front
 Reserved in region, or AZ with capacity reservation
-Reserved takes priority for AZ capacity.
+If you lock a reservation in a specific AZ then you will reap benefits only if you when launching instances in that AZ but it also reserves capacity
+If you purchase reservation for a region it doesn't reserve capacity
+Reserved takes priority for AZ capacity but it can benefit any instances which are launch in that region???
 Can perform scheduled reservation when you can commit to specific time windows.
 
-If you have a known stead state usage, email usage, domain server.
+If you have a known steady state usage, email usage, domain server.
 Cheapest option with no tolerance for distruption.
+
+### Dedicated Hosts
+- These hosts come with all the resources that you would expect from a physical host like number of CPU/Cores, Meomry, Local Storage, etc.
+- You pay for the host. Any instance that run on the host has no per second charge. You can lauch any number of instances up to the complete resource capacity of the host
+Exmaple:
+You are using a software that is license based on teh Sockets/Cores of a machine
+![image](https://user-images.githubusercontent.com/33827177/144697100-898251e1-75a2-4c24-a19a-78d243e4aa74.png)
+Host Affinity - Starting and Stoping an instance means it will remain on the same host
+### Dedicated Instances
+![image](https://user-images.githubusercontent.com/33827177/144697179-7307500e-fec2-4ffa-b69c-4c5827d6bdf0.png)
+
+#### Scheduled Reserved Instance
+![image](https://user-images.githubusercontent.com/33827177/144697342-f9b80b04-1d99-4678-a78a-58ca3aac5bde.png)
+
+### Capacity Reservations
+![image](https://user-images.githubusercontent.com/33827177/144697494-caeb072a-dd6d-41b7-89f3-db0c5942a160.png)
+Capacity reservations don't have the 1 or 3 year commitment requirements tht you need for reserved instances
+
+### EC2 Savings Plan
+Its like Reserved instances but instead of focusing on a particular type of instance in an AZ or region you are making a commitment of an hourly spend for a 1 or 3 year term
+![image](https://user-images.githubusercontent.com/33827177/144697700-78aa0f7f-ece6-4c53-80c3-5b6484e0b374.png)
 
 ### Instance Status Checks and Autorecovery
 
