@@ -774,17 +774,32 @@ This is specific to the file system or has a corrupted Kernel
 
 Assuming you haven't launched an instance, this is a problem and needs to be
 fixed.
+![image](https://user-images.githubusercontent.com/33827177/144697812-22ced368-081b-4ca9-a04a-3529bd909e12.png)
 
+You can manually stop and start instance or terminate or recreate an instance.
+Or
 #### Create Status Check Alarm
 
 This feature has four options
 
-- Recover this instance: can be a number of steps depending on the failure
+- Recover this instance: can be a number of steps depending on the failure. It can do a simple restart or it can migrate an instance to another host within the same AZ. EC2 being an AZ resilient service, this won't safe us from an AZ failure. Won't work if an instance has an Instance Store Volume. Will only work if an instance solely has EBS
 - Stop this instance
 - Terminate this instance: useful in a cluster
 - Reboot this instance:
 
-### Horizontal and Vertical Scaling
+### Termination Protection
+Provides us protection from accidental termination or termination by an inexperienced architect. This is done by requiring specific permission to disable the termination protection in addition to having the permission to terminate an instance. This allows for role separation where only a Senior Architect will have both permissions. This is done for reasons like to safe us from data loss, etc.
+How to do it??
+Right Click on an instance --> Click on Instance Settings --> Change Termination Protection --> Enable
+
+Can be done in an automated way using CloudFormation for launching instances.
+
+### Shutdown Behviour
+How to do it??
+Right Click on an instance --> Click on Instance Settings --> Change Shutdown Behavior --> Choose Shutdown Behavior as Stop or Terminate
+### Horizontal and Vertical Scaling.
+
+
 
 #### Vertical Scaling
 
