@@ -556,8 +556,10 @@ Has these properties
     - ip-10-16-0-10.ec2.internal
     - only resolvable inside the VPC and always points to private IP address
 - 0 or more secondary private IP addresses
-
 - 0 or 1 public IPv4 address given two ways
+- 1 elastic IP address per IPv4 address. Elastic IP address are public IPv4 address and these are different then normal IPv4 address
+- 0 or more IPv6 addresses which are all public. With IPv6 there is no definition of public or private addresses. All are public addresses
+
   - Instance must manually be set to recieve an IPv4 addr
   - Default settings into a subnet which automatically allocates an IPv4
   - Dynamic IP that is not fixed
@@ -636,6 +638,12 @@ AMI's can be used to launch EC2 instance.
   - Can be set to be public
   - Can have specific AWS accounts on the AMI
 - Can create an AMI from an existing EC2 instance to capture the current config
+
+#### Launching Manual Install of Wordpress on single EC2 instance
+This is going to be a working Wordpress website without High Availibility features because it will be running on a single EC2 instance and it is going to be architecturally
+monolithic i.e. both the application and the database
+We will have the A4L VPC and we will deploy the Wordpress in a single subnet WEBA public subnet.
+![image](https://user-images.githubusercontent.com/33827177/144689375-532f5e2f-5484-4487-b57a-587fd97c7477.png)
 
 #### AMI Lifecycle
 
