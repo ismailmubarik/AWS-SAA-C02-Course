@@ -805,7 +805,10 @@ Right Click on an instance --> Click on Instance Settings --> Change Shutdown Be
 
 As customer load increases, the server may need to grow to handle more data.
 The server can increase in capacity, but this will require a reboot.
-Often times vertical scaling can only occur during planned outages.
+
+![image](https://user-images.githubusercontent.com/33827177/144766102-52512502-97ec-4cfd-b8eb-315623373f40.png)
+
+in vertical scaling you are actually resizing the EC2 instance. Often times vertical scaling can only occur during planned outages.
 Larger instances also carry a $ premium compared to smaller instances.
 There is an upper cap on performance - instance size.
 No application modification is needed.
@@ -817,25 +820,34 @@ As the customer load increases, this adds additional capacity.
 Instead of one running copy of an application, you can have multiple versions
 running on each server.
 This requires a load balancer.
+![image](https://user-images.githubusercontent.com/33827177/144766208-0bb2c05e-69b8-455a-81bd-ffc0d270a5c2.png)
+
 When customers try to access an application, the load balancer ensures the
 servers get equal parts of the load.
 
-Sessions are everything.
-With horizontal scaling you can shift between instances equally.
-This requires either application support or off-host sessions.
-This means the servers are **stateless**, the app stores session data elsewhere.
+When talking about Horizontal scaling SESSIONS are EVERYTHING.
+SESSION: For example, when a user logs in to a website, the state of your interaction with a website is called a session.
+With a single application running on a single server the Session is generally stored on that server. THis won't work with horizontal scaling
+With horizontal scaling you can shift between instances to even out the load. For example, while you are buying one item you are on one instance and if buying a second you have shifted to another one. It means you will have different session or no sense of a session and hence the application wouldn't work and you would be logged out
+Thus for Horizontal scaling to work it either requires application support or off-host sessions.
+If you use off-host sessions, your server data is used in another place.
+This means the servers are **stateless**, the app stores sessions data elsewhere.
 
 No distruption while scaling up or down.
 
 No real limits to scaling.
 
-Uses smaller instances so you pay less, allows for better granulairity.
+Uses smaller instances so you pay less, allows for better granulairity meaning if you are using 5 instance you will start using 6 if load increases. With vertical scaling you will have double directly.
+
+### Exam Power UP
+![image](https://user-images.githubusercontent.com/33827177/144766646-9ec34d2e-a3a3-47df-8e1f-2a08382d1fa0.png)
 
 ### Instance Metadata
 
 EC2 service provides data to instances
 Accessible inside all instances
 
+To access instance Metadata
 Memorize **<http://169.254.169.254/latest/meta-data/>
 
 Meta-data contains:
