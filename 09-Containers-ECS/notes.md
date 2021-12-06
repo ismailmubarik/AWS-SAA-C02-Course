@@ -94,30 +94,33 @@ Accepts containers and instructions you provide.
 ECS allows you to create a cluster. Clusters are where containers run from.
 
 Container images will be located on a registry.
-AWS provides ECR (elastic container registry).
+AWS provides ECR (elastic container registry). You can use that or Docker Hub. Just in this case you won't require have to deal with permission, etc.
 
-Container definition tells ECS where the container image is.
+Container definition is like a pointer which tells ECS where the container image is store and which port it is going to be exposed, and similarly other info. needed to run the container
 
-Task definition represents the application as a whole and stores whatever
-information is needed to run the application.
+Task definition represents a self-contained application. Task definition represents the application as a whole and stores whatever
+information is needed to run the application. It could have one container defined inside it or many.
+The task definition stores information about the resources used by the task., so CPU and Memory. They also store the networking mode that task uses. It also stores the compatibility i.e whether the task will work on EC2 mode or Fargate. It also stores the IAM  Role the task will assume
 
 Container is just a pointer to where the container is stored and what port is
 exposed. The rest is defined at the task definition.
+https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html
 
 Task definitions store the resources and networking used by the task. It stores
 the compatability of how the container runs. It also stores **task role**, an
 IAM role that allows the task complete its task. This is the best practice
 way to give containers the access needed for other AWS resources.
-
+https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_TaskDefinition.html
 A lot of tasks will only have one container definition, but a task could
 include one or more containers.
 
-Task is not by itself highly available.
+Task is not by itself highly available and it doesn't scale on its own.
 
-ECS service - Service Definition. This defines how many copies of the task
-is allowed to run to load balance. You can use a service to provide scalability
+ECS Service is configured via a Service Definition. This defines how many copies of the task
+is allowed to run to load balance. It can add capacity and reselience (The service will replace failed tasks. 
+You can deploy a Load Balancer in front of a service to provide scalability
 and high availability.
-
+![image](https://user-images.githubusercontent.com/33827177/144780073-0ce78396-6153-4e40-a17b-4e4914668a5e.png)
 Tasks or services get deployed to an ECS cluster.
 
 **Container definition** the image and the ports that will be used.
