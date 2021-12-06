@@ -167,7 +167,7 @@ There is a **fargate shared infrastructure** which allows all customers
 to access from the same pool of resources.
 
 Fargate deployment still uses a cluster with a VPC where AZs are specified.
-![Uploading image.png…]()
+![image](https://user-images.githubusercontent.com/33827177/144935937-ded7dc44-742d-423a-bbe4-fba2e2b2eb33.png)
 For ECS tasks, they are injected into the VPC. Each task is given an
 elastic network interface which has an IP address within the VPC. They then
 run like an VPC resource.
