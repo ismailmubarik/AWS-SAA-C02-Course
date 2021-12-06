@@ -149,12 +149,14 @@ are within that VPC.
 
 You specify an initial size which will drive an **auto scaling group**
 
-ECS using EC2 mode is not a serverless solution, you need to worry about
-capacity for your cluster.
+These are just like EC2 insances with containers running in them. You will see them in your account and can even connect with them.
 
-The container instances are not delivered as a managed service, they
-are managed as normal EC2 instances.
+It is to be noted when they are provisioned you will be paying for them regardless of what containers are running on them??
 
+ECS using EC2 mode is not a serverless solution, you need to worry about capacity for your cluster.
+
+The container instances are not delivered as a managed service, they are managed as normal EC2 instances through ECS tooling and you need to worry about availibility and capacity
+![image](https://user-images.githubusercontent.com/33827177/144934955-6f8713f6-dbcc-4b78-8385-c0e58270582c.png)
 This is good because you can use spot pricing or prepaid EC2 servers.
 
 #### Fargate mode
@@ -165,18 +167,18 @@ There is a **fargate shared infrastructure** which allows all customers
 to access from the same pool of resources.
 
 Fargate deployment still uses a cluster with a VPC where AZs are specified.
-
+![Uploading image.png…]()
 For ECS tasks, they are injected into the VPC. Each task is given an
 elastic network interface which has an IP address within the VPC. They then
 run like an VPC resource.
 
-You only pay for the container resources you use.
+You only pay for the container resources you use based on the resources they consume. So you've no visibility of the host costs, you dont need to manage host, provision hosts or worry about their availibility or scalibility
 
 #### EC2 vs ECS(EC2) vs Fargate
 
 If you already are using containers, use **ECS**
 
-**EC2 mode** is good for a large workload with price conscious. This allows for
+**EC2 mode** is good for a large workload with price consciousness and are not worried about effort. This allows for
 spot pricing and prepayment.
 
 Large workload but overhead conscious **Fargate**
