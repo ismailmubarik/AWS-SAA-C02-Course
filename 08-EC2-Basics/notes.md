@@ -860,3 +860,13 @@ Meta-data contains:
 - NO AUTHENTICATION or ENCRYPTED
   - Anyone who can gain access and it can and will get exposed
   - Can be restricted by local firewall
+  - 
+### Exam Powerup
+In the network configuration the public IPv4 address is not visible. This is becase at not point ever 
+during the lifetime of an EC2 instance is a public IPv2 address configured within the OS. The IPV4 has no exposure to
+the public IPv4 address of an instance. That is performed by the internet gateway which translates the private address
+into a public address.
+The IPv6 is configured within the OS as there is no sense of public or private address
+![image](https://user-images.githubusercontent.com/33827177/144768150-23760ec5-bc83-41da-9c25-5a1c17f70561.png)
+
+
