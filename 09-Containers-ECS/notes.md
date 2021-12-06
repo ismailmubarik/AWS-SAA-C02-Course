@@ -1,5 +1,5 @@
 ## 09-Containers
-
+What we refer to as Virtualization should be called OS Virtualization which involves running multiple OS on the same hardware
 ### Intro to Containers
 
 Virtualisation Problems
@@ -10,14 +10,23 @@ AWS Hypervisor (Nitro)
 If you run a virtual machine with 4 GB ram and 40 GB disk,
 the OS can comsume 60-70% of the disk and little available
 memory.
-
+![image](https://user-images.githubusercontent.com/33827177/144770838-11d34aae-019c-424e-89ec-7ef708948687.png)
 If all of the OS use the same or similar resources, they are
 duplicates. Every restart must manipulate the entire OS.
 
-What you want to do is run applications in their own
-isolated enviroments for their applications to run.
+What you want to do in order to run applications in their own
+isolated enviroments for their applications to run? Do we really want separate OS each taking disk space and resources? NO...
 
-Containers have isolated OS from each other.
+Containers handle things much differently. We have Host Hardware and a Host OS. Running on top of the OS is a Container Engine like Docker.
+A container is similar to a virtual machine because it provides an isolated environment in which an application can run.
+But unlike a virtual machine, a container runs within a host OS as an isolated process. It is isolated from other processess but it can use
+the host OS for networking, file I/O, etc.
+
+Example Scenario: If the OS is Linux, it can run Docker as container Engine. Linux + Docker can run a container. That container would run
+as a single process within Linux potentially with other container processes. But inside the container, it's like an isolated OS, it has its
+own file system and it can run child processes.
+
+![image](https://user-images.githubusercontent.com/33827177/144771522-997bde47-2d7d-4530-9875-16aad20f4d2d.png)
 
 #### Image Anatomy
 
@@ -25,17 +34,27 @@ Container is a running image of docker image.
 
 These are stacks of layers and not a monolithic disk image.
 
+Docker Images are created by a Docker file
+
 Each line of a docker image creates a new filesystem layer.
 
-Images are created from scratch or a base image.
+Images are created from scratch or a base image. e.g in the example below a based image of CentOS 7 is created as
+a base image a thin layer of file system that can run CentOS 7 disctibution.
+
+The next line adds another layer for a webserver in this case APACHE
 
 Images contain read only layers, images are layer onto images.
 
-Docker container is the same as a docker image, except it
-has an additional READ/WRITE layer of the container.
+The next line adds another file system layer for a total of 3
+![image](https://user-images.githubusercontent.com/33827177/144771894-2d0d6e2c-6b99-4f52-8be5-0afbd8b405a9.png)
 
+In reality the Docker Image is upside down with the based image at the botton, then the webserver and the final layer of customization
+
+Docker container is the same as a docker image (Docker Image is read only), except it
+has an additional READ/WRITE layer of the container. All the data of the application is stored in the READ/WRITE layer of the container
+![image](https://user-images.githubusercontent.com/33827177/144772274-28f3683a-a8a1-4804-bd9e-6e7079458c0b.png)
 If you have lots of containers with very similar base
-structures, they will share the parts that overlap.
+structures, they will share the parts that overlap. For example, in the image above the R/W layers are different so the other layers are shared. Imagine 200 containers sharing the 3 layers...
 
 The other layers are reused between containers.
 
@@ -53,18 +72,20 @@ Docker hosts can run many containers between one or more images.
 Dockerfiles are used to build images
 
 Portable and always run as expected. Anywhere there is a compatable host,
-it will run exactly as you intended.
+it will run exactly as you intended. --> Portability and Consistency
+
+![image](https://user-images.githubusercontent.com/33827177/144772415-61a34241-ad75-4b3b-b6e3-e8bb2d758000.png)
 
 Containers are super lightweight, use the host OS for the
-heavy lifting, but otherwise are light. File system layers
+heavy lifting, but otherwise are isolated. File system layers
 are shared when possible.
 
-Containers only run the application and enviroment it needs.
+Containers only run the application and enviroment it needs very little memory.
 
-Ports need to be **exposed** to allow outside access from
-the host and beyond.
+Ports are isoalted so anything it runs need to be **exposed** to allow outside world to access the application its running. 
+This can be done by exposing ports of the host for example, TCP port 80 the host and beyond.
 
-Application stacks can be multi container
+Application stacks can be multi container. Meaning you can use, multiple containers in a single architecture running different applications. e.g. a database container, application container, ML container
 
 ### Elastic Container Service (ECS) Concepts
 
