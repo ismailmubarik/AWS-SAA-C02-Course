@@ -150,11 +150,18 @@ who has access to the meta-data has access to the secrets.
 
 Parameter store allows for storage of **configuration** and **secrets**
 
+Parameter Store lets you create parameters which has name and a value. Value is the part stat
+stores the actual configuration.
+
+Many AWS services integrate with the Parameter Store natively.
+
+Parameter Store offers to store three difeerent kinds of paramters:
+
 - Strings
 - StringList
 - SecureString
 
-You can store license codes, database strings, and full configs and passwords.
+You can store license codes, database (connection) strings like hostnam or ports, and full configs and passwords.
 
 Parameter store allows for hierarchies and versioning.
 
@@ -164,7 +171,7 @@ encrypt passwords.
 Allows for public parameters such as the latest AMI parameter to be stored
 and referenced for EC2 creating.
 
-This is a public service so any services needs access to the public sphere or
+This is a public service so any services needs access to the public space end points or
 to be an AWS service.
 
 Applications, EC2 instances, lambda functions can all request access to
@@ -172,9 +179,12 @@ parameter store.
 
 This is tied closely to IAM and could use long term credentials such
 as access keys, or short term use of IAM roles.
+![image](https://user-images.githubusercontent.com/33827177/145036562-8e066420-0400-4735-9758-a8609fcac8fc.png)
+If the parameters are encrypted then KMS will be involved and appropriate permissions to the CMK inside the KMS will be required
 
-Allows for simple or complex sets of parameters.
+Allows for simple or complex sets of parameters. For example, myDBpassword, or create hierarchical structures like /wordpress/ which might DBUser and DBPassword inside it and can be accessed by /wordpress/DBUser and /wordpress/DBPassword respectively.
 
+Permissions are flexible and they can be set on individual parameters or whole trees. It supports versioning. Changes occuring to parameter can/may spawn events which can start processes in other AWS services.
 ### System and Application Logging on EC2
 
 Cloudwatch monitors the outside metrics of an instance
