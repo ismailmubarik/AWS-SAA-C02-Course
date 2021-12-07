@@ -16,11 +16,10 @@ Bootstrapping is done using user data - accessed via the meta-deta IP
 
 <http://169.254.169.254/latest/user-data>
 
-Anything you pass in is executed by the instance OS. It is excecuted
-only once on launch!
-
-EC2 doesn't validate the user data. You can tell EC2 to pass in trash data
-and the data will be passed. The OS needs to understand the user data.
+Anything you pass in is executed by the instance OS. 
+### Exam Powerup: User Data is excecuted only once on launch. If you update the User Data and restart the instance it won't be executed again.
+EC2 doesn't validate/interpret the user data. You can tell EC2 to pass in delete the data on the Boot Volume and the data will be passed ad there is a process on the OS which run it as a root user
+The OS needs to understand the user data.
 
 #### Bootstrapping Architecture
 
@@ -29,12 +28,12 @@ an EBS volume that is attached to the EC2 instance. This is based on the
 block mapping inside the AMI.
 
 Now the EC2 service provides some userdata through to the EC2 instance.
-There is software within the OS running which is designed to look at the
-metadata IP for any user data. If it sees any user data, it executes
+There is software within the OS running on the EC2 instance which is designed 
+to look at the metadata IP for any user data. If it sees any user data, it executes
 this on launch of that instance.
-
+![image](https://user-images.githubusercontent.com/33827177/144942423-266cd90c-80e9-4b33-9488-eec532417304.png)
 This is treated like any other script the OS runs. At the end of running
-the script, the instance will be in:
+the script, the instance will be in either:
 
 - Running state and ready for service
 - Bad config but still likely running
@@ -65,8 +64,9 @@ downloads that are needed for the user.
 When looking at an AMI, this can be measured in minutes.
 
 AMI baking will front load the time needed.
-
-The optimal way is to use AMI baking
+![image](https://user-images.githubusercontent.com/33827177/144943524-6fa0248f-a464-4fcd-972e-85f17023e407.png)
+The optimal way is to use AMI baking and Bootstraping. When you have an application installation process which is 90% installation and 10% confugration, then you should
+AMI bake the 90% part and Bootstrap the 10% confugration part
 
 ### AWS::CloudFormation::Init
 
