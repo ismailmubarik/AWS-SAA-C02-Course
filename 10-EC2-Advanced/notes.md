@@ -74,9 +74,9 @@ AMI bake the 90% part and Bootstrap the 10% confugration part
 
 This is a simple configuration management system.
 
-Procedural (user Data) vs Desired State (cfn-init)
+Procedural (User Data) vs Desired State (cfn-init)...cfninit can be also procedural and run commands line by line like user data
 
-Packages, groups, users, sources, files, commands, services, and ownerships.
+Ti can make sure Packages are installed even with awareness of specific versions. It can manipulate OS groups and users. It can download sources and extract them onlto the local isntance even using authentication. It can create files with certain content , permission and ownerships. It can run commands and test if certain conditions are true after the commands ahve run. It can even control services on instance like ensuring a service started at the boot of the instance or enabled to be started.
 
 This is executed as any other command by passing into the instance with
 the user-data.
@@ -89,25 +89,29 @@ a CFN resource
 Starts off with a **cloud formation template**
 This has a logical resource within it which is to create an EC2 instance.
 
-This has a specific section called `Metadata:`
+This has specific section called `Metadata:` and "AWS::CloudFormation::Init" and this where the cfn:init configuration is stored.
 
-This then passes in the information passed in as `UserData`
+The cfn:init command itself is executed from the user data which is passed into the instance
+
+![image](https://user-images.githubusercontent.com/33827177/144954512-fdbce591-b212-4d40-ae57-e3e54591a150.png)
 
 cfn-init gets variables passed into the userdata by cloud formation
 
 It knows the desired state desired by the user and can work towards a
 final stated configuration
 
-This can monitor the userdata and change things as the EC2 data changes.
+This can monitor the userdata and change things as the EC2 data changes unlike the user data which executes once. If the metadata changes cfn:init will update instance...
 
 #### CreationPolicy and Signals
 
-The template has a specific part designated signals
+The template has a specific part designated signals. Without Signals the resource creation process inside CloudFormation is dumb. For example, you have a template which is used to create a stack which creates an EC2 instance, let say you pass some User Data which is run and then the instance is marked as complete. The problem we don't know if the resource actually completed successfully in cases we are doing extra configuration through User Data. CloudFormation has created the resource and passed in the user data but CF doesnt understand the User Data. If there is a problem with user data if the boot strapping doesn't work CF wouldn't know but the instance would be marked as complete.
 
-A creation policy is added to a logical resource. It is provided a
-timeout value. The resource itself will trigger a signal that cloud formation
-can continue
+![image](https://user-images.githubusercontent.com/33827177/144958124-59b08880-e619-4fa6-9885-cc4c933299b7.png)
 
+A creation policy is added to a logical resource inside CF template. It is provided a
+timeout value say 15 minutes as given below. A template is used to create a stack which creates an EC2 instance but at this point CF waits. It doesn't move the instance into create complete state when EC2 signals that its been created successfully. Instead it wait for a signal from the resource itself. The 'cfn-signal' command is given the stackid, the resource and the region.
+
+The resource itself will trigger a signal that cloud formation if the resource creation has been done successfully or there was an error.
 ### EC2 Instance Roles
 
 IAM roles are the best practice ways for services to be granted permissions.
@@ -116,11 +120,14 @@ Roles that an instance can assume to grant permissions for resources within.
 
 Starts with an IAM role with a permissions policy.
 
-EC2 instance role allows the EC2 service to assume that role.
+EC2 instance role allows the EC2 service to assume that role but we need someway of delivering those credentials into the EC2 instance.
 
 The **instance profile** is the item that allows the permissions inside
 the instance.
 
+When you create an instance role in the console, an instance profile is created in the same name but if you use the command line or 
+CloudFormation or Command Line you have to create these two things separately
+![image](https://user-images.githubusercontent.com/33827177/145029541-92b6c936-57a0-48e8-b1ef-94595a391425.png)
 When IAM roles are assumed, you are provided temporary roles based on the
 permission assigned to that role. These credentials are passed through
 instance **meta-data**.
@@ -130,8 +137,8 @@ EC2 and the secure token service ensure the credentials never expire.
 Key facts
 
 - Credentials are inside meta-data
-- iam/security-credentials/role-name
-- automatically rotated - always valid
+- Specifically inside iam/security-credentials/role-name
+- automatically rotated - always valid as long as the instance role attached to the instance
 - the resources need to check the meta-data periodically
 - should always use roles compared to storing long term credentials
 - CLI tools use role credentials automatically
