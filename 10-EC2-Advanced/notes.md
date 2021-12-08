@@ -187,12 +187,12 @@ Allows for simple or complex sets of parameters. For example, myDBpassword, or c
 Permissions are flexible and they can be set on individual parameters or whole trees. It supports versioning. Changes occuring to parameter can/may spawn events which can start processes in other AWS services.
 ### System and Application Logging on EC2
 
-Cloudwatch monitors the outside metrics of an instance
+Cloudwatch monitors the outside metrics of an instance.
 Cloudwatch logs is for logging
 
-Neither natively capture data inside an instance.
+Neither natively capture data inside an EC2 instance.
 
-CloudWatch Agent is required for OS visible data. It sends this data into CW
+A CloudWatch Agent is required for inside data i.e. OS visible data. It sends this data into CW or CloudWatch Logs
 
 For CW to function, it needs configuration and permissions in addition
 to having to install the cloud watch agent.
@@ -205,13 +205,16 @@ IAM role as best practice. The IAM role has permissions to interact
 with CW logs. The IAM role is attached to the instance which provides
 the instance and anything running on the instance, permissions to manage
 CW logs.
-
+![image](https://user-images.githubusercontent.com/33827177/145138499-1d4a3881-0d58-468c-a396-9a0bfdd3d1d0.png)
 The data requested is then injected in CW logs.
 
 There is one log group for each individual log we want to capture
 
-There is one log stream for each group for each instance that needs
-management.
+And then within each log group, there is one log stream for each instance that performs this logging or is injecting that data
+
+To do this for one instance, we can do it manually i.e. log in to the instance, install the Agent, configure it, attach a role and start injecting the data.
+
+But to do it at scale, you will need to autmate the process and use CloudFormation to use the Agent Configuration for every instance you provision.
 
 We can use parameter store to store the configuration for the CW agent.
 
