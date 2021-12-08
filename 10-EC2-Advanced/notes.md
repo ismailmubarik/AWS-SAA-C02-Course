@@ -219,7 +219,8 @@ But to do it at scale, you will need to autmate the process and use CloudFormati
 We can use parameter store to store the configuration for the CW agent.
 
 ### EC2 Placement Groups
-
+Normally when you launch an EC2 instance its physical location is selected by AWS with placing in an EC2 host makes the most sense within an AZ its launched in
+Placement Groups allows you to influence placements ensuring placements are either physically close together or not depending your preference
 #### Cluser - Pack instances close together
 
 Achieves the highest level of performance available with EC2.
