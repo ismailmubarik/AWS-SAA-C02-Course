@@ -234,7 +234,7 @@ for 12, you are now limited in how many you can add.
 Cluser placements need to be part of the same AZ. The idea with cluster
 placement groups are generally the same rack, but they can even be the same
 EC2 host.
-
+![image](https://user-images.githubusercontent.com/33827177/145561056-01b78269-8d2c-4cb8-b152-7c94d74fd2b7.png)
 All members have direct connections to each other. They can achieve
 10 Gbps single stream vs 5 Gbps normally. They also have the lowest
 latency and max PPS possible in AWS.
@@ -245,9 +245,9 @@ If the hardware fails, the entire cluster will fail.
 
 Clusters can't span AZs. The first AZ used will lock down the cluster.
 
-They can span VPC peers.
+They can span VPC peers - but impacts performance
 
-Requires a supported instance type.
+Requires a supported instance type. Cluster Placement Groups are not support by every type of instance.
 
 Best practice to use the same type of instance and launch all at once.
 
@@ -262,25 +262,28 @@ Spread groups can span multiple AZs. Information will be put on distinct
 racks with their own network or power supply. There is a limit of 7 instances
 per AZ. The more AZs in a region, the more instances inside a spread placement
 group.
-
+![image](https://user-images.githubusercontent.com/33827177/145561548-f5bb04e6-7834-41fb-a9a8-b7077acbc6c7.png)
 ##### Spread Exams
 
 Provides the highest level of availability and resillience. Each instance
-by default runs from a different rack.
+by default runs from a different rack (Each rack has its own network and power source).
 
 7 instances per AZ is a hard limit.
 
 Not supported for dedicated instances or hosts.
 
 Use case: small number of critical instances that need to be kept seperated
-from each other. Several mirrors of an application
+from each other. Several mirrors of an application or file server.
+
+In short, if you want to maximize the availibility of your application go with Spread Placement Groups
 
 #### Partition - groups of instances spread apart
 
-Spread placement groups are handled by default natively by AWS.
-
-If a problem occurs with one rack's networking or power, it will
-at most take out one instance.
+Instances can be placed into a specific parition, or have EC2 make that decision on your behalf.
+![image](https://user-images.githubusercontent.com/33827177/145563542-1ee0f9f5-94ae-4eca-bfbc-5c5abc619024.png)
+If you launch 10 instances into 10 different partition and a problem occurs with one partition's 
+networking or power, it will at most take out one instance. If you launch 10 into a single instance
+then you will lose all if a problem occurs.
 
 The main difference is you can launch as many instances in each partition
 as you desire.
@@ -288,11 +291,17 @@ as you desire.
 When you launch a partition group, you can allow AWS decide or you can
 specifically decide.
 
+They are designed for huge scale parallel processing systems
+
+Partition Placement Groups provide visibility into the partion 
+which enables us to see which instance is in which partition and 
+we can share this information with topology aware applications like HDFS, HBase, and Cassandra
+
 ##### Parition Exams
 
 7 paritions maximum for each AZ
 
-Instances can be placed into a specific parition, or AWS can pick.
+Instances can be placed into a specific parition, or AWS can pick natively.
 
 This is not supported on dedicated hosts.
 
@@ -302,46 +311,53 @@ Great for HDFS, HBase, and Cassandra
 
 EC2 host allocated to you in its entirety.
 
-Pay for the host itself which is designed for a family of instances.
+Pay for the host itself which is designed for a family of instances. e.g. a1, c5, m5
 
-No instance charges.
+No instance charges...you pay for the whole capacity of the host
 
 You can pay for a host on-demand or reservation with 1 or 3 year terms.
 
 The host hardware has physical sockets and cores. This dictates to how
 many instances can be run.
-
+![image](https://user-images.githubusercontent.com/33827177/145564191-15c31fcc-bdcb-4586-b277-eef60a4e9bc1.png)
 Hosts are designed for a specific size and family. If you purchase one host, you
 configure what type of instances you want to run on it. With the older
-system you cannot mix and match. The new nitro system allows for mixing and
-matching host size.
+system you cannot mix and match. 
 
+The new nitro system allows for mixing and matching host size.
+![image](https://user-images.githubusercontent.com/33827177/145564396-23f8dda3-a6d9-4de4-9596-70f35bee1886.png)
 #### Dedicated Hosts Limitations
 
-AMI Limits, some versions can't be used
+AMI Limits, some versions can't be used - RHEL, SUSE Linux & Windows AMIs aren't supported
 
 Amazon RDS instances are not supported
 
 Placement groups are not supported for dedicated hosts.
 
-Hosts can be shared with other organization accounts using **RAM**
+Hosts can be shared with other organization accounts using **RAM** which is the Resource Access Manager.
+
+The owner of the dedicated host can see the instances other organization create in the dedicate host but 
+the other guest organization cannot see other intances. But the owner cannot control any of the instances
+created by other organizations though
 
 This is mostly used for licensing problems related to ports.
 
 ### Enchanced Networking
 
-Enchanced networking uses SR-IOV - The physical network interface is aware
-of the virtualization. Each instance is given exclusive access to one part
-of a physical network interface card.
+Enchanced networking isued to improve the overall performance of EC2 networking (Required for Cluster placement Groups)
+Enhanced networking uses SR-IOV - The physical network interface is aware
+of the virtualization. Instead of presenting itself as a single NIC which the host needs to manage it offers what can be
+called Logical Cards per physical card. Each instance is given exclusive access to one logical of a physical network interface card.
 
 There is no charge for this and is available on most EC2 types.
 
 It allows for higher IO and lower host CPU usage
 
-This provides more bandwidth and higher packet per seconds.
+This provides more bandwidth and higher packet per seconds
+Networking' in picture below
 
 In general this provides lower latency.
-
+![image](https://user-images.githubusercontent.com/33827177/145567386-cd4cd4dc-d034-4f44-9426-f8e46a280bde.png)
 #### EBS Optimized
 
 Historically network was shared, data and EBS.
