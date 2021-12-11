@@ -196,23 +196,23 @@ The standby replica cannot be used for extra capacity.
 2. Primary database instance commits changes
 3. Same time as the write is happening, standby replication is happening
 4. Standby replica commits writes.
-
-If any error occurs with the primary database, AWS detects this and will
-failover within 60 to 120 seconds to change to the new database.
-
-This does not provide fault tolerance - there will be some impact during change
+![image](https://user-images.githubusercontent.com/33827177/145667204-dff7203f-56fa-4c99-a21b-67bb7425fee5.png)
+If any error occurs with the primary database, AWS detects this and changes the Database CNAME moving it from the 
+primary instance to the standby replica....This happens within 601-20 seconds and clients may notice a brief interruption
+![image](https://user-images.githubusercontent.com/33827177/145667294-fd606ab3-7852-4ce3-86c9-f42aaca1b369.png)
+So RDS Multi AZ does not provide fault tolerance - there will be some impact during change to standby
 
 Exam Powerups
 
 - Multi-AZ feature is not free tier, extra infrastructure for standby. Generally
 two times the price.
-- The standby replica cannot be accesed directly unless a fail occurs.
+- The standby replica cannot be accesed directly unless a fail occurs. It's not a performance improvement feature. It cannot be used to scale read or write operations
 - Faillover is highly available, not fault tolerant.
-- Same region only (others AZ in the VPC).
+- Same region only (others AZ in the VPC inside the region).
 - Backups taken from standby (removes performance impacts).
-- AZ outage, primary failure, manual failover, instance type change, and
-software patching
-
+- Faill overs can happen in multiple situations: Full AZ outage-->RDS will fail over to a standby replica in an unafffected AZ,
+- Can perform manual failover for example if trying to diagnose performance issues, if you change type of RDS instance it will fail over
+Remember Synchronous Replication-->Talkinga bout Multi AZ> It can only happend with 2 AZ within the same region
 ### RDS Backup and Restores
 
 RPO - Recovery Point Objective
