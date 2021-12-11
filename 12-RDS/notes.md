@@ -1,6 +1,7 @@
 ## RDS
 
 ### Database Refresher
+![image](https://user-images.githubusercontent.com/33827177/145656110-cc07dd21-e9c0-4ab8-88d4-2b1a57a5d8da.png)
 
 Systems to store and manage data.
 
@@ -17,7 +18,7 @@ Every row in a table must have a value for the **primary key**
 
 There will be multiple tables, but each one needs a primary key. For every
 table, there must be a value stored for every attribute in the table.
-
+![image](https://user-images.githubusercontent.com/33827177/145656131-bf126799-aaf1-4421-a648-73c62176dc2b.png)
 There is a join table with a **composite key**. The key must be unique in its
 entirety.
 
@@ -38,7 +39,7 @@ So long as every key is unique, there is no real schema or structure.
 These are really fast and highly scalable.
 
 This is also used for **in memory caching**
-
+![image](https://user-images.githubusercontent.com/33827177/145656449-b619cb2b-3c81-45aa-9004-838639f4c35c.png)
 ##### Wide Column Store
 
 DynamoDB is one type of database.
@@ -46,28 +47,31 @@ DynamoDB is one type of database.
 Parition key - The search key  
 Other Key - sort or range key
 
-Each needs to have one key or more keys.
+Each needs to have one key or more keys and they just need to be unique to that table
 
 Every item in a table can also have attributes, but they don't have to be
 the same between values. The only requirements is the key needs to be unique.
-
-It can be **single key** or **composite key**. Either case, it must be unique.
+![image](https://user-images.githubusercontent.com/33827177/145656660-d4e68d91-3828-4bd8-8b64-f53bace751a8.png)
+It can be **single key** or **composite key**. Either case, it must be unique. if its a single key it has to be unique. if its a combination of 2 keys the combination has to be unique
 
 ##### Document
 
-Documents are generally formated using JSON or XML.
+Documents are generally formated using JSON or XML. The structure can be different between the documents in the same database
 
-This is an extension of a key-value store.
+This is almost like an extension of a key-value store where each document is interacted via an ID unqiue to that document
+![image](https://user-images.githubusercontent.com/33827177/145656967-0e5d09f8-7ac3-4c34-8fda-8a0c6500aa05.png)
+Good for orders or contacts. This is good for whole documents or deep attribute interations i.e. nested data items within a data structure
 
-Good for orders or contacts. This is good for whole documents or deep attribute
-interations.
+It works well with use cases catalogues, user profiles and Content Management Systems where each document is unqiue but it changes over time
+
+Document databases provide flexible indexing, so you can provide powerful against/for data that can be nested deep inside a document
 
 ##### Column
 
 Row Store (MySQL) - If you needed to read the price of one item you need that
 row first. If you wanted to query all of the sizes of every order, you will
 need to check for each row. Often called Online Transactional Processing (OLTP).
-
+![image](https://user-images.githubusercontent.com/33827177/145657158-c90a6a57-5e2f-4b94-a7ca-b3d8935c9550.png)
 Column Store (Redshift) - Columns are stored together. Bad for sales style
 but good for reporting or when all values for a specific size are required.
 
@@ -83,25 +87,43 @@ Edges are relationships between the nodes. They have a direction.
 Relationships can also have values associated with them and they are also
 stored inside the database.
 
-Relationships are fast because interactions can be queried.
+Relationships are stored inside the database as well as the data
+![image](https://user-images.githubusercontent.com/33827177/145657430-98a29658-c26f-452c-a3d7-385b741bafef.png)
+A query to pull up details of xyz corp can be quicker then standard 
+SQL database because data and relationship are both pulled from the database.
+With Relational database relationship between the table is computed each and
+everytime when you execute the query
 
+### ACID vs BASE
+![image](https://user-images.githubusercontent.com/33827177/145657677-8edda2a1-31a5-4b47-91d6-36ffd31aac6e.png)
+ ### Exam Power Up
+  If you see ACID mentioned they refer to RDS databases. 
+    ![image](https://user-images.githubusercontent.com/33827177/145657930-53e4b21e-ce57-4d48-9925-6a46729352d4.png)
+  If you see BASE mentioned then you can assume No-SQL type database
+  ![image](https://user-images.githubusercontent.com/33827177/145658149-1f1b90c9-2e5a-4983-ab34-2e3dc33a4cc5.png)
+  But if you see DynamoDB or No-SQL together with ACID then assume DynamoDB Transactions
 ### Databases on EC2
-
 It is always a bad idea to do this. Splitting an instance over different
-AZs adds a small cost to moving the data between AZs if it happens.
-
+AZs adds a dependency on reliable communication between the Web/App Server and Database
+There is also a small cost to moving the data between AZs if it happens.
+ ![image](https://user-images.githubusercontent.com/33827177/145658434-7b351186-4508-4b05-b39d-23adefa46ae3.png)
 #### Reasons EC2 Database might make sense
 
-You might need access to the OS of the Database. You should question
-if a client requests this, it rarely is needed.
+You might need access to the OS of the Database because other AWS Database products don't give you OS level access. 
+You should question if a client requests this, it rarely is needed so if a client asks for it you really need to question
+that because they might want it but would not be actually needing it.
 
-Advanced DB Option tuning (DBROOT) AWS provides options against this.
+Advanced DB Option tuning (DBROOT) --> not available with AWS database products BUT AWS provides options against this.
 
 This is typically a vendor that demands this.
 
 DB or DB version that AWS doesn't provide.
 
 You might need a specific version of an OS and DB that AWS doesn't provide.
+
+Deicision makers demands it.
+
+There might be some tricky exam questions where the right choice is to use DB on an EC2 instance
 
 #### Reasons why you really shouldn't run a database on EC2
 
@@ -113,11 +135,15 @@ EC2 is running in a single AZ. If the zone fails, access to the database fails.
 
 Will miss out on features from AWS DB products.
 
-EC2 is ON or OFF, there is no way to scale easily.
+EC2 is ON or OFF, there is no way to scale easily. It has no concept of serverless
+because its actually sort of a server. You can't keep up with high demand or scale 
+down due to low demand if database on EC2 is used. AWS databases can scale up or 
+down based on demand.
 
-**Replication** the skills and setup time to monitor this
+**Replication** the skills,setup time and monitor required
 
-Performance will be slower than AWS options.
+Performance will be slower than AWS options because AWS DB will always be optimized 
+for performance
 
 ### Relational Database Service (RDS)
 
