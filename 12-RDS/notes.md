@@ -400,9 +400,9 @@ Cluster endpoint - points at the primary instance used for Read/Write operations
 Reader endpoint - will point at Primary if no replicas but if there are the Reader endpoint will 
 load balance across all of the available replicas
 ![image](https://user-images.githubusercontent.com/33827177/145698941-e3e74d75-8606-4856-8ed3-f86a54c26a65.png)
-As additional replicas are used for reads, the Reader Endpoint is automaticall updated to load balanced over
+As additional replicas are used for reads, the Reader Endpoint is automatically updated to load balanced over
 replicas.
-Also allows custom end points in addition to that the primary replica have their own end points
+Also allows custom end points which can point to specific subsets of intances within a cluser
 #### Costs
 
 - No free-tier option
