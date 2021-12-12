@@ -312,6 +312,7 @@ Availability Improvements
 - Promotion cannot be reversed
 - Global availability improvements provides global resilience by using cross region replication
 
+Important: If it mentions Asynchronous it probably means Read Replicas. It can only have 5 replicas. Only provides Read scaling not write scaling
 ### Amazon Aurora
 
 Aurora architecture is VERY different from RDS. At it's heart it uses a
