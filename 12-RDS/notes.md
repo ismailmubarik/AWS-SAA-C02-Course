@@ -313,6 +313,35 @@ Availability Improvements
 - Global availability improvements provides global resilience by using cross region replication
 
 Important: If it mentions Asynchronous it probably means Read Replicas. It can only have 5 replicas. Only provides Read scaling not write scaling
+
+### Amazon RDS Security
+We can use Encryption in transit meaning data between the client and RDS instance is ecrypted via SSL/TLS, can be set to mandatory on a per user basis
+
+Encryption at rest is supported in a few numder of ways depending on the database engine. By default it  i supported by KMS and EBS ecnryption:
+
+![image](https://user-images.githubusercontent.com/33827177/145697769-e2be8540-3db3-4e8f-906f-8ec3cdca152d.png)
+
+In addition to KMS and EBS based encryption, Microsoft SQL and Oracnle Support TDE --> Transparent Data Encryption
+TDE is encrypted/decrypted within DB engine itself and not by the host the instance is running on and this means that the data is secure from the moment it is written to disk
+
+![image](https://user-images.githubusercontent.com/33827177/145697833-ef36d71c-5f4d-4c78-8e84-8c7cf1152ebf.png)
+
+Visually this is how the encryption architecture looks. Lets say we have a VPC and inside it we have a few RDS instances running or hosts and these instances use EBS for underling storage
+
+![image](https://user-images.githubusercontent.com/33827177/145697906-3a27f14f-208a-4758-b733-ba05bfa672c2.png)
+
+IAM Authentication for RDS:
+Normally, logins to RDS are controlled using local DB users. These have their own user IDs and passwords and they
+are not IAM users and they are outside the control of AWS. 
+You can configure and RDS to allow an IAM user authectication against a database. We start with an RDS instance
+on which we create a local database user account configured to use AWS Authentication token.
+We have an IAM user or EC2 role and attached to the role is a policy. THe policy maps the IAM identity onto 
+the local RDS user. This allows the IAM user to generate a DB Auth token operation which works with RDS and IAM
+and based on the policy (now attached to the IAM identities) generates a token with 15 minutes validity and this 
+token can be used to login to the DB without requiring a password.
+This authentication not authorization
+![image](https://user-images.githubusercontent.com/33827177/145698250-f097abba-7194-444e-a754-75760bfa7802.png)
+
 ### Amazon Aurora
 
 Aurora architecture is VERY different from RDS. At it's heart it uses a
@@ -320,23 +349,24 @@ Aurora architecture is VERY different from RDS. At it's heart it uses a
 
 - A single primary instance and 0 or more replicas
 - The replicas within Aurora can be used for reads during normal operation
-  - Provides benefits of RDS multi-AZ and read-replicas
+  - Provides benefits of RDS multi-AZ and read-replicas. So improves both availibility but also Read operations during normal operations
 - Aurora doesn't use local storage for the compute instances. An Aurora
-cluster has a shared cluster volume. Provides faster provisioning.
+cluster has a shared cluster volume which is available to all compute instance within a cluster. Provides faster provisioning, availibility & performance
 
 Aurora cluster functions across different availability zones.
 
 There is a primary instance and a number of replicas. The read applications from
 applications can use the replicas.
 
-There is a shared storage of **max 64 TiB, 6 Replicas, AZs**
+There is a shared storage of **max 128 TiB, and it has 6 Replicas across multiple AZs**.
+When data is written to a storage, Aurora synchronously replicates that data in the 6 Replicas across multiple AZs**.
 
-All instances have access to all of these storage nodes. This replication
-happens at the storage level. No extra resources are consumed during
-replication.
+All instances have access to all of these storage meaning the primary and Replicas have access to all storages
+). This replication happens at the storage level. No extra resources are consumed during replication.
 
 By default the primary instance is the only one who can write. The replicas
 will have read access.
+![image](https://user-images.githubusercontent.com/33827177/145698801-2726866c-d229-42c0-af36-b269812126d1.png)
 
 Aurora automatically detect hardware failures on the shared storage. If there
 is a failure, it immedietly repairs that area of disk. It automatically
@@ -347,7 +377,7 @@ can be a failover target. The failover operation will be quicker because
 it doesn't have to make any storage modifications. 
 
 Cluster shared volume is based on SSD storage by default so high IOPS and low
-latency.
+latency. No option of magnetic storage
 
 Aurora cluster does not specify the amount of storage needed. This is based on
 what is consumed.
@@ -355,33 +385,42 @@ what is consumed.
 High water mark - billed for the most used. Storage which is freed up can
 be re-used.
 
+If you go through a process of significantly reducing storage and need to reduce
+storage costs then you need to create a brand new cluster and migrate data from 
+the old cluster to the new one.
+
 Replicas can be added and removed without requiring storage provisioning.
 
 #### Endpoints
+Aurora clusters like RDS instances use Endpoints - DNS address used to connect to the cluster.
+Unlike the RDS, Aurora clusters have multiple Endpoints.
 
-Cluster endpoint - points at the primary instance
+Cluster endpoint - points at the primary instance used for Read/Write operations
 
-Reader endpoint - will load balance over the available replicas
-
-As additional replicas are used for reads, this is load balanced over
+Reader endpoint - will point at Primary if no replicas but if there are the Reader endpoint will 
+load balance across all of the available replicas
+![image](https://user-images.githubusercontent.com/33827177/145698941-e3e74d75-8606-4856-8ed3-f86a54c26a65.png)
+As additional replicas are used for reads, the Reader Endpoint is automaticall updated to load balanced over
 replicas.
-
+Also allows custom end points in addition to that the primary replica have their own end points
 #### Costs
 
 - No free-tier option
 - Aurora doesn't support micro instances
 - Beyond RDS singleAZ (micro) Aurora provides best value.
-- Storage - GB-Month consumed, IO cost per request
-- 100% DB size in backups are included
+- Storage - GB-Month consumed metric taking into the account the High Water Mark (maximum amount of storage that has been consumed during the lifetime of the cluser), 
+- there is also IO cost per request
+- 100% DB size in backups are included in the cost you pay for the cluster
 
 #### Aurora Restore, Clone and Backtrack
 
 Backups in Aurora work in the same way as RDS
 
-Restores create a new cluster.
+Restores create a new cluster (like new instance created in RDS)
 
 Backtrack allows for you to roll back to a previous point in time. You can roll
-back in place to a point before that corruption.
+back the same cluster in place to a point before that corruption occured. Much better than RDS in which 
+you have to restore to a new database instance
 
 Enabled on a per cluster basis and can adjust the window backtrack can perform.
 
