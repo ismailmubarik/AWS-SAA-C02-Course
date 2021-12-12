@@ -214,7 +214,7 @@ two times the price.
 - Can perform manual failover for example if trying to diagnose performance issues, if you change type of RDS instance it will fail over
 Remember Synchronous Replication-->Talkinga bout Multi AZ> It can only happend with 2 AZ within the same region
 ### RDS Backup and Restores
-
+![image](https://user-images.githubusercontent.com/33827177/145694823-62b7640a-39c9-40b1-9272-1da1d1236811.png)
 RPO - Recovery Point Objective
 
 - Time between the last backup and when the failure occured
@@ -227,27 +227,42 @@ RTO - Recovery Time Objective
 - Time between the DR event and full recovery
 - Influenced by process, staff, tech and documentation
 
-**RDS Backups**
+There are two types of RDS Backups: 1. Automatic Backups & 2. Manual Snapshots. Both types employ AWS S3 buckets
+but both are AWS Managed S3 buckets so they are not visible to us within S3 console. The benefits of using S3 buckets
+is that the data is now region reselient because it replicates data through multiple AZ of the region. 
+The backup occurs from the single database instance if you have multiple AZs disabled or the standby instance if you
+have multiple AZs enabled.
 
+**Manual Snapshots**
+Snapshots are manual backups and you run them against RDS database instance
 First snap is FULL size of consumed data. If you are you using single AZ
 
-Manual snapshots will remain in your AWS account even after the life of
-the snapshot. These need to be deleted manually.
+When any snapshot occurs there is a bried interruption to the flow of data b/w 
+the compute resource and the storage, so if you are using a single AZ configuration
+your applications can get effected
 
-**Automatic Snapshots**
+Manual snapshots don't expire so will remain in your AWS account until you delete them,
+Meaning they will live on past the life of the RDS instance. These need to be deleted manually.
 
-Every 5 minutes translation logs are saved to S3. A database can then be
-restored to a 5 min snapshot in time.
+If your organization does Manual Snapshot you have full control over the RPO. The lower
+the gap b/w backups the lower the RPO the higher the cost
 
-Automatic cleanups can be anywhere from 0 to 35 days. This will use
-both the snapshots and the translation logs.
+**Automatic Backups**
 
-When you delete the database, they can be retained but they will expire
-based on their retention period.
+Every 5 minutes transaction logs (actual operations that occur) are saved to S3. A database can then be
+restored to a 5 min snapshot in time. So your RPO is 5 minutes. Basically, using your transaction logs
+the operations are run again to bring your database back up to the same state
+
+Automatic cleanups can be anywhere from 0 to 35 days. Zero means no backup. 35 means delete after 35 days.
+If you use 35 days, it means you can restore to any point in time in those 35 days. This will use both the 
+snapshots and the transaction logs.
+![image](https://user-images.githubusercontent.com/33827177/145695211-536c0b3a-735d-454f-8e85-533c7d770351.png)
+When you delete the database, they can be retained but they will expire based on their retention period.
 
 #### RDS Exam Powerups
 
-When performing a restore, RDS creates a new RDS with a new endpoint address.
+When performing a restore, RDS creates a new RDS instace with a new database endpoint address. So you will need to
+update your applications to use this new RDS address
 
 When restoring a manual snapshot, you are setting it to a single point
 in time. This influences the RPO value.
@@ -260,13 +275,21 @@ desired point in time.
 Restores aren't fast, think about RTO.
 
 ### RDS Read-Replicas
+As the name suggests, are read-only replicas of RDS instances. They can be only used
+for read operations. They have their own end-point addresses so applications should 
+be configured to use them directly. 
+Read replicas provide two benefits: 1. Performance Benefits 2. Availibility Benefits
 
-Kept in sync using **asyncronous replication**
+Kept in sync using **asyncronous replication**. 
 
 It is written fully to the primary instance. Once its stored on disk, it
-is then pushed to the replica. This means there could be a small lag.
+is then pushed to the replica. This means there could be a small lag. 
+This is unlike multi AZ based RDS that uses Synochronous replication meaning 
+data is written to both the primary and the backup RDS at the same time.
+
 These can be created in the same region or a different region. This is a
-**cross region replication**
+**cross region replication**. IF you do cross region replication, then 
+AWS handles all the networking b/w regions.
 
 #### Why do these matter
 
@@ -274,21 +297,20 @@ READ performance
 
 - 5 direct read-replicas per DB instance
 - Each of these provides an additional instance of read performance
-- This allows you to scale out read operations for an instance
-- Read-replicas can chain, but lag will become a problem
-- Can provide global performance improvements
+- This allows you to scale out read operations for an instance and only use primary for write operations
+- Read-replicas can chain mean Read-Replicas of Read-Replicas, but lag will become a problem
+- Can provide global performance improvements. Deploye multiple appication front-end and connect it to a read replica and use it for read only operations
 
 Availability Improvements
 
 - Snapshots and backups improve RPO
-- These don't help RTOs
-- These offer near 0 RPO
-- If the primary instance fails, you can promote a read-replica to take over
+- But these don't help RTOs
+- These offer near 0 RPO: If the primary instance fails, you can promote a read-replica to take over and this can be done quicly - so also low RTO value
 - Once it is promoted, it allows for read and write
-- Only works for failures, these can replicate data corruption, default back
-to snapshots and backups
+- Only works for failures, these can replicate data corruption, in which case you have to default back to snapshots and backups
+- Read Replicas are read only until promoted
 - Promotion cannot be reversed
-- Global availability improvements provides global resilience
+- Global availability improvements provides global resilience by using cross region replication
 
 ### Amazon Aurora
 
