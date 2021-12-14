@@ -447,10 +447,14 @@ storage.
 
 They have access to cluster storage in the same way.
 
+When the load on the Aurora serverless cluster increases beyond the capacity units, then more ACUs are allocated.
+
 There is a shared proxy fleet. When a customer interacts with the data
 they are actually communicating with the proxy fleet. The proxy fleet
 brokers an application with the ACU and ensures you can scale in and out
 without worrying about usage.
+![image](https://user-images.githubusercontent.com/33827177/145921924-76ce09ea-f74c-4153-8fb3-f2bde5e5f14c.png)
+![image](https://user-images.githubusercontent.com/33827177/145922269-dfc74e81-e43e-4f12-a0b7-7b4b1450a482.png)
 
 #### Aurora Serverless - Use Cases
 
@@ -470,7 +474,7 @@ Great for multi-tenant applications. If your incoming load is directly
 tied to more people, that's fine.
 
 ### Aurora Global Database
-
+Allows you to replicate your database from a master region to 5 secondary AWS regions.
 Replication from primary cluster volume to secondary replicas for read
 operations.
 
@@ -481,23 +485,25 @@ customers.
 
 The application can perform read operations against the read database.
 
-There is ~1s or less replication between regions. It is one way replication.
+There is ~1s or less replication between regions. It is only one way replication.
+![image](https://user-images.githubusercontent.com/33827177/145924574-3b4b84ac-def6-416c-8ab6-3e1f4b12f7c3.png)
+No additional CPU usage is needed for replication as it happens on the storage layer.
 
-No additional CPU usage is needed, it happens on the storage layer.
+Secondary regions can have 16 replicas i.e. 1 Read/Write and 15 Write.
 
-Secondary regions can have 16 replicas.
+Currently MAX 5 secondary regions
 
-All can be promoted to Read or Write with diasters.
+All can be promoted to Read or Write with diasters with low RPO and low RTO because there was ~1s delay in data replication
 
 There is currently max of 5 secondary regions.
 
 ### Aurora Multi-Master Writes
 
-Allows an aurora cluster to have multiple instances with multiple writers.
+Allows an aurora cluster to have multiple instances capable of performing both read and writes.
 
-The default aurora mode is single-master.
+The default aurora mode is single-master in which:
 
-- This is one R/W and zero or more read only replicas.
+- There is one R/W and zero or more read only replicas.
 - Cluster endpoint is normally used to write, read endpoint is used for load
 balancing.
 
@@ -511,13 +517,17 @@ of the clusters. They each confirm or deny if this change is allowed.
 The writing instance is looking for a bunch of nodes to agree. If the group
 rejects it, it cancels the write in error. If it commits, it will replicate
 on all storage nodes.
-
-In a Multi-master cluster, it will then copy into other masters.
+![image](https://user-images.githubusercontent.com/33827177/145926643-7ec5d692-aaee-49c6-b734-c7eafdaaf28f.png)
+In a Multi-master cluster, it will then copy into the inmemory caches of the other masters (besides all the disks in the cluster) 
+thus ensuring that reads are consistent
 
 This ensures storage is updated on in-memory cache's
 
 If a writer goes down in a multi-master cluster, the application will shift
-all future load over to the new writter with little to no downtime.
+all future load over to the new writter with little to no downtime. in Aurora-Single Master it will take time to conver the Read-only cluster to
+Read/Write as the configuration changes takes time
+
+THe only caveat is that the Application itself needs to load-balance in terms of sending Write requests to different masters
 
 ### Database Migration Service (DMS)
 
