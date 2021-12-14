@@ -537,3 +537,12 @@ Need to define the source and destination endpoints. These point at the
 physical source and target databases.
 
 One endpoint MUST be on AWS.
+![image](https://user-images.githubusercontent.com/33827177/146002719-60cbb522-ec07-418c-bb93-ae5637cab016.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146004016-de1a065c-bb84-4c86-ac49-83584d38dad0.png)
+The rule for SCT in exam is that you are using SCT because the DB engine is changing. But used with DMS & SnowBall because
+you are essentially changing the file format to generic format on Snowball for transfer
+![image](https://user-images.githubusercontent.com/33827177/146004219-ae3f6cd9-d95f-4f06-84f3-9777eb85047f.png)
+
+
+
