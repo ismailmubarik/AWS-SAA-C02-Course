@@ -33,6 +33,10 @@ Classic Load balancers can load balance http, https as well as lower level proto
 
 Application Load Balander (ALB) -v2 are truly layer 7 devices
 ![image](https://user-images.githubusercontent.com/33827177/146116224-2e9c1358-0b3e-4612-ad19-db75f9ab3b02.png)
+
+### Load Balancer
+It is to job of  a load balancer to accept connections from the client and then distribute to backend compute. It means the user is abstracted away from the infrastructure. So the amount of infrastructure can increase/decrease or fail without the customer knowing
+ELB Architecture
 ### Load Balancing Fundamentals. 
 
 Without load balancing, it is difficult to scale.
