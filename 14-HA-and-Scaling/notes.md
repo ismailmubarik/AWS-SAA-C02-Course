@@ -1,6 +1,39 @@
 ## HA and Scaling
+### Global Service Location and Discovery: When you type in Netlflix dot com into you browser, what happens? How does you machine figure where to point at?
+![image](https://user-images.githubusercontent.com/33827177/146112947-bd3ca45d-ba89-4004-8bbd-e3bc97943fe7.png)
+DNS Part: On AWS DNS component is implemented via route 53. Route 53 is flexible and can be configured in any number of ways.
+Netflix client will use the DNS for initial service discovery. Netflix would have configured the DNS to point at one or more service entry points i.e primary and secondary. Let's say there is a primary location for Netflix in the US and if that fails Australia will be used a secondary. Another valid configurationc can be to send customer to the nearest
+location. 
 
-### Load Balancing Fundamentals
+### Content Delivery and Optimization: How does the content or data of an application get delivered in an optimized way, globally?
+Content Delivery Network delivery method can be used to cache content globally as close to the users as possible to improve performance. The locations from the global location as and when required
+
+### Global Health Check & Failover: Detecting if Infrastructure in one location is healthy and moving the customers to new location as or when required
+The AWS global architecture has health checks which can determine if a location is healthy and direct all traffic to the primary if everything is OK or direct customers to
+the secondary in case of problems.
+
+Assuming the user is directed to the US location for application's content/data consumption. The traffic will enter one specific region of AWS. Depending on the architecture
+this might be entering into a VPC or public space AWS services. The purpose of the web tier is to act as an entry point for regional application component
+
+### Reginonal Entry Point
+Initially communication or traffic from the customer will enter using the web tier. Generally, this will be a Regional based AWS service Application Load Balancer or API gateway
+depending on the architecture the application uses. The purpose of the web tier is to act as an entry point for regional application component.
+![image](https://user-images.githubusercontent.com/33827177/146115377-766059b0-ef09-45ec-b008-f086882ebdbc.png)
+
+### Scaling and Resilience
+
+### Application services and components
+The functionality provided to the customer via the web tier of is provided by the compute tier using servides like EC2, Lambda or Elastic Container Service. The computer tier would consume storage like EBS, EFS or S3(for media storage)
+You will also find that many global architecture utilizing CloudFront. The global content delivery network within AWS. And CLoudFront is capable of using S3 as an origin for media. So S3 can store media such as movies and these might be cached by CloudFront
+In additon to file storage an application may require data storage like RDS, Aurora, DynamoDB, or RedShift. But in order to improve performance most applications dont access the database, instead they go via a caching layer through applications like Elastic Cache for general caching or DyanmoDB Accelerator DAX. Only access database if data isn't available on the caching application. Accessing/Reads from Cache is cheap as compared to databases. Also better performance
+
+### ELB Evolution
+Classic Load balancers can load balance http, https as well as lower level protocols but they aren't layer 7 devices. They dont understand http and they can't make decisions on http protocol features. For example, Classic CLB only support 1 SSL per CLB so larger deployments you might user 100s or 1000s load balancer. This can be consolidated to 1 single v2 load balancer. In exam, default to v2 load balancer
+![image](https://user-images.githubusercontent.com/33827177/146115727-4f804ff4-4f34-4ac9-9c76-4e7e1efab9fb.png)
+
+Application Load Balander (ALB) -v2 are truly layer 7 devices
+![image](https://user-images.githubusercontent.com/33827177/146116224-2e9c1358-0b3e-4612-ad19-db75f9ab3b02.png)
+### Load Balancing Fundamentals. 
 
 Without load balancing, it is difficult to scale.
 
