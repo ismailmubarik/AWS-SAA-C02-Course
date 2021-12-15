@@ -35,8 +35,55 @@ Application Load Balander (ALB) -v2 are truly layer 7 devices
 ![image](https://user-images.githubusercontent.com/33827177/146116224-2e9c1358-0b3e-4612-ad19-db75f9ab3b02.png)
 
 ### Load Balancer
-It is to job of  a load balancer to accept connections from the client and then distribute to backend compute. It means the user is abstracted away from the infrastructure. So the amount of infrastructure can increase/decrease or fail without the customer knowing
-ELB Architecture
+It is the job of  a load balancer to accept connections from the customers and then distribute to backend compute. It means the user is abstracted away from the physical infrastructure. So the amount of infrastructure can change(increase/decrease) or fail and repaired without the customer knowing
+### ELB Architecture
+We have a VPC with 2 AZs. AZ A and AZ B. We have got subnets some public and some private. We have a Bob a user and 2 load balancers. The load balancer accepts connection from the user. When provisioning a load balancers, you have to decide a bunch of configurations one of them is to accept both IPv4 and IPv6 or just IPv4. We also need to pick the AZ the load balancer would use. Specifically, you will be picking 1 subnet in each AZs. Based on the subnets you pick the when you provision a Load balancer, it places one or more LB nodes in each nodes. The way you pick which AZ goes into is by picking one and only one of the subnet in that specific AZ. 
+
+Incoming load is distributed equally to the individual nodes of the LB. These nodes scale so if one fails another one is provisioned if traffic increases additional LB nodes are provisioned inside each AZ
+
+Aanother choice while configuring the LB, you need to choose whether it would be internal or internet facing. This choice controls the IP addressing of the LB nodes. If you choose public then the nodes are given private and public addresses. Only private ip addresses if private facing is chosen.
+
+Once connection to the LB nodes is made, the LB nodes can make connections to instances that are registered with the LB.
+![image](https://user-images.githubusercontent.com/33827177/146276016-be9cbbbd-f7db-4ceb-8fa0-3876d9115069.png)
+
+A LB requires 8 free IPs to functions, so with the 5 reserved IPs for AWS we are looking for a /28 subnets (11 free IPs) although aWs suggest /27 for scaling. So if in exam there is no option with /27 then /28 is the right choice for the minimum number of IPs and subnet.
+
+Internal load balancers work the same like internet facing LBs, they are used to separate application tiers.
+![image](https://user-images.githubusercontent.com/33827177/146277868-47ac6309-5bba-452a-bbe6-9a2d6b026572.png)
+
+### ELB Architecture Example:
+We have a multi-tier Application. Its inside a VPC and inside that an AZ. We have an internet facing load balancer. Then a Web Autoscaling Group providing the front-end capability of the App. Then another LB which is internal (with only private IPs) and then an APP ASG. And then Aurora DB. 
+![image](https://user-images.githubusercontent.com/33827177/146276941-ba809f7f-de45-4cf8-8344-ae169cef9558.png)
+Without a LB the instances need to have awareness of each other. e.g. Bob would need an awareness of connecting to a specific web instance which will be 
+
+Bob doesnt know which Web instance is he connecting with caz he connects with them through LB nodes
+
+### Cross Zone Load Balancing
+![image](https://user-images.githubusercontent.com/33827177/146277338-a588b7a3-3072-4fb4-8cae-3c24536cc082.png)
+
+### Load Balancer Consolidation
+![image](https://user-images.githubusercontent.com/33827177/146279725-4de277e9-d661-4d15-9795-2cc1e1138f0d.png)
+
+### Application Load Balancer
+![image](https://user-images.githubusercontent.com/33827177/146280024-397ef4c0-d39f-4833-b094-0d5ba1009dc3.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146280607-64974415-aa4f-4536-9283-344089b983aa.png)
+
+IF you need an end to end encrypted connection to your application without the connection getting terminated at 
+the LB then we need to use Network LB instead of Application LB. The network balancer can configure a listener 
+which forwards TCP traffic directly to instances and can thus have unbroken encryption. 
+
+![image](https://user-images.githubusercontent.com/33827177/146280918-4ef92fdc-a945-4393-b780-4bdc61bb17c6.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146281490-332c91d6-722e-44bf-969c-3bdf85f80647.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146281550-baf56b17-63c8-49eb-808b-277e2e081c5b.png)
+
+### Launch Configurations and Lanuch Templates
+![image](https://user-images.githubusercontent.com/33827177/146281890-ff090f64-1950-4b5c-bbfc-53c9c45566e5.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146282015-063ee0e9-0ebc-47f2-859a-98be52cbc58b.png)
+
 ### Load Balancing Fundamentals. 
 
 Without load balancing, it is difficult to scale.
