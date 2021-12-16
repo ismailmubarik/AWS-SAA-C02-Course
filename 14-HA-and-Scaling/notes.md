@@ -171,17 +171,18 @@ If you need to adjust a configuration, you must make a new one and launch it.
 
 ### Auto Scaling Groups
 
-Automatic scaling and self-healing for EC2
+ASG provides Automatic scaling and self-healing for EC2. Can be alsoed used to implement self-healing architecture as part of the scaling or in isolation
 
-They make use of Launch Templates to know what to provision.
+They make use of configurations defined within Launch Templates or Launch Configurations to know what to provision.
 
-They use one version or one configuration they're assigned with.
+They use one version specific version of a configuration they're assigned with. You can assign either a LT or LC but not both
 
 Minimum, Desired, and Maximum Size.
 
-Provision or Terminate instances to keep at the desired level
+Provision or Terminate instances to keep at the desired capacity
 
-Scaling Policies automate based on metrics or a schedule
+Scaling Policies automate based on metrics like CPU load or a schedule
+![image](https://user-images.githubusercontent.com/33827177/146287677-1b984667-414a-40f7-92c2-40bdc1ebadf0.png)
 
 Auto Scaling Groups will try to keep the AZs equal with the number of EC2
 instances.
@@ -190,28 +191,66 @@ instances.
 
 Manual Scaling - manually adjust the desired capacity
 
-Scheduled Scaling - time based adjustments
+Scheduled Scaling - time based adjustments e.g. Sales or known period of high/low usage. In exam if you have know periods of high/low usage Scheduled Scaling can be the potential answer
 
 Dynamic Scaling
 
-- Simple : If CPU is above 50%, add one to capacity
-- Stepped : If CPU usage is above 50%, add one, if above 80% add three
-- Target : Desired aggregate CPU = 40%, ASG will achieve this
+- Simple : If CPU is above 50%, add one to capacity. iF below 50 removwe 1
+- Stepped : If CPU usage is above 50%, add one, if above 80% add three. And the same in reverse
+- Target Tracking: Desired aggregate CPU = 40%, ASG will achieve this. Not all metrics for target tracking. Some that do are avg cpu utilizatiion, etc.
 
-Cooldown Period - How long to wait at the end of a scaling action before scaling again.
+Cooldown Period - How long to wait at the end of a scaling action before scaling again. Helps avoid chaotic changes and billing due to minimum billing periods
 
 Always use cool downs to avoid rapid scaling.
 
-AGS can use the load balancer health checks rather than EC2.
+AGS can use the load balancer health checks rather than EC2. If an EC2 instance fails. The ASG terminates it and provisions another one. Called Self-Healing
 
 Autoscaling Groups are free  
 
-Think about more, smaller instances to allow granularity
+Think about more, smaller instances to allow granularity and cost reduction
 
-You should use ALB with autoscaling groups.
+You should use ALB with autoscaling groups - abstraction and elasticity
 
-ASG defines when and where, Launch Template defines what.
+ASG defines WHEN (instances are launched) and WHERE (which sunnets are launched into). Launch Template defines WHAT ( whatisntances are launched and what configuration).
 
+### ASG + Load Balancers
+The real powder of ASG comes from their ability to integrate with Load Balancers
+
+![image](https://user-images.githubusercontent.com/33827177/146288990-b6133c41-fa6f-4c2b-a7a9-5fe8738f3578.png)
+You need to be careful while using Application Load Balancer Health Checks. For example, if your application has complext logic in it and you are checking a static HTML page then health check may respond as Okay even though the Application is failing. Inversely, if your application uses Database and your health checks a page with some DB requirements and the database fails the health check can return a fail state even though the DB not the application has failed. Your EC2 instance would be reprovisioned
+![image](https://user-images.githubusercontent.com/33827177/146289374-80d845a7-566f-4ad1-b76d-dde53989dd9c.png)
+
+### ASG SCALING POLICIES
+![image](https://user-images.githubusercontent.com/33827177/146291342-c8f10168-1cd8-4e01-8069-a5accc76b472.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146291482-23573f84-c432-4c45-94d4-d676f9e887fd.png)
+Not Flexivlw A RHW Amw 2 instances are added or removed irrespective of high a jump above/below 50%
+
+![image](https://user-images.githubusercontent.com/33827177/146291819-7aa16fc8-58e8-4832-82a7-ffed939548d5.png)
+
+### ASG LifeCycle Hooks
+![image](https://user-images.githubusercontent.com/33827177/146292902-786b4c52-fede-4543-a019-4bf6cf328a81.png)
+
+![image](https://user-images.githubusercontent.com/33827177/146293114-0e91acce-3efa-43dd-b59c-ba535df95d68.png)
+
+### ASG HealthCheck Comparison
+
+![image](https://user-images.githubusercontent.com/33827177/146294847-99a12849-6c74-444b-9309-aadf41857c58.png)
+The grace period needs to be sufficiently lolong to allow system launch, bootstrapping and application start. Otherwise, what will happen is that if the grace period isn't sufficiently long you can be in a situation where the Health Check starts before the application has finished configuring. This would result in it being viewed unhealthy terminated. And this would be repeated until a sufficiently long graceperiod is chosen
+
+### SSL Offload & Session Stickiness
+There are 3 ways a load balancer can hanlde a secure connection:
+
+**Bridging Mode:** The Load Balancer needs a certificate which matches the domain name of the Application. It also mean AWS has some level of access to the Certificates (First down side of Bridging Group). It is important not to use it if your security frameworks doesnot allow that. So in situations where you might or might not be able to store SSL certificates, then you need to be careful. In bridging mode the ELB and the EC2 instances would need to have SSL certificates for the 2nd encryption (after the first encryption wrapper is dropped by the ELB). Also the EC2 instances need to perform cryptographic operatiosn (First down side of Bridging Group).
+
+**Pass-Through:** One encrypted tunnel all the way to EC2. So AWS doesn't have access to SSL certificate beacause its never exposed to the NLB. Nut the instance still need to have the certificate and use cryptogrpahic operations
+
+**Pass-Through:**
+
+### Scaling Processes
+Launch & Terminate: IF Launch is set to SUSPEND then the application won't scale out. If termiante is set to SUSPEND then application won't terminate
+![image](https://user-images.githubusercontent.com/33827177/146289687-11fb753f-6a0d-4025-8dd8-930bffc1dee1.png)
+Standby - Won't get effected by what the ASG does.
 ### Network Load Balancer (NLB)
 
 Part of AWS Version 2 series of load balances.
