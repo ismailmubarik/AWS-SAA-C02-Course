@@ -238,15 +238,6 @@ Not Flexivlw A RHW Amw 2 instances are added or removed irrespective of high a j
 ![image](https://user-images.githubusercontent.com/33827177/146294847-99a12849-6c74-444b-9309-aadf41857c58.png)
 The grace period needs to be sufficiently lolong to allow system launch, bootstrapping and application start. Otherwise, what will happen is that if the grace period isn't sufficiently long you can be in a situation where the Health Check starts before the application has finished configuring. This would result in it being viewed unhealthy terminated. And this would be repeated until a sufficiently long graceperiod is chosen
 
-### SSL Offload & Session Stickiness
-There are 3 ways a load balancer can hanlde a secure connection:
-
-**Bridging Mode:** The Load Balancer needs a certificate which matches the domain name of the Application. It also mean AWS has some level of access to the Certificates (First down side of Bridging Group). It is important not to use it if your security frameworks doesnot allow that. So in situations where you might or might not be able to store SSL certificates, then you need to be careful. In bridging mode the ELB and the EC2 instances would need to have SSL certificates for the 2nd encryption (after the first encryption wrapper is dropped by the ELB). Also the EC2 instances need to perform cryptographic operatiosn (First down side of Bridging Group).
-
-**Pass-Through:** One encrypted tunnel all the way to EC2. So AWS doesn't have access to SSL certificate beacause its never exposed to the NLB. Nut the instance still need to have the certificate and use cryptogrpahic operations
-
-**Pass-Through:**
-
 ### Scaling Processes
 Launch & Terminate: IF Launch is set to SUSPEND then the application won't scale out. If termiante is set to SUSPEND then application won't terminate
 ![image](https://user-images.githubusercontent.com/33827177/146289687-11fb753f-6a0d-4025-8dd8-930bffc1dee1.png)
@@ -296,7 +287,7 @@ The EC2 will need matching SSL certificates.
 
 Needs the compute for the cryptographic operations. Every EC2 instance must
 peform these cryptographic operations.
-
+![image](https://user-images.githubusercontent.com/33827177/146297467-afb99a47-e050-46a1-a631-23d3dabd8a9f.png)
 #### Pass-through
 
 The client connects, but the load balancer passes the connection along without
@@ -329,10 +320,11 @@ Session Stickiness is an option. If enabled, the first time a user makes a
 request, the load balancer generates a cookie called AWSALB. A valid duration
 is between one second and seven days. For this time, sessions will be sent to
 the same backend instance. This will happen until:
-
+![image](https://user-images.githubusercontent.com/33827177/146298184-e6c61954-100a-4a56-bb56-5837fa241967.png)
 - If we have a server failure, then the user will be moved to a different
 server.
 - The cookie could expire, the whole process will repeat and will recieve a
 new cookie and the process will start again.
 
-This could cause backend unevenness
+The proble with this method is that it could cause uneven load on backend because irrespective of the load on say EC2-2 server the user will still sent to the EC2-2 server.
+Applications should therefore be designed to use stateless servers meaning holding the session or user state somewhere else externally, like DynamoDB. If this method is used the EC2-2 instance would be stateless and the load balancer would be able to load balance without using cookies in a fair way.
