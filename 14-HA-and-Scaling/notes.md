@@ -355,3 +355,7 @@ We have a Catagram Application running in a pair of private subnets, behind and 
 
 ![image](https://user-images.githubusercontent.com/33827177/147009696-64123d85-2cd2-41a6-861e-955b0d5144ad.png)
 
+The sameway it works on return journey
+
+![image](https://user-images.githubusercontent.com/33827177/147010543-3fc21649-b6b9-449b-8fdb-8ba0ca86a48c.png)
+
