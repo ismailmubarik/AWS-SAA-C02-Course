@@ -328,3 +328,30 @@ new cookie and the process will start again.
 
 The proble with this method is that it could cause uneven load on backend because irrespective of the load on say EC2-2 server the user will still sent to the EC2-2 server.
 Applications should therefore be designed to use stateless servers meaning holding the session or user state somewhere else externally, like DynamoDB. If this method is used the EC2-2 instance would be stateless and the load balancer would be able to load balance without using cookies in a fair way.
+
+### Gateway Load Balancer
+![image](https://user-images.githubusercontent.com/33827177/147007954-d7c71f2e-3b8b-431e-ae01-729c0973198c.png)
+
+AWS has networking products that can do what a GWLB does but a company might be required to use a 3rd-party networking and/or security product (for various like in-house expertise, formal requirements, or a specific which only a specfic vendor's hardware has. So in that case you will use a 3rd-party device with AWS and to do that in a manageable way you need a GLWB.
+
+GWLB endpoints are like VPC interface endpoints with some key improvements. 
+
+The GWLB balances packets aross multiple instances. These are normal EC2 instances running security softwares. The GWLB sends and receive packets to the security devices without any alterations. The security device reviews packets as they are sent/received. The source or destination on the packets might have source or destination IPs which might work on the original network but not on the network on which the security appliances are hosted. So the GWLB uses a protocol called GENEVE
+![image](https://user-images.githubusercontent.com/33827177/147008860-10968cd5-2a92-49df-b9d9-70d2c4bb7b95.png)
+
+The GWLB endpoint is different than the VPC endpoint in that it can be added to a route table as a next hop
+
+The gateway load balancer ensure flow stickiness. So one flow of data will always use one appliance so it allows that appliance to monitor the state of the packet. Provides reselience by providing multiple security appliance so if one fails packets are moved over to another security appliance
+
+![image](https://user-images.githubusercontent.com/33827177/147009354-3bcfd1ef-4435-439d-b7ea-6d427e9803f9.png)
+
+We have a Catagram Application running in a pair of private subnets, behind and Application Load Balander which is running in pair of public subnets. We have a separate VPC with a pair of security appliances inside an auto-scaling group so they can grow and shrink based on load. This is how it works
+
+1. We start with a client which is accessing the catagram.io app. It first the internet gateway which has a gateway route table. 
+2. The gateway sends the traffic to the GWLB endpoint
+3. The traffic is send to the GWLB itself. The packet has original IP addresses. The packets are encapsulated using GENEVE and sent to security appliance.
+4. Packets are send back to the GWLB the encapsulation is stript and the packet is sent to the GWLB endpoint
+5. Packets sends packets to ALB and then the application
+
+![image](https://user-images.githubusercontent.com/33827177/147009696-64123d85-2cd2-41a6-861e-955b0d5144ad.png)
+
