@@ -187,11 +187,13 @@ EventBridge can have additional event buses. These can be interacted with
 in the same way as the default bus.
 
 Rules match incoming events or schedules. The rule matches an event and routes
-that event to one or more targets as you define on that rule.
+that event to one or more targets as you define on that rule. e.g. invoke a specific Lambda function
 
-Architecturally at the heart of event bridge is the default event bus.
+Architecturally at the heart of event bridge is the default event bus. The default is the default Event Bus.
 
-The default event bus is moving packets of JSON data.
+Within Eventbridge we have rules. Rules are created and they are linked to specific Event Bus
+
+The default event bus is moving packets of JSON data. The data (json) in the event bus can be used by the targets (e.g. lambda)
 
 ### API Gateway
 
