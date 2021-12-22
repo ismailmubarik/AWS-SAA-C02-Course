@@ -9,7 +9,7 @@ different quality levels. Historically the most popular way to make this work
 was a monolithic architecture.
 
 #### Monolithic
-
+![image](https://user-images.githubusercontent.com/33827177/147016320-c51ac63c-c8d2-48c8-b3f6-3fce364f3164.png)
 - It fails together. One error will bring the whole system down.
 - Scales together. Everything expects to be running on the same compute hardware
 - Bill together. All components are always running and always incurring charges.
@@ -22,19 +22,21 @@ The different components can be on the same server or different servers.
 
 The components are coupled together because the endpoints connect together.
 
-You can increase the size of the server that is running each application tier.
+You can independently increase the size of the server that is running each application tier.
 
 We can utilize load balancers in between tiers to add capacity.
 
 The tiers are still coupled, the upload tier **expects** and requires
 processing to respond. If the Processing fails completely, the upload tier
-will fail because it does not recieve a response.
-
+will fail because it does not recieve a response. So the upload tier needs at least one processing
+tier to ex![image](https://user-images.githubusercontent.com/33827177/147016689-c9978d18-8f29-451a-a6ab-3c3cbee24107.png)ist. 
+![image](https://user-images.githubusercontent.com/33827177/147016967-5d401547-1528-433e-a00a-70425d490705.png)
 If there is a backload in one tier, it will impact the other tiers and the
 customer experience.
 
 Even if there is no job to be processed, the middle tier will need to be
-running because otherwise it would fail.
+running because otherwise it would fail. So we need at least one istance of Upload, Processing, and Storage tier.
+This means if demand is zero we will still have one instance each
 
 #### Evolving with Queues
 
@@ -46,29 +48,34 @@ bucket as well as detailing the information into the queue. This now
 moves towards the next slot in the queue.
 
 The upload tier doesn't expect an immediate answer from the processing tier.
-
-It sends an asycn message. While this is happening, the upload can add more
-messages to the queue.
-
-The queue will have an autoscaling group to increase capacity at the end and
-process appropriately.
-
 The queue has the location of the S3 bucket as well as the location
 of the information.
+It sends an asycn message. While this is happening, the upload can add more
+messages to the queue.
+![image](https://user-images.githubusercontent.com/33827177/147017140-2a295001-2028-4297-9321-30f7ca689fcf.png)
 
-The autoscaling group will only bring up servers as their needed.
+The queue will have an autoscaling group to increase capacity at the end and
+process appropriately. Similarly, once the jobs are processes, they are deleted
+from the queue. If we now less jobs remaining the ASG can delete one processing
+instance.
+![image](https://user-images.githubusercontent.com/33827177/147017172-e16870d8-c5d6-473f-98d8-08c8fd727ca5.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147017497-6c937df0-c7ca-4d0c-a3d6-0b81857a9b39.png)
+
+The autoscaling group will only bring up servers as their needed. Using the Queues components are decoupled and
+can scale independently
 
 #### Event Driven Architecture
-
+![image](https://user-images.githubusercontent.com/33827177/147017773-e4b2ac2b-b103-4cd8-afb7-aa5921c80d7f.png)
 Event producers - interact with customers or systems monitoring components.
-They produce events in reaction to something.
+They produce events in reaction to something
 
 Event consumers - pieces of software waiting for events to occur.
 
 Services can be producers and consumers at once.
 
-In either case, there are no resources waiting around to be used.
-
+In either case, there are no resources waiting around to be used. That is neither the producers or the consumers.
+![image](https://user-images.githubusercontent.com/33827177/147019982-bed3705a-efca-4011-94ee-8517b3d91603.png)
 Event router is needed for event driven architecture that also manages
 an event bus.
 
@@ -81,26 +88,28 @@ an event bus.
 - Actions are taken and the system returns to waiting
 
 Mature event driven architecture only consumes resources while handling
-events.
+events. 
 
 ### AWS Lambda
 
-- Function-as-a-service (FaaS)
-- Event driven invocation (execution)
-- **Lambda function** piece of code in one language
-- Lambda functions use a **runtime** (e.g. Python 3.6)
-- Runs in a **runtime environment**
-- You are billed only for the duration a function runs. There is no charge
-for having lambda functions waiting and ready to go.
+![image](https://user-images.githubusercontent.com/33827177/147021073-01b56e58-6f81-4073-8dba-ac3259531285.png)
 
 #### Lambda Architecture
+Every time a Lambda functions is invoked a new runtime environment is
+created with all the component that the functiond needs. Once runs it terminates.
+If we want to run again a new runtime environment is invoked (there are exceptions though). Lambda functions are
+state less. Meaning no  data is stored from previous runs.
+
+You also define the resources that your Lambda runtime environment gets. Minimum is 128 MB. Max is 3 GB. 64 MB Steps.
+You dont control the virtual CPU. This scales with memory. Also some disk space.
 
 Best practice is to make it very small and very specialized.
 The runtime enviroment will match the language the script is written in.
 The runtime enviroment is lime a mini container provided with resources.
-
+![image](https://user-images.githubusercontent.com/33827177/147021286-3bd120c1-9633-4d6f-ad38-3cab2fc2d3fd.png)
 Lambda functions can be given an IAM role, **execution role**. Whenever that
-function executes, the code inside has access to permissions.
+function executes, the code inside has access to permissions to other products and services
+![image](https://user-images.githubusercontent.com/33827177/147021943-85a5229a-daeb-4675-8eea-25ae3d11e779.png)
 
 This can be **event-driven** or **manual** invocation many ways.
 
@@ -115,9 +124,43 @@ Should always use AWS services for input and output.
 
 Lambda functions can run up to 15 minutes. That is the max limit.
 
+Lambda has two networking modes. Public and VPC Networking
+
+For public networking we start with an AWS environment where Lambda is running. 
+![image](https://user-images.githubusercontent.com/33827177/147022377-7aa938b7-108f-4a00-a674-6030ada4b2fb.png)
+
+For VPC networking mode we have a private subnet inside the VPC. By default it does not have access to public internet or services unless
+the private subnet is configured
+![image](https://user-images.githubusercontent.com/33827177/147022685-ee5538d9-fab5-4997-a94d-26fdf9aa96d8.png)
+
+VPC Lambda functions actually dont run within the VPC they used to  work like FarGate. We have Lambda Service VPC and Customer VPC. Each Lambda service when invoked would create and Elastic network within the customer VPC. Configuring the Elastic Network takes time and doesnt scale well
+![image](https://user-images.githubusercontent.com/33827177/147022813-fcf7d4ad-1f66-478c-b323-1ebe9ed10f09.png)
+Now it uses Elastic Network Interfaces based on subnets and security groups
+![image](https://user-images.githubusercontent.com/33827177/147023077-c59ff71b-c12f-41b1-895b-cb32cea8e723.png)
+
+Rule of Thumb: Treat any Lambda in a VPC like any other service running in the VPC. It will follow the rules and permission policies
+
+![image](https://user-images.githubusercontent.com/33827177/147023215-e33da237-2bfc-4235-b91e-1e9773e63059.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147024015-0d940e01-a3b2-4925-8ffd-0cac2b649b06.png)
+
+### Lambda Function Invocation
+![image](https://user-images.githubusercontent.com/33827177/147024635-ad1ceaba-aeb2-4206-aa57-14ec057a648c.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147024913-94f64b87-4da6-4ae0-a1b7-d0bcd18d4a2c.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147024999-a12b23c3-1e01-451a-86b2-bc83ac8e0bc3.png)
+
+### Lambda Versions
+![image](https://user-images.githubusercontent.com/33827177/147025346-17867668-5d53-4548-a3c9-4e38fad3a47a.png)
+
+### Lambda Startup Times
+![Uploading image.png…]()
+
+
 #### Key Considerations
 
-- Currently 15 min execution limit
+- Currently 15 min (900s) execution limit
 - Assume each execution gets a new runtime environment
 - Use the execution role which is assumed when needed
 - Always load data from other services from public API's or S3
@@ -127,7 +170,7 @@ Lambda functions can run up to 15 minutes. That is the max limit.
 ### CloudWatch Events and EventBridge
 
 Delivers near real time stream of system events that describe changes in AWS
-products and services. EventsBridge will replace CW Events.
+products and services. EventsBridge will be replacing CW Events.
 
 EventsBridge can also handle events from third parties. Both share the same
 underlying architecture. AWS is now encouraging a migration to EB.
