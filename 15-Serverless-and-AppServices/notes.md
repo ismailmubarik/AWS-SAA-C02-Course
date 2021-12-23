@@ -155,7 +155,7 @@ Rule of Thumb: Treat any Lambda in a VPC like any other service running in the V
 ![image](https://user-images.githubusercontent.com/33827177/147025346-17867668-5d53-4548-a3c9-4e38fad3a47a.png)
 
 ### Lambda Startup Times
-![Uploading image.png…]()
+![image](https://user-images.githubusercontent.com/33827177/147170831-56994e97-07ff-4dd4-ac82-f63f5b5313f7.png)
 
 
 #### Key Considerations
@@ -246,11 +246,11 @@ Generally, everything is event driven. While not being used, there should
 be little to no cost due to compute not being used.
 
 Should use managed services when possible.
-
+![image](https://user-images.githubusercontent.com/33827177/147171554-fd17652d-8ee2-4820-b257-e7afc72cc111.png)
 #### Example of Serverless
 
 She browses to a static website that is running the uploader. The JS runs
-directly from the web browser.
+directly from the web browser which provides the frontend for the PetTUbe Application
 
 We use a third party auth provider, google in this case. Authenticate via
 **token**.
@@ -263,10 +263,13 @@ It uses these temporary credentials to upload a video to S3 bucket.
 
 The bucket will generate an event once it has completed the upload.
 
-The event will trigger a lambda to transcode the video as needed. The
-transcoder will get the original S3 bucket video location and will use
-this for its workload.
-
+When the Video is uploaded to the Originals Bucket it is configured to
+generate and event. That event contain details of the video upload.
+The event will trigger a lambda to process the video. The Lambda function
+creates jobs within the AWS Elastic transcoder service (managed service by 
+AWS which mainipulate the media like generate media of different sizes, etc.) 
+The transcoder will get the original S3 bucket video  location and will use this for its workload.
+![image](https://user-images.githubusercontent.com/33827177/147172988-74e7059f-25a6-4b71-981f-150fa8a0415d.png)
 These will be added to a new transcode bucket and will put an entry into
 DynamoDB.
 
@@ -282,28 +285,35 @@ allows anyone from the public internet to access it.
 
 Messages are under 256KB in size.
 
-SNS topics are the base entity of SNS.
+SNS topics are the base entity of SNS. On these topics the permissions are 
+controlled and most configurations for SNS are defined.
 
-A publisher sends messages to a topic. Topics have subscribers which recieve
-messages.
+SNS has a concept of a publisher. A publisher sends messages to a topic. 
+Topics can have subscribers which recieve messages. They can come in many
+different forms like HTTP(s) end points, Email addresses(-JSON), SQS Queues, 
+Mobile Push notifications, SMS Messages & Lambda.
+
+Things like APis can be subscribers and producers at the same time.
 
 You can create topics inside the SNS.
 
+SNS used across AWS for notifications e.g. CloudWatch and CloudFormation
+![image](https://user-images.githubusercontent.com/33827177/147173545-d99d6d21-6a29-4883-9bcc-49e6c03bbcd4.png)
 By default all topics will recieve the message, you can put filters on
 those lines to make sure they don't trigger additional lambdas.
 
-You can use fanout to process different flows from SQS
+You can use fanout to process different flows to SQS Queues
 
 Offers:
 
 - Delivery Status including HTTP, Lambda, SQS
-- Delivery retries - Reliable Delivery
-- HA and Scalable (Regional)
-- SSE (server side encryption)
-- Topics can be used cross-account via Topic Policy
+- Delivery Retries - Reliable Delivery
+- HA (within a Region) and Scalable (within a Regional and can cope with a range of workloads from nothing to highly transactional workloads)
+- SSE (server side encryption) meaning on-disk encryption
+- Topics can be used cross-account via Topic Policy (like resource policy)
 
 ### AWS Step Functions
-
+![image](https://user-images.githubusercontent.com/33827177/147174422-d619448a-f63c-4e4f-865e-fb6291574c0e.png)
 There are many problems with lambdas limitations that can be solved with
 a state machine.
 
@@ -313,28 +323,46 @@ This is a serverless workflow
 - States
 - End
 
-States are **things** which occur
+States are **things** which occur inside these workflows.
 
 Maximum duration is 1 year
 
 Standard workflow and express. At a high level, standard is the default
-and has a 1 year workflow. Express is for IOT and highly transactional
-such as IoT.
+and has a 1 year workflow. Express is for high volume event processing 
+workloads like IoT and highly transactional such as IoT, streaming data processing, 
+mobile app backends and can run upto 5 minutes
 
-Started via API Gateway, IOT Rules, EventBridge, Lambda.
+Started via API Gateway, IoT Rules, EventBridge, Lambda.
 
 Amazon States Languate (ASL) - JSON template
 
 These use IAM Roles for permissions.
-
+In summary step functions lets you create state machines. State machines are long running serverless workflows. They have start and end and in between they have states. States can be directional points or they can be tasks
 #### States
 
 - Succeed & Fail : Will wait until either is achieved
-- Wait : will wait until specific date and time or period of time
+- Wait : will wait until specific date and time or for period of time
 - Choice : different path is determined based on an input
 - Parallel : will create parallel branches based on a choice
-- Map : accepts a list of things
-- Task : Single unit of work (lambda, batch, dynamoDB)
+- Map : accepts a list of things e.g. a list of orders and for each order the Map function a set of actions
+- Task : Single unit of work ( can be integrated lambda, batch, dynamoDB, ECS, SNS,SQS, Glue, SageMaker, EMR, Step Functions)
+![image](https://user-images.githubusercontent.com/33827177/147175694-47a88994-ef91-42bc-95d8-0bf7535c3dbf.png)
+
+### API Gateway - Referesher
+
+![image](https://user-images.githubusercontent.com/33827177/147175895-255c6237-9536-4eb0-b4e3-943924b93d99.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147176087-b6002af8-c904-42ab-8662-d98fcdb25ed4.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147176119-73fa44e9-e443-468e-a93f-e147a3653203.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147176223-97b23dd5-6638-4edf-8900-3d8879cced3b.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147176515-00bbeb50-a5c4-44f0-8842-620f2cd57e6c.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147176768-6be76a3e-aa88-4f99-b384-dc62efd4f42b.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147176851-fe3205b5-39fa-41d8-9037-f5baf1553664.png)
 
 ### Simple Queue Service (SQS)
 
