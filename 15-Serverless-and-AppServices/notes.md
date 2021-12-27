@@ -390,37 +390,50 @@ to be finished, this puts it into a different workload to try and fix
 the corruption.
 
 ASG can scale and lambdas can be invoked based on queue length.
+![image](https://user-images.githubusercontent.com/33827177/147493752-98acfdc5-bbd4-4aac-a0fe-82bd996b0921.png)
+
+Important for Exam:
+
+![image](https://user-images.githubusercontent.com/33827177/147493878-136465d2-4e45-401e-93be-2522ea5650a5.png)
 
 #### Highlights
 
 Two types of queue
 
 Standard - multi-lane HW
-guarantee the order and at least once delivery.
+guarantee at least once delivery but no guarantee on the order of the delivery
+With Standard you can get the message delivered twice on two different polls
+Standard queues like multi-lane HW so they can scale to theoretically infinite levels
+because you can continue more lanes to the HW
 
 FIFO - single lane road with no way to overtake
 guarantee the order and at exactly once delivery
 3,000 messages per second with batching or up to 300 messages second without
+So they don't offer exceptional levels of scaling and hence performance is limited
 
-Billed on **requests** not messages. A request is a single request to SQS
-One request can send 1 - 10 messages up to 64KB total.
+SQS you are Billed on **requests** not messages. A request is a single request to SQS
+One request can send 1 - 10 messages up to 64KB total. So less efficient the more frequently
+you request with less than 10 message
 
-Requests can return 0 messages. The more frequently you poll a SQS Queue,
-the less effective it is.
+ The more frequently you poll a SQS Queue, the less effective it is. Requests can return 0 messages.
 
 Two ways to poll
 
 - short (immediate) : uses 1 request and can return 0 or more messages. If the
-queue is empty, it will return 0 and try again. This hurts queues that stay
-short
+queue is empty, it will return 0 (but does consume a request) and try again.
+This hurts queues that stay short as each message will consume a request
 
 - long (waitTimeSeconds) : it will wait for up to 20 seconds for messages
 to arrive on the queue. It will sit and wait if none currently exist.
 
-Messages can live on SQS Queue for up to 15 days. They offer KMS encryption
-at rest.
+Therefore, use Long polling is the method you should poll SQS
 
-Access is based on identity policies or a queue policy.
+Messages can live on SQS Queue for up to 14 days. They offer KMS encryption
+at rest and in-transit (by default because data between SQS and any client is encrypted anyways)
+
+Access is based on identity policies or a Queue policy. Identity policies or a Queue policy can be 
+used to control access to SQS from the same account. But only Queue policy can be used to control
+access from external account. A Queue policy is like Resource policy (on S3 buckets, etc.)
 
 ### Kinesis
 
@@ -433,7 +446,7 @@ The stream can scale from low to near infinite data rates.
 
 Highly available public service by design.
 
-Streams store a 24-hour moving window of data. Can be increased to 7 days.
+Streams store a 24-hour moving window of data (data ingested from producers is accessible for 24 hour). Can be increased to 7 days.
 Data that is 24 hours and a second more is replaced by new data entering
 the stream.
 
@@ -442,20 +455,24 @@ that can be ingested during a 24 hour period. However much you ingest during
 24 hours, that's included.
 
 Multiple consumers can access data from that moving window.
-One might look at data points once per hour while another looks at data in
-real time.
+One consumer might look at data points once per hour while another looks at data in
+real time. So great for things like Analytics and Dashboard
 
-Each shard can have 1MB/s for ingestion and 2MB/s consumption.
-
+Each shard can have 1MB/s for ingestion and 2MB/s consumption. The more shard a stream
+has the more expensive it is and the more peformance it provides
+![image](https://user-images.githubusercontent.com/33827177/147495809-db4fbc21-b8c1-499a-88f0-606c5ebd089f.png)
 **Kinesis data records (1MB)** are stored accross shards and are the blocks
 of data for a stream.
 
-**Kinesis Firehose** connects to a Kinesis stream. It can move the data
-from a stream onto S3 or another service.
+**Kinesis Firehose** a related product that connects to a Kinesis stream. It can move the data
+from a stream onto another AWS servince like S3.
 
 ### SQS vs Kinesis
 
 Is this about the ingestion of data or is it about the worker pools.
+If its about ingestion of data and large throughput then Kinesis is the likely answer.
+If its about worker pools, decoupling or asyncrhonous communications then assume first its SQS and only
+change if you have a stron reason to do so.
 
 Large throughput or large numbers of devices, it is likely Kinesis.
 
@@ -463,9 +480,56 @@ SQS has 1 thing sending messages to the queue. One consumption group from
 that tier.
 
 Allow for async communications where the sender and reciever don't care
-about what the other is doing. Once the message is processed, it is deleted.
+about what the other is doing. 
+
+SQS doesn't have the concept of persistence. Once the message is processed, it is deleted at which point it is gone. 
+No concept of time window.
 
 Kinesis is desiged for huge scale ingestion with multiple consumers. Rolling
-window for multiple consumers.
+window for multiple consumers consuming data at different rates
 
 Designed for data ingestion, analytics, monitoring, app clicks.
+
+### Kinesis Data Firehose
+Kinesis Firehose might be used to provide permanent storage of data comes into a stream so its not lost as it exits the rolling window like regular Kinesis.
+Kinesis Firehose may also be used if you want to store data in a different format because Firehose can transform it using Lambda
+While Kenesis Data Stream is real-time Kinesis Firehose is near real-time not actually real-time.
+
+![image](https://user-images.githubusercontent.com/33827177/147498488-a2d74450-a5da-47c8-a5a1-379eb2fac66b.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147498952-bd80f03f-85ac-471c-93f2-14c21e5d6432.png)
+
+### Kinesis Data Analytics
+![image](https://user-images.githubusercontent.com/33827177/147499369-dce8fd76-3f3e-48f9-a8ba-09448f3e3d48.png)
+
+Data is fed to Kinesis Analytics Application in real-time and it stays that way if the output stream is fed to the Kinesis Stream
+or stays near-real-time if fed to Kenisis Firehose
+
+![image](https://user-images.githubusercontent.com/33827177/147499661-5829c7b9-b821-49b4-9467-fb9ba9228eb9.png)
+While we can use Kinesis Firehose with Lambda for near real-time manipulation it only supports relatively simple
+Using Kinesis Data Analytics you can create complex SQL queries to manipulate data in real-time
+![image](https://user-images.githubusercontent.com/33827177/147499896-d2f973b1-f7d5-4c7a-be29-d2e50a07247d.png)
+
+### Amazon Cognito
+**Authentication:** Login to verify Credentials
+**Authorization:** Manage access to services
+**User Management:** Allows the creation and management of serverless user database
+![image](https://user-images.githubusercontent.com/33827177/147500663-fb094676-f5f5-4c8c-be8e-99cd851cf743.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147501074-107820ec-d211-4001-8295-35a130712e0c.png)
+
+JSON Web Token (JWT) for authetication with applications, certain AWS products like API gateway can accept it directly but
+most AWS services cannot accept JWT. To access AWS services you need actual AWS credentials.
+User Pools besides allowing sign in from built in user also allow social sign in using identities provided by Facebook, Google, AMZN, Apple, etc.
+User Pool is like a database of user. They sign in and get a JWT
+
+![image](https://user-images.githubusercontent.com/33827177/147500753-1e972d53-5f6e-40b4-80ed-21ace3d7544b.png)
+
+User Pools is about authenticating or proving a signin/signup experience through user directory and profile management services.
+Identity Pools are swapping identities for temporary AWS credentials to access AWS services.
+
+Identity Pools work by assuming an IAM role on behalf of an identity
+
+![image](https://user-images.githubusercontent.com/33827177/147501201-3639bad3-bb62-400e-8c79-499423da85a4.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147501315-75fb6467-6599-411d-b515-98b5323ee859.png)
