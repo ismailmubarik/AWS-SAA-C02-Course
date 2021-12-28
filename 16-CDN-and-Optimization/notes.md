@@ -59,7 +59,6 @@ CloudFront to use object specific TTL values using Headers
 ![image](https://user-images.githubusercontent.com/33827177/147516177-c37ac70b-ee1a-4f00-8bda-5d0f34743c63.png)
 The Min. and Max. TTL are going to still acts as limiters. So values defined in headers below the Min. will mean that
 the Min. value be used instead. Same goes for Max TTL.
-![image](https://user-images.githubusercontent.com/33827177/147516537-e07eefae-2256-4ff0-94d9-b3d45b0aa53a.png)
 
 Cache Invalidation costs the same irrespective of the number of objects you are trying to invalidate and so if you have to
 invalidate quite frequently use Versioned File Names instead. Versioned File Names are better for a few reasons caz it involves 
@@ -82,17 +81,41 @@ use them, ensure the strings are in the same order.
 - HTTPS uses SSL/TLS layer of encryption added to HTTP
 - Data is encrypted in-transit
 - Certificates allow servers to prove their identity
-- Signed by a trusted authority (CA).
-- To be secure, a website generates a certificate and has a CA sign it. The
-website then uses that certificate to prove its authenticity.
+- Signed by a trusted authority (CA i.e. Certificate Authority). So if a site claiming to be Netflix.com has a Netflix.com certificate signed by the CA then it is Netflix.com
+- To be secure, a website generates a certificate and has a CA sign it. The website then uses that certificate to prove its authenticity.
 
-Create, renew, and deploy certificates with ACM.
+AWS Certificate Manager (ACM) allows to Create, Renew, and Deploy certificates to supported AWS services
 
 Supported AWS services ONLY (CloudFront and ALB, NOT EC2)
 
-If it's not a managed service, ACM doesn't support it.
+If it's not a managed service, ACM doesn't support it. EC2 is self-managed so ACM doesn't support it. So you can't use ACM and deploy a certificate
+to an EC2 based webserver but you can deploy a certificate to the Application Load Balancer (ALB) which load-balancing across those EC2 insances
 
 Cloudfront must have a trusted and signed certificate. It can't be self signed.
+![image](https://user-images.githubusercontent.com/33827177/147518084-f8a697d0-4d7b-4843-a38e-25fb3c9afcaf.png)
+
+### CloudFront & SSL
+Each CloudFront receives a Default Domain Name (CNAME).SSL certificate is also provided by default. 
+![image](https://user-images.githubusercontent.com/33827177/147519247-42e00184-8f5c-466f-a256-ce03f962d703.png)
+If you want to use your customer Domain Name, it is done via the alternate domain name feature. You can then use
+a DNS provider like Route 53 to point at the distribution (with the custom domain name). If you use HTTPs with your
+distribution which has the custom/alternate domain name or even if you dont use HTTPs it needs to prove its identity and that is done
+by adding a certificate matching the custom/alternate Domain Name to verify the identity. FOr that you need to generate or import a certificate
+using AWS ACM. This is a regional service and normally you need to add certificate in the same region in which the service is being used. Exceptions to
+this are global services like AWS CloudFront. For CF the certificate will always be in us-east-1.
+
+There are 2 sets of connections when any individual is using CF.
+![image](https://user-images.githubusercontent.com/33827177/147519206-7e3cce44-7107-4ef6-bbf2-2a906b9f0ac1.png)
+Self signed certificate won't work. Both will need public certificates
+
+![image](https://user-images.githubusercontent.com/33827177/147519697-a62e9046-5583-4b89-ace7-035754f7927c.png)
+So SSL and TLS are often used interchangeably but in this context we mean encryption that occurs over a network connection.
+
+Now encryption occurs at TCP layer which is at a much lower layer than the HTTP which is an Application layer protocol.
+![image](https://user-images.githubusercontent.com/33827177/147520091-203eb46d-0bda-4e48-bd10-8f9929b204f3.png)
+
+Now a single webserver many website using different names a single IP address. Now if we are using only HTTP there is no
+problem. Using the host header the browser tell the Application/Layer-7 which application to access
 
 ### Origin Access Identity (OAI)
 
