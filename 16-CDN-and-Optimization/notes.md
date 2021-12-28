@@ -115,7 +115,16 @@ Now encryption occurs at TCP layer which is at a much lower layer than the HTTP 
 ![image](https://user-images.githubusercontent.com/33827177/147520091-203eb46d-0bda-4e48-bd10-8f9929b204f3.png)
 
 Now a single webserver many website using different names a single IP address. Now if we are using only HTTP there is no
-problem. Using the host header the browser tell the Application/Layer-7 which application to access
+problem. Using the host header the browser tell the Application/Layer-7 which application to access. But this happens at the
+application layer after the connection has been established. But TLS the encrypted part of HTTPs happens before this layer i.e.
+Layer-7/Application. So before the browser tells the server which application it wants. Part of what TLS does is allow a webserver
+to validate its indentity. When you first create an encrypted connections between your browser and the webserver/ip-address, the webserver 
+identifies itself. But if you have no way to tell the webserver which application you want to use out of the say 2 it host then it won't be 
+able to figure out which application service to serve your browser. So the server can only provide one certificate. This was originally the case and
+hence only one site could be hosted and each site/application needed an invidual IP.
+
+![image](https://user-images.githubusercontent.com/33827177/147520804-6ba2ef3d-b2da-437c-9a25-1229ac0c8f94.png)
+
 
 ### Origin Access Identity (OAI)
 
