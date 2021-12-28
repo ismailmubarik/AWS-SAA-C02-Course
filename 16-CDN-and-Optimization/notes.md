@@ -122,9 +122,31 @@ to validate its indentity. When you first create an encrypted connections betwee
 identifies itself. But if you have no way to tell the webserver which application you want to use out of the say 2 it host then it won't be 
 able to figure out which application service to serve your browser. So the server can only provide one certificate. This was originally the case and
 hence only one site could be hosted and each site/application needed an invidual IP.
-
 ![image](https://user-images.githubusercontent.com/33827177/147520804-6ba2ef3d-b2da-437c-9a25-1229ac0c8f94.png)
 
+![image](https://user-images.githubusercontent.com/33827177/147521472-ce1d25ee-4079-40b0-93bf-7a29d2cd0bff.png)
+In all cases of origin, the certificate needs to match the DNS name of the origin. Similarly, the certificate for the
+CloudFront needs to match the DNS Name
+
+### Origin Types & Architecture
+Architecturally, origin is from where CloudFront gets data. That is not cached at the edge, an Origin Fetch occurs to cache the data from the origin on the
+edge.
+
+Origin Groups Allows you to have resiliency. If you have 2 or more origins created within a distribution. You can add them both to an Origin Group. And get the
+Origin Group used by a CloudFront Behavior. So any request with a specific Path pattern will provide resilience across the Origin Group
+![image](https://user-images.githubusercontent.com/33827177/147522462-27f42415-b7b4-4af5-96ad-a337139f1a2f.png)
+
+There are few categories of Origin:
+1. AWS S3 Buckets: Important to remember that S3 bucket has 1 set of features but if you configure a static website and use that as an origin then CloudFront views as a webserver and so a custom origin and hence different feature set is availabe to it
+2. AWS Media Package Endpoints
+3. AWS Media Store Container Endpoints
+4. Everything Else (Webservers): Has different restrictions and features vs S3 buckets.
+
+OAI only works for S3 origins
+Whichever protocol is ued between a customer and the edge location. So the viewer protocol policy is also used between the CloudFront and the S3 bucket. So the origin and viewer policy are matched and http/https will be used on the origin and viewer side.
+![image](https://user-images.githubusercontent.com/33827177/147523448-40121eb1-5b5b-44d7-827d-4f263abcb9a0.png)
+
+If you are not using S3 origins you cannot use Origin Access Identity and to secure you custome origins you can use Origin Custom Headers that only you are aware of and pass them to Custom Origin to check for those headers. This will allow the your custom Origin to only accept connections from CloudFront.
 
 ### Origin Access Identity (OAI)
 
