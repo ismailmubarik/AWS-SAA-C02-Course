@@ -142,13 +142,15 @@ There are few categories of Origin:
 3. AWS Media Store Container Endpoints
 4. Everything Else (Webservers): Has different restrictions and features vs S3 buckets.
 
-OAI only works for S3 origins
-Whichever protocol is ued between a customer and the edge location. So the viewer protocol policy is also used between the CloudFront and the S3 bucket. So the origin and viewer policy are matched and http/https will be used on the origin and viewer side.
+OAI only works for S3 origins. 
+
+Whichever protocol is used between a customer and the edge location. So the viewer protocol policy is also used between the CloudFront and the S3 bucket. So the origin and viewer policy are matched and http/https will be used on the origin and viewer side.
 ![image](https://user-images.githubusercontent.com/33827177/147523448-40121eb1-5b5b-44d7-827d-4f263abcb9a0.png)
 
 If you are not using S3 origins you cannot use Origin Access Identity and to secure you custome origins you can use Origin Custom Headers that only you are aware of and pass them to Custom Origin to check for those headers. This will allow the your custom Origin to only accept connections from CloudFront.
 
-### Origin Access Identity (OAI)
+### Securing S3 Origin via Origin Access Identity (OAI)
+You can use S3 as an origin for CloudFront in 2 ways: 1. As an S3 origin and use it with CloudFront2. As a static website using S3 use it with CloudFront(in which case it will be treated like a custom origin). OAI is applicable for S3 origin.
 
 This identity can be associated with a cloud front distribution.
 
@@ -158,16 +160,57 @@ We then remove the explicit allows and only allow the OAI to use it.
 
 Best practice is to create one per distribution to manage permissions.
 
+![image](https://user-images.githubusercontent.com/33827177/147709152-b1de65a3-362f-423c-8c95-b4bac183e0c4.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147709272-db323e79-f307-44cd-be12-2da38ae8f3fc.png)
+
+### Securing Custom Origin
+Two ways to handle:
+1. gin configured to required custom header. Custom headers are injected at the edge locations so the custom origin knows the request is coming from a legit source. If the custom header isn't present the custom origin will refuse to serve the request.
+
+![image](https://user-images.githubusercontent.com/33827177/147709627-3d572f1c-986c-4bf1-b4ab-6a9d24896fd8.png)
+
+2. Via Traditinal Security Methods: AWS publicizes IPs of all of their services so we can easily determine the IPs of the CloudFront edge locations.
+
+![image](https://user-images.githubusercontent.com/33827177/147709769-607eaf5e-fbcf-4bc1-a79d-24c95ee3cab9.png)
+
+Either or both of these methods can be used to ensure that security cannot be bypassed by a user through direct access to the origin
+
+### Lambda@Edge
+![image](https://user-images.githubusercontent.com/33827177/147710242-3739f233-4f7b-4864-9c4b-8cb5cfbdad44.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147710319-9a21390a-2d27-4360-bb41-b2e0da816790.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147710421-0fd33211-2880-4d2c-be9e-a05d603783f7.png)
+
+https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-examples.html#lambda-examples-redirecting-examples
+
 ### AWS Global Accelerator
+AWS Global Accelerator is a product that is designed to optimize the flow of data from your users to your AWS infrastructure
+
+![image](https://user-images.githubusercontent.com/33827177/147711348-4e913638-5266-4e4d-985e-a138abb7380f.png)
 
 Starts with 2 **anycast** IP address
 1.2.3.4 & 4.3.2.1
 
 Anycast IP's allow a single IP to be in multiple locations.
-Routing moves traffic to closest location.
+Routing moves traffic to closest GLobal accelerator Edge Locations. 
+The key to remember is that all of these global accelerator edge locations 
+are using these 2 **anycast** IP address of 1.2.3.4 & 4.3.2.1
+
+![image](https://user-images.githubusercontent.com/33827177/147711528-d344b6fe-40c8-4043-b0d3-8eeb1bd87492.png)
+
 
 Traffic initially uses public internet and enters a global
 accelerator edge location.
+
+Difference between CloudFront & AWS Global Accelerator:
+CF move the content closer to the user by caching at the CF edge locations whereas AWS Global Accelerator moves the actual AWS network as close to the user as possible. It can route traffic through a dedicated connection to the original location or to the nearest infrastructure location.
+
+![image](https://user-images.githubusercontent.com/33827177/147711744-3228fa10-1207-4a77-894b-842279202394.png)
+
+Where & Where to use it:
+Its a network product so scenarios in which we want to transport network data TCP/UDP then use AWS Global Accelerator. If its content, caching, presigned URL, etc. then use CF
 
 #### Key concepts
 
