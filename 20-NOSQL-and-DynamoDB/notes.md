@@ -464,11 +464,34 @@ You cannot just use ElasticCache your application code needs to change. Your app
 ![image](https://user-images.githubusercontent.com/33827177/147838400-27e3fe5a-248c-4bec-bf32-464f76794728.png)
 
 ### AWS RedShift
+Redsfhift is a Peta-byte scale Data Warehouse.
+A **Data Warehouse** is a location where many different operational databases from across your business can pump data into for long term analysis and trending. A datawarehouse is designed for Reporting and Analytics and not for operational style usage.
 
+Reshift is OLAP based database rather than OLTP (Online Transaction Processing) like RDS. OLTP which is row-based captures, stores processes, and/or deletes data from transactions in real-time. OLTP type databases are used for online transactions, etc. 
 
+Online Analytical Processing (OLAP) is designed for complex queries to analyze aggregated data stored by OLTPs. Redshift stores data in column rather than rows
 
+In column based databases, if you want to say query the average age of a row-based database, you need to read through every row looking for just one fields. In column based databases, all names will be stored in one column, age in another and so on and it is thus efficient to analyze specific columns.
 
+Redshift is delivered as a service like RDS. It is provisioned like RDS.
 
+**Redshift Spectrum** querying of data on S3 without loading it into RedShift in advance..
 
+**Federated Query** is like federated identity it allows you to query data stored in remote data sources. So essentially you can virtually integrate your databases with foreign/remote databases and query their data.
 
+Intergates with AWS QUicksignt for visualizations.
+
+Redshift is server based not serverless like Athena and so there is a provisioning time.
+
+**Redshift uses a cluster architecture and the cluster is a private network**. You cannot access most of the cluster directly.
+
+Redshift works with multiple nodes with each node connected using highspeed bus.
+
+By default Redhsift uses pub;ic routes for communicating with external services. If Enhanced VPC Routing is enabled then traffic is routed bases on VPC configurationss
+
+![image](https://user-images.githubusercontent.com/33827177/147840787-710db85f-01e9-4a73-be42-96442981e536.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147840822-eba89657-2953-44e6-a716-90caef62e4c6.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147840846-83d624eb-b507-4e2f-b909-27114d038b15.png)
 
