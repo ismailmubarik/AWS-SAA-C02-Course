@@ -438,3 +438,7 @@ the data itself.
 This can be saved in the console or fed to other visualation tools.
 
 You can optimize the original data set. How??
+
+Exam Power Up?
+If you are given a scenario where structured, semi-structured or unstructured data is stored on S3 and you need to 
+perform Ad-hoc queries and you are charged only for the queries then Athena might be answer...
