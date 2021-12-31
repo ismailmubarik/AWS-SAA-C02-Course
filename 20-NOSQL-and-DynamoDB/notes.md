@@ -446,3 +446,29 @@ perform Ad-hoc queries and you are charged only for the queries then Athena migh
 ### Demo Example
 ![image](https://user-images.githubusercontent.com/33827177/147801433-d4178e88-7219-4e80-bf79-8dac9d2875fc.png)
 
+### AWS Elastic Cache
+In-memory database for application with high performance requirements.
+
+Consider RDS which is a managed product that delivers Database as a service. Databases stores data **persistenly** on a disc and hence its performance is limited compared to cache. An In-memory cache holds data in memory which orders of magnitude faster than the disc but the data is not persistent, so it can only be used for temporary data.
+
+![image](https://user-images.githubusercontent.com/33827177/147838017-b19e068c-b4a0-4b66-8731-cc7e9ca32378.png)
+
+Can be used to store session data for stateless application (This is generally used in highly scalable and elastic and fault tolerant environment where users can't notice if an components fail and hence stateless applications are required.)
+
+You cannot just use ElasticCache your application code needs to change. Your application should understand or be compatible with caching architecture. For example, the application should be programmed to check the cache for data and if there is a cache miss then check the database. So in exam, if a questions says no application/code changes required then ElasticCache isn't the answer.
+
+![image](https://user-images.githubusercontent.com/33827177/147838272-e466cce6-e541-4bd3-8102-6ff6b05f3424.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147838313-8be1f45b-aff0-48a8-aef2-2c6bc781f916.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147838400-27e3fe5a-248c-4bec-bf32-464f76794728.png)
+
+### AWS RedShift
+
+
+
+
+
+
+
+
