@@ -442,3 +442,7 @@ You can optimize the original data set. How??
 Exam Power Up?
 If you are given a scenario where structured, semi-structured or unstructured data is stored on S3 and you need to 
 perform Ad-hoc queries and you are charged only for the queries then Athena might be answer...
+
+### Demo Example
+![image](https://user-images.githubusercontent.com/33827177/147801433-d4178e88-7219-4e80-bf79-8dac9d2875fc.png)
+
