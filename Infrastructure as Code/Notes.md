@@ -54,3 +54,76 @@ The template can take actions based on how things are when the template is used 
 
 ![image](https://user-images.githubusercontent.com/33827177/147895853-fe76104f-755f-42c8-84d6-9818ef136f1b.png)
 
+### CloudFormation Wait Conditions & CFN Signal
+
+![image](https://user-images.githubusercontent.com/33827177/147896267-358cb471-a15c-41ee-8c18-7758c74808fd.png)
+
+With simple provisioning when the EC2 instance tells CloudFormation that it is in create complete state it has no further information after that? For example, the EC2 instance has been provisioned but have the Bootstrapping steps been completed? CloudFormation has no way to find the success/failure of BootStrapping...So we can be in a situation where the EC2 instance is in Create_Complete but BootStrapping was a failure.
+
+Creation Policy, Wait Policy and CFN signals provides a way around this to provide more details to CloudFormation.
+
+![image](https://user-images.githubusercontent.com/33827177/147896658-ec8d866a-6959-4944-8cea-b8cc77aa2414.png)
+
+AWS suggests that for provisiong EC2 or an AutoScaling group we use a CreationPolicy because it is tied to that specific resource...But we might have other requirements. For example, if we are integrating CloudFormation with an external IT System then we might want to use Wait Condition.
+
+![image](https://user-images.githubusercontent.com/33827177/147896868-078212b7-acd6-4c53-b08a-064b50ec40e3.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147897083-67ae65d0-8b86-4757-9b49-7d82640c8999.png)
+
+### CloudFormation Nested Stacks
+
+![image](https://user-images.githubusercontent.com/33827177/147897362-64c4f2d6-533b-45e3-8217-88733adad7a5.png)
+
+A Root Stack is the Stack that gets created first. It is the first that creates Manually through the Console UI or through the command line or using some form of automation.
+
+A parent stack is a parent of any stack that it immediately creates.
+
+You can also have a CloudFormation Stack as a logical resource within a CloudFormation template.
+
+![image](https://user-images.githubusercontent.com/33827177/147897856-1767fc2a-822a-4dd8-aa35-45e634cece5f.png)
+
+We have to provide parameters for the nested stack for all those parameters that are paramatized within the (nested) stack that we are using. One exception is if the stack is using default values in which we don't have to provide the parameters.
+
+***Note***: The Root/parent stack can only reference the Outputs from the nested/child stack not the logical resources.
+
+![image](https://user-images.githubusercontent.com/33827177/147897914-c066a542-0ec4-44e8-a797-cec2d3ab8712.png)
+
+### CloudFormation Cross-Stack References
+In nested stacks everytime you use/re-use a template you are creating a new stack and resources. The resources are not shared just a shared/common template is being used to create new and distinct/separated resources. To share resources say a VPC we need to use Cross-Refercing within thes same region...
+
+![image](https://user-images.githubusercontent.com/33827177/147898411-5efe7c34-9fb6-4647-898d-7623f1aab0ea.png)
+
+Because of the separation of Stacks, Stacks cannot see the Ouptputs of other stacks. They are only visible one the command line or UI. This means you cannot use the built-on REF functions to reference one stack or output in another. The exception though is the Root Stack...but that means its a nested stack we are talking about and thus the architecture is linked in terms of life-cycle
+
+![image](https://user-images.githubusercontent.com/33827177/147898567-0973c64c-5446-4d4a-b967-0e074cc0ff92.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147898674-aa0bff93-3f51-46f9-aad6-ae807f3580eb.png)
+
+The import of export of references to share resources like VPC has to be within the same region. Cross region import/export is not supported
+
+### CloudFormation StackSets
+A cloud formation feature that allows you to create, delete, update across multiple regions potentially across many AWS accounts.
+
+Service-Managed Roles: When Cloud-Formation is used in conjunction with AWS Organizations so all of the roles get created on your behalf by the product behind the scene.
+So in Service-managed everything is handled by the product for you. OR you can use
+
+Self_Managed Roles: to grant permission so that CLoudFormation can create Stack Infrastructure across many different accounts in many Regions
+
+![image](https://user-images.githubusercontent.com/33827177/147899460-b620299d-8cdc-4c13-8877-cc650ff631c4.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147899707-cac0c656-603b-47c1-8ce6-90f4b8b8dad7.png)
+
+### CloudFormation Deletion Policy
+
+![image](https://user-images.githubusercontent.com/33827177/147900017-f08ab124-d72f-4703-b3e9-555548026692.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147900023-84da9258-976d-41fc-a1bb-bc7616652721.png)
+
+### CloudFormation Roles
+![image](https://user-images.githubusercontent.com/33827177/147900175-afd7a8e6-0b91-42df-a66e-5b2229b57fa7.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147900258-a38f5326-0399-4210-ad17-f9c9b2362bfa.png)
+
+
+
+
