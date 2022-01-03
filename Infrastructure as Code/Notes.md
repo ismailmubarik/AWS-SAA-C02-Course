@@ -23,6 +23,14 @@ The template can take actions based on how things are when the template is used 
 
 ![image](https://user-images.githubusercontent.com/33827177/147886257-e94cb515-b9a0-4f57-863d-f3b11643d56f.png)
 
+![image](https://user-images.githubusercontent.com/33827177/147896131-e6c760fa-13c1-456e-af45-c711526654f1.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147896142-afebfba0-1769-423d-9d56-9494be2cd154.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147896160-3a19beaa-3934-4583-b0e6-98d351b5457b.png)
+
+![image](https://user-images.githubusercontent.com/33827177/147896177-bf40a408-4ff5-420f-84b6-2c450dcd6ab5.png)
+
 ### CloudFormation Mappings
 
 ![image](https://user-images.githubusercontent.com/33827177/147895624-8d0c9290-6117-4ef6-a2d7-4f35ead301b5.png)
@@ -41,18 +49,8 @@ The template can take actions based on how things are when the template is used 
 
 ![image](https://user-images.githubusercontent.com/33827177/147895829-714c2bde-2c41-476c-9c12-fd0ffd75be08.png)
 
-
 ### CloudFormation DependsON
 ![image](https://user-images.githubusercontent.com/33827177/147895843-4b27c57c-05a5-47d8-9526-62dc607f97ec.png)
 
 ![image](https://user-images.githubusercontent.com/33827177/147895853-fe76104f-755f-42c8-84d6-9818ef136f1b.png)
-
-
-
-
-
-
-
-
-
 
