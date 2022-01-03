@@ -42,20 +42,11 @@ The template can take actions based on how things are when the template is used 
 ![image](https://user-images.githubusercontent.com/33827177/147895829-714c2bde-2c41-476c-9c12-fd0ffd75be08.png)
 
 
-
-
-
-![image](https://user-images.githubusercontent.com/33827177/147895839-aad28566-ec5d-437f-94e4-37ea8311de0e.png)
-
+### CloudFormation DependsON
 ![image](https://user-images.githubusercontent.com/33827177/147895843-4b27c57c-05a5-47d8-9526-62dc607f97ec.png)
-
-![image](https://user-images.githubusercontent.com/33827177/147895845-722a3202-6a43-4aa9-bae3-1b488547bb2b.png)
-
-![image](https://user-images.githubusercontent.com/33827177/147895848-e9b34d5f-7c4d-482b-8384-bb9998beedb5.png)
 
 ![image](https://user-images.githubusercontent.com/33827177/147895853-fe76104f-755f-42c8-84d6-9818ef136f1b.png)
 
-![image](https://user-images.githubusercontent.com/33827177/147895855-20c0307c-066d-42fc-bab0-e596caa8da07.png)
 
 
 
