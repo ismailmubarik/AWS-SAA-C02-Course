@@ -124,6 +124,37 @@ Self_Managed Roles: to grant permission so that CLoudFormation can create Stack 
 
 ![image](https://user-images.githubusercontent.com/33827177/147900258-a38f5326-0399-4210-ad17-f9c9b2362bfa.png)
 
+### CloudFormation Init
+A way to provide configuration data to EC2 instance. This is an alternative to BootStrapping via 'User Data' (Passing scripts to EC2 Instance). CloudFormation Init is a simple Configuration Management System. 
 
+![image](https://user-images.githubusercontent.com/33827177/148141710-1057a510-e83c-4c29-b57f-cec3b5cf4571.png)
 
+The Cloud Init tells the system the desired state so it can be cross-platformed meaning in some cases it may work on both Linux and Windows AMIs.
+
+It is also IdemPotent. So if something in a certain state CloudFormation will leave it in that state.
+
+![image](https://user-images.githubusercontent.com/33827177/148142238-58c2b53c-20e1-411f-993b-03a2f9b6cf55.png)
+
+Usually you would define one Config Key specifying packages, groups, users, etc. But you can also define a config set with different Config Keys which defines which Config Keys and in which order
+
+### cfn-hub
+![image](https://user-images.githubusercontent.com/33827177/148142384-ce62a91c-d89a-4e5b-8d73-b46b46b65775.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148142493-aa51cd13-e16a-49f5-91d9-d0a39f1da34b.png)
+
+###CloudFormation ChangeSets
+
+![image](https://user-images.githubusercontent.com/33827177/148145210-e5100905-4e95-4647-97dd-a2903362f853.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148145333-a00d1171-1ac9-410f-ac1a-3f5790c1d5dd.png)
+
+###CloudFormation Resources
+
+![image](https://user-images.githubusercontent.com/33827177/148146281-77ad4376-20a1-41d5-a3a2-d163c29e1e60.png)
+
+Examples of what you do with CloudFormation Resources is to populate S3 bucket with objects when you create it or delete objects when you delete the S3 bucket. Normailly this is something that would result in an error if you try to do it without CloudFormation Resources. Another example, is to request configuration information from an external source as a part of setting up an EC2 instance.
+
+*** Architecture*** Cloudformation begins the process of creating a custom resource and sends data to an end-point you have defined within the custom resource. This might be a a custom resource like Lambda Function or an SNS Topic. Everytime the resource is updated/deleted CloudFormation will send data to the custom resource.
+
+![image](https://user-images.githubusercontent.com/33827177/148148858-488445d4-7527-4269-b9f0-01bc91eba658.png)
 
