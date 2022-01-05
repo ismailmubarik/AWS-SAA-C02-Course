@@ -142,13 +142,13 @@ Usually you would define one Config Key specifying packages, groups, users, etc.
 
 ![image](https://user-images.githubusercontent.com/33827177/148142493-aa51cd13-e16a-49f5-91d9-d0a39f1da34b.png)
 
-###CloudFormation ChangeSets
+### CloudFormation ChangeSets
 
 ![image](https://user-images.githubusercontent.com/33827177/148145210-e5100905-4e95-4647-97dd-a2903362f853.png)
 
 ![image](https://user-images.githubusercontent.com/33827177/148145333-a00d1171-1ac9-410f-ac1a-3f5790c1d5dd.png)
 
-###CloudFormation Resources
+### CloudFormation Resources
 
 ![image](https://user-images.githubusercontent.com/33827177/148146281-77ad4376-20a1-41d5-a3a2-d163c29e1e60.png)
 
