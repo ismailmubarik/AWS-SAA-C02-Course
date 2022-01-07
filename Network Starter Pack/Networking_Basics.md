@@ -222,3 +222,31 @@ The 10.16.0.0/16 is a subset of the wider network of 10.0.0.0 because the 10.0.0
 ![image](https://user-images.githubusercontent.com/33827177/148491065-ef4651e0-1660-4f89-a97f-6623704ce50c.png)
 
 ### Distributed Denial of Service Attacks
+**Application Layer** e.g. HTTP Flood: It takes less processing to request a service but significantly higher resource to process the request on the server side. Multiply that by a billion and you have a significant difficulty providing service.
+**Protocol Attack** e.g. SYN Flood: Takes advantage of the connection based nature of the requests. A connection is established via 3-stage handshake. In SYN Flood a IP is spoofed and a connection attempt is initiated. The server tries to perform step-2 of the handshake process but it can't because the source IP address is spoofed and so the SYN-ACK from the server (2nd step) would be ignored. It waits for a specified duration and using resources in the process. Multiply that by a billion and you have a significant difficulty providing service. 
+Volumetric Attack e.g. DNS Amplification: It only takes small amount of data to make a DNS resolution request but in return the DNS Server deliver large amount of data ( protocol data imbalance). So a volumetric attack would involve multiple such independent request to overwhelm the DNS server. But unlike the other the size of the botnet can be much smaller with devastating effects still. This is because of the inherent protocol data imbalance where the botnet consumes smaller bandwidth and get the server to consume a a bandwidth much larger than it can handle (due to amount of data that it is getting from DNS Server)
+
+![image](https://user-images.githubusercontent.com/33827177/148564845-400b686f-2f9a-4e1a-86f6-b863944f746c.png)
+
+Botnets is a network of hosts infected with Malware without the knowledge of the user/owner of the host/device/pc.
+
+![image](https://user-images.githubusercontent.com/33827177/148565140-e855fadf-8768-4233-8d90-d7690a87a3bd.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148565586-62b4ce4b-d821-440f-9ef4-aaf5942136e2.png)
+
+Difficult to handle DDoS attacks because the traffic from the legitimate and the bots look identical.
+
+![image](https://user-images.githubusercontent.com/33827177/148566044-40b56847-7bbf-4354-9d10-30e74f5bd1ed.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148566789-7b7d540a-f731-4650-b354-b444c4f50cab.png)
+
+
+![image](https://user-images.githubusercontent.com/33827177/148566529-25e96782-ba67-48b3-8644-1ebf492d4d08.png)
+
+
+
+
+
+
+
+
