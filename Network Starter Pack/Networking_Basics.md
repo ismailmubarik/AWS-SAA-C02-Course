@@ -240,13 +240,6 @@ Difficult to handle DDoS attacks because the traffic from the legitimate and the
 
 ![image](https://user-images.githubusercontent.com/33827177/148566789-7b7d540a-f731-4650-b354-b444c4f50cab.png)
 
+In the Voumetric Attack the machines overwhelming the host might not even be mailicious for example, where DNS servers are just providing data to the spoofed IP that they think are legimate requests coming from the catagram.io servers when they are coming from bots that Spoof the server.
 
-![image](https://user-images.githubusercontent.com/33827177/148566529-25e96782-ba67-48b3-8644-1ebf492d4d08.png)
-
-
-
-
-
-
-
-
+Because of the distributed nature of the DDos attack it is not practical to do single IP address blocks.
