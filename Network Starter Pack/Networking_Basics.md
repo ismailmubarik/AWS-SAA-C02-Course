@@ -213,14 +213,12 @@ Within the IPv4 space certain networks are reserved for private use. It means yo
 ### IPv4 Subnetting
 CIDR - Classless InterDomain Routing lets us breakdown the network to smaller chunks. It defines a way of defining the network using a Prefix. 
 
-You might notice that the below given 10.16.0.0/16 is inside the class A network spot (Class IPs being between 10.0.0.0 to 10.255.255.255. This is also in the private Class A IPv4 space i.e. it falls in 10.0.0.0 to 10.255.255.255
+You might notice that the below given 10.16.0.0/16 is inside the class A network spot (Class IPs being between 0.0.0.0 to 127.255.255.255). This is also in the private Class A IPv4 space (i.e. it falls betweemn 10.0.0.0 to 10.255.255.255).
+
+The 10.16.0.0/16 is a subset of the wider network of 10.0.0.0 because the 10.0.0.0/8 would be the full range of the IPs of which the 10.16.0.0/16 is a subset. So 10.0.0.0/8 is the same as Class A private newtork with the first octet for host and the other 24 for networking.
+
+
+
+
 
 ![image](https://user-images.githubusercontent.com/33827177/148489180-a9e7b8d7-5a2f-4425-bebf-ff4ee3b04171.png)
-
-
-
-
-
-
-
-
