@@ -127,3 +127,49 @@ Its a router's job to move packets across the internet.It does so by reviewing p
 
 ![image](https://user-images.githubusercontent.com/33827177/148324423-06ca6f71-1a90-4d02-a7d2-7c271b9339de.png)
 
+### Layer 4 - Transport Layer
+There is usually an overlap between features of the Layer-4 (Transport) & Layer-5 (Session). The transport layer runs on top of the Network i.e. Layer-3. Session Layer runs on top of Transport and there is usually a mix between the functionality they provide. So often time they can be club together foor understanding purposes.
+
+Layer-3 cannot be scalled for multi-channel/multi-app communication because Layer-3 packets only have source and destination IPs and so they cannot be distiguished meaning there is no mechanism in Layer-3 to uniquely associate packets with specific applications.
+
+![image](https://user-images.githubusercontent.com/33827177/148474769-a33a45d6-751f-44e7-9896-6f0ca062c5b8.png)
+
+Layer-4 adds 2 protocol TCP and UDP. Both of these run on top of IP. TCP/IP means running IP protocol on top of Layer-3's TCP protocol. TCP enables reliability, error correction and ordering of data in packets.It is used for most of Application layer protocols such as http, https, SSH, etc. UDP offers performance.
+
+![image](https://user-images.githubusercontent.com/33827177/148475075-320239a9-586c-45d2-97df-c37f1ed5d5a4.png)
+
+TCP Segments is just another container for data like Packets and Frames before them. Segments are encapsulated inside TCP packets.
+
+The combination of Source/Destination IPs in Network Packets and Source/Destination Ports in Transport Segments enables the bi-directional multi-App communication. Meaning two devices can multiple streams of conversation without packets getting mixed up. 
+
+![image](https://user-images.githubusercontent.com/33827177/148476157-5153959a-ecf2-473a-badd-42d32c297bc1.png)
+
+Sequence Number is the unqiue Segment number that helps order segments and hence, ensure segments are processed in order.
+
+Acknowledgment: Enables nodes to indicate that they have received upto and including X sequence number. So every segment needs to be acknowledged
+
+Window: The number of bytes that you are willing to receive between acknowledgments. Once that number is reached the sender will pause until you acknowledge those specific amounts of data and this is how flow control is implemented and so the sender cannot overwhelm the receiver.
+
+CheckSum: Checks errors and hence, TCP can arrange for re-transmission of data if error detected
+
+Urgent Pointer??
+
+![image](https://user-images.githubusercontent.com/33827177/148477071-211fdc2c-3e51-46b2-9b4c-8c106b26b2e4.png)
+
+Ephemeral port is a port that the client uses to communicate with the server. It is usually a higher numbered port.
+
+There are going to be two kind of segments one with a destination port of 23060 and Source of 443 and another set of segments with destination port of 443 and Source of 23060. These are different segments from Layer-4's perspective and that is why we need a different set of rules for each.
+
+With TCP every communication is based on a connections and that is why you need to first establish connection using FLAGS.
+
+![image](https://user-images.githubusercontent.com/33827177/148477585-8bc67589-ac52-4838-bbaf-9fd6927a2975.png)
+
+Client selects a random sequence number 'cs'
+
+![image](https://user-images.githubusercontent.com/33827177/148478043-0742b962-eaeb-443e-b2b5-9263e43cd836.png)
+
+What if want to add security features and add a Firewall?
+
+There are 2 kinds of Firewall: 1. Stateless Firewall ((That's what a Network (Access Controll List) e.g. AWS) & 2. Stateful Firewall (e.g. AWS Security Group)
+
+Technically a Session and the firewall would fall under Session i.e. Layer-5
