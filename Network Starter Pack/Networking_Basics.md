@@ -172,4 +172,33 @@ What if want to add security features and add a Firewall?
 
 There are 2 kinds of Firewall: 1. Stateless Firewall ((That's what a Network (Access Controll List) e.g. AWS) & 2. Stateful Firewall (e.g. AWS Security Group)
 
-Technically a Session and the firewall would fall under Session i.e. Layer-5
+Technically a Session and the firewall would fall under Session i.e. Layer-5.
+
+### Network Address Translation (NAT)
+Network Address Translation (NAT) is the process of adjusting packets source and destination addresses to allow transit across different networks. The main types you will encounter are Static NAT, Dynamic NAT and Port Address Translation (PAT). NAT is most commonly experience in home or office networks where private IPv4 addresses are translated to a single public address, allowing outgoing internet access.
+
+NAT is used in home networks, business networks and cloud environments such as AWS.
+
+IPv4 fall under 2 categories: Publicly Routable and Private Address Space.
+
+Publicly Routable are assigned by a Central/Regional Agency which assign them to ISPs which then assign them to Businesses or end users.
+
+The public routable addresses have to be unique to work. Privaste addresses such as the ones in 10.0.0.0 range can be used in multiple places but can't be routed over the
+internet. So to give internet access to private devices we need use NAT.
+
+Different Types of NAT
+
+![image](https://user-images.githubusercontent.com/33827177/148481551-d60329aa-e7c2-463c-a977-2c15a6758009.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148482239-5541d4d7-40e6-405b-a6fe-d45fca31e5ee.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148482525-1ac89fb0-dabf-43b0-bf56-6891987b74a9.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148483040-db5fd35f-f74d-48f4-8ce3-38178b3511e7.png)
+
+A device with public IP won't be able to communicate with a device private IP unless the the router has entry for the private to public translation.
+
+
+
+
+
