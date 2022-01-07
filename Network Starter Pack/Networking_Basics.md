@@ -198,6 +198,28 @@ Different Types of NAT
 
 A device with public IP won't be able to communicate with a device private IP unless the the router has entry for the private to public translation.
 
+### IPv4 Addressing
+
+![image](https://user-images.githubusercontent.com/33827177/148486403-07f34206-927c-407e-82e7-c0912d9de989.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148487525-ca432f4e-c7aa-4026-ac96-0252b08f84e7.png)
+
+Within the IPv4 space certain networks are reserved for private use. It means you can use it for private networks but they are not publicly routable addresses.
+
+![image](https://user-images.githubusercontent.com/33827177/148488564-646f23b7-0da9-4fa7-961c-9868c66eb425.png)
+
+![image](https://user-images.githubusercontent.com/33827177/148488858-26c2a220-f270-4915-97d9-41b87650d8fa.png)
+
+### IPv4 Subnetting
+CIDR - Classless InterDomain Routing lets us breakdown the network to smaller chunks. It defines a way of defining the network using a Prefix. 
+
+You might notice that the below given 10.16.0.0/16 is inside the class A network spot (Class IPs being between 10.0.0.0 to 10.255.255.255. This is also in the private Class A IPv4 space i.e. it falls in 10.0.0.0 to 10.255.255.255
+
+![image](https://user-images.githubusercontent.com/33827177/148489180-a9e7b8d7-5a2f-4425-bebf-ff4ee3b04171.png)
+
+
+
+
 
 
 
