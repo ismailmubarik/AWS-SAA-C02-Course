@@ -217,8 +217,8 @@ You might notice that the below given 10.16.0.0/16 is inside the class A network
 
 The 10.16.0.0/16 is a subset of the wider network of 10.0.0.0 because the 10.0.0.0/8 would be the full range of the IPs of which the 10.16.0.0/16 is a subset. So 10.0.0.0/8 is the same as Class A private newtork with the first octet for host and the other 24 for networking.
 
+![image](https://user-images.githubusercontent.com/33827177/148490829-b73fe36d-9201-4af1-8451-6afdb31bf69f.png)
 
+![image](https://user-images.githubusercontent.com/33827177/148491065-ef4651e0-1660-4f89-a97f-6623704ce50c.png)
 
-
-
-![image](https://user-images.githubusercontent.com/33827177/148489180-a9e7b8d7-5a2f-4425-bebf-ff4ee3b04171.png)
+### Distributed Denial of Service Attacks
