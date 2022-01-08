@@ -576,7 +576,7 @@ Parts of the DNS system
 
 Steps:
 
-Find the Nameserver which hosts a particular zone file.
+So the Clients requests the DNS Resolver Server to find the Nameserver which hosts a particular zone file.
 Query that Nameserver for a record that is in that zone file.
 It then passes the information back to the DNS client.
 
