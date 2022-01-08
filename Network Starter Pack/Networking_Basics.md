@@ -258,10 +258,12 @@ TLS also ensure Reliable connection and protects against data alteration
 
 When a client inititates communication with a server and TLS is used there are 3 phases: 1. Cipher Suites are Agreed. 2. Authentication Happens & 3. Keys are Exchanged
 
-There three things start from the point when the TCP connections is already active between the Client & Server so this a Layer-4 and at the end of this an encrypted communicationc channel is established between the client and the server.
+There three things start from the point that a TCP connections is active between the Client & Server so this a Layer-4 and at the end of this an encrypted communicationc channel is established between the client and the server.
 
+At the End of the 1st phase i.e. Cipher Suites in the diagram above we have an Asymmetric encryption active and now the goal is to move to fully symmetric as the former is computationally heavy. 
+The public key pair is sent to the client so that the client can authenticate the identity of the Server (ensure its say Netflix and not someone spoofing Netflix IP).
+The Certificate of the Server has information like its public Key, DNS Name and other Organization info.
 
+![image](https://user-images.githubusercontent.com/33827177/148625284-0bacdba6-5d35-4fad-b93c-efc9d5bbe557.png)
 
-
-
-
+At the end of stage-3 we move from Asymmetric to Symmetric Communication. We start this stage with a Public Key on the Client and a Matching Private Key on the Server. The client generates a Pre-Master Key and Encryptes it using the Server's Public Key and sends it to ther server. The server decrypts the encrypted Pre-Master Key using its private key. At this point both client and Server hs the Pre-Master Key. And both sides now use this pre-master secret to have encrypted communication. 
