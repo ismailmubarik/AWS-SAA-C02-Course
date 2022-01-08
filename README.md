@@ -582,18 +582,25 @@ It then passes the information back to the DNS client.
 
 #### 1.2.12.1. DNS Root
 
-The starting point of DNS.
-DNS names are read right to left with multiple parts separated by periods.
+The starting point of DNS. DNS names are read right to left with multiple parts separated by periods.
+Notice the 'Pink Dot' on the right, that is the root.
 
-`www.netflix.com.`
+![image](https://user-images.githubusercontent.com/33827177/148627835-40b379f6-f462-4c4d-9eb4-2a5950c51b8a.png)
 
-The last period is assumed to be there in a browser when it's not present.
-The DNS Root is hosted on DNS Root Servers (13). These are hosted
-by 12 major companies.
+The last period is assumed to be there in a browser when it's not present or typed. But if we explicitly with what 
+looks like an extra dot it would sitll work. The DNS Root is hosted on 13 Special DNS Root Servers. These are operated by
+by 12 major companies. It is to be noted that these companies operate/manage the DNS Root Servers not the Root Zone Databases.
+Each Root Server is a combination of servers distributed globally but represented by one of the 13 entities. Each has a letter from
+'a' to 'm' and each of this managed by different organizations with the exception of VeriSign which manages two DNS Servers.
 
-![image](https://user-images.githubusercontent.com/33827177/142965067-a27d04a4-2668-4239-91e5-4b696c5f5f42.png)
+![image](https://user-images.githubusercontent.com/33827177/148627980-6889eb68-9199-41bf-a5bc-a40da56cdec0.png)
 
-**Root Hints** is a pointer to the DNS Root servers provided by the OS vendor
+These DNS servers are the entry points. But how does your device e.g. laptop find these root servers?
+Generally, your device or Lapop would use a DNS Resolver Server hosted on your router or ISP. 
+
+The OS supplies what is called a **Root Hints** File and it is a pointer to the DNS Root servers provided by the OS vendor
+
+![image](https://user-images.githubusercontent.com/33827177/148628106-573f4013-fdf7-4679-8d45-34415cbc1c45.png)
 
 Process
 
@@ -602,12 +609,13 @@ Process
 more of the root servers to access the root zone and begin the process
 of finding the IP address.
 
-The Root Zone is organized by IANA (Internet Assigned Numbers Authority).
-Their job is to manage the contents of the root zone. IANA is in charge
-of the DNS system because they control the root zone.
+The Root Zone is managed by IANA (Internet Assigned Numbers Authority).
+Their job is to manage the contents of the root zone. This is separate from managing the root servers which is managed by
+the 13 organizations. IANA is in charge of the DNS system because they control the root zone.
 
 ![image](https://user-images.githubusercontent.com/33827177/142965272-c83fec5f-962c-43cf-954b-806986b8603a.png)
 
+DNS is built on trust. At the start of the process we only have the Root Zone and out OS are configured (via Root Hints) to trust the Root Zone.
 
 #### 1.2.12.2. DNS Hierarchy
 
