@@ -557,11 +557,11 @@ DNS is a discovery service. Translates machines into humans and vice-versa.
 It is a huge database which is globally distributed.
 
 The conversion from www.amazon.com to 104.98.34.131 happens when your laptiop/device directly communicates with the DNS server OR it talks to a 
-DNS resolver server (which is either running on your router or your ISP) to find and query the Zone File within the Name Server (NS) and get IP for www.amazon.com
-Zone File has details about the conversion  from www.amazon.com to 104.98.34.131.
-The Zone file is hosted by the DNS server or Name Server i.e. NS
+DNS resolver server (which is either running on your router or your ISP) to find and convert the Domain name to an IP address. That piece of information is called a zone and the way it is stored is called zone file. The Zone File is stored on a Name Server. So we query the Zone File within the Name Server (NS) and get IP address for www.amazon.com
+i.e. 104.98.34.131. our laptop can communicate with the Amazon Web Server. 
+The Zone file can be located anywhere on 1 or 2 out of potentially millions of Name Servers i.e. NS
 
-![image](https://user-images.githubusercontent.com/33827177/142964683-4f8019a4-b6be-49b6-a0e1-22669ab3c6c7.png)
+![image](https://user-images.githubusercontent.com/33827177/148627476-6347a9f5-e2a7-43a7-bc2b-b3db22e91052.png)
 
 Parts of the DNS system
 
