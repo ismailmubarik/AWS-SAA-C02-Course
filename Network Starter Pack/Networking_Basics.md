@@ -243,3 +243,25 @@ Difficult to handle DDoS attacks because the traffic from the legitimate and the
 In the Voumetric Attack the machines overwhelming the host might not even be mailicious for example, where DNS servers are just providing data to the spoofed IP that they think are legimate requests coming from the catagram.io servers when they are coming from bots that Spoof the server.
 
 Because of the distributed nature of the DDos attack it is not practical to do single IP address blocks.
+
+### SSL & TLS
+***SSL*** - Secure Socket Layer
+***TLS*** - Transport Layer Security
+
+At a high level they do the same thing as they both provideencrypted communications for HTTPS and other encrypted connection oriented protocols.. TLS is just a newer and more secure version of SSL
+
+TLS starts with asymmetric information architecture. Symmetric encryption is computationally easier then Asymmetric encryption that is why the goal should be to move to symmetric as soon as possible. And part of the negotiation that TLS performs is moving Asymmetric to symmetric encryption.
+
+TLS also provides Identity Verification. WHile TLS is capable of performing full two way identity verification the main goal is make sure that you are infact connecting to say Netflix.com because it is usually the client verifying the server
+
+TLS also ensure Reliable connection and protects against data alteration
+
+When a client inititates communication with a server and TLS is used there are 3 phases: 1. Cipher Suites are Agreed. 2. Authentication Happens & 3. Keys are Exchanged
+
+There three things start from the point when the TCP connections is already active between the Client & Server so this a Layer-4 and at the end of this an encrypted communicationc channel is established between the client and the server.
+
+
+
+
+
+
