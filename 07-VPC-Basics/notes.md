@@ -1,5 +1,18 @@
 ## Virtual Private Cloud (VPC)
 
+### VPC Sizing and Structure
+VPC Sizing and Structure is about designing an invidual IP plan for your organization and it includes designing the networking within that plan AWS VPC.
+A VPC is essentially a private network inside the AWS. When designing a VPC the first and important thing to decide is the IP range for the VPC network i.e. the VPC CIDR.
+It critically important to figure out in advance, what IP range the VPC would use even if that range is made up of multiple smaller ranges. It is critically important because
+it is not easy to change later and as an architect is would save you a world of pain down the line if you get it right from the begining
+
+![image](https://user-images.githubusercontent.com/33827177/148704989-a86260ca-1f89-489e-9f89-89ceca2da359.png)
+
+You need to consifder other networks you will use or the nodes in your VPC would interact with..Overlapping or duplication of IPs would make network communication difficult. So
+choosing wisely is important. So be mindful of IP ranges other VPC, CLoud environments, On-premises, Partners and Vendors use.
+
+VPC Structures need to be figured out as well. For a given IP range it will be broken down further like into  Web tier, database tier, application tier (Tiers separate application components and allow different security policies to be applied).
+
 ### Networking Refresher
 
 #### IPv4 - RFC 791 (1981)
