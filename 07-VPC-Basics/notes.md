@@ -200,10 +200,13 @@ An example:
 
 - 3 regions in US, Europe, Aus (5) x 2 - assume 4 AWS accounts
 - Total of 40 ranges
+
 ![image](https://user-images.githubusercontent.com/33827177/144335118-d10a6837-5931-4e76-8a4f-164aa1301006.png)
 
 VPC services run from within subnets, not directly from the VPC
+
 ![image](https://user-images.githubusercontent.com/33827177/144335320-88f68621-7c23-493a-aa5e-430fd640cfa2.png)
+
 ![image](https://user-images.githubusercontent.com/33827177/144335864-2f049faf-ea91-463d-ab0c-3945c42ae755.png)
 
 #### How to size VPC
