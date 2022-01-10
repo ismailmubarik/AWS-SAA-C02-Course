@@ -13,6 +13,49 @@ choosing wisely is important. So be mindful of IP ranges other VPC, CLoud enviro
 
 VPC Structures need to be figured out as well. For a given IP range it will be broken down further like into  Web tier, database tier, application tier (Tiers separate application components and allow different security policies to be applied).
 
+### Case Study
+
+![image](https://user-images.githubusercontent.com/33827177/148705034-a3153be5-73a1-4f9d-b536-e43ea8d5cea5.png)
+
+We wil have to avoid the IP ranges already used by Animals for life network because our network would need to communicate with it. That is the IP ranges 192.168.0/24, 10.0.0.0/16, 172.31.0.0/16 is out of bounds. Besides that we cannot use the IP ranges for London, New York, and Seattle Office. Additonally, the GCP pilot for previois cloud pilot had a range of 10.128.0.0 --> 10.255.255.255 will also not be used.
+
+![image](https://user-images.githubusercontent.com/33827177/148705221-13a1dd29-1f82-4b72-b529-e42793ebc3a9.png)\
+
+Besides that the Azure network is using the same IP address range that the default AWS VPC uses i.e. 172.31.0.0/16. So we can't use the AWS default VPC IP
+
+### More Considerations
+
+Limit on VPC sizing in AWS: A VPC can be at the smallest a /28 network meaning 28 bits for network and 4 for IPs 
+![image](https://user-images.githubusercontent.com/33827177/148705357-8e39db6b-dcfb-4f1d-8f51-fcde37ea6a86.png)
+
+Try to avoid 10.0 and 10.1 in fact anything from 10.0 to 10.10. We cant use 10.128. to 10.255 because that is usually used by Google Cloud. 
+A good idea is to start from 10.16. So we have a good range from 10.16. to 10.127 inclusive which we can use to create our network.  
+
+![image](https://user-images.githubusercontent.com/33827177/148706085-3c06365f-1fe4-45bb-aef3-a6375b99971d.png)
+
+How many IP ranges a business would require can be based on how many AWS regions your applicaiton would operate it. Be cautious and consider the maximum number of regions the business could operate in and then add more as a buffer.
+
+### VPX Sizing
+
+![image](https://user-images.githubusercontent.com/33827177/148706256-4af4eb3b-cb66-4687-849a-a40ef7aebb9f.png)
+
+You can't just use a VPC to launch services into in AWS. Services uses subnets which is where IP addresses are allocated from. VPC services run from within subnets not directly from the VPC. Since a VPC is located in AZs. The first decision we have to make is that how many AZs your VPC will use. This decison impacts High Availibility and Reselience and  this depends somewhat on the Region the VPC is in because some Regions are limited in the number of AZs they have. Some have 3 some have more.
+.
+A good trick is to choose at least 3 caz it will work anywhere and then use 1 spare. So use 4 AZs. This means we will have to split the VPC into at least 4 smaller networks. So for example, if we started with /16s we will 4 /18s.
+
+![image](https://user-images.githubusercontent.com/33827177/148707058-26d8650b-30d9-4b82-a7a0-6620ff391a17.png)
+
+In addition we have tiers. A good idea is to use 4 tiers inside each network of the AZ. Now each Tier will have its own subnet in each availibity zone. So a total of 16 subnets.
+(i.e. 4 Webm App, DB, and Spare subnets). So it means if we chose a /16 IP range for the whole VPC then each of the 16 subnets would need to fit into the /16 VPC. A /16 VPC split into 16 subnets results in 16 smaller network ranges of /20 (Remember each time the /16 prefix is increased by 1 it creates 2 networks of half sizes. So a /20 would create a 16 subnets of 16th the size of original VPC.
+
+Now that we know that we need 16 subnets we can start with with a /17 VPC. Then each subnet would /21. Or we can start with /18 and then each subnet would /22.
+
+https://github.com/acantril/aws-sa-associate-saac02/blob/master/07-VPC-Basics/01_vpc_sizing_and_structure/A4L_IPPlan.pdf
+
+### Proposal
+
+![image](https://user-images.githubusercontent.com/33827177/148707272-777d2267-ba60-45e4-94f9-f3575ccd6a72.png)
+
 ### Networking Refresher
 
 #### IPv4 - RFC 791 (1981)
@@ -226,7 +269,7 @@ will get get public DNS hostnames.
 
 ### VPC Subnets
 
-This is what services run from inside VCPs.
+This is what services run from inside VPCs.
 
 AZ Resilient subnetwork of a VPC. This runs within a particular AZ.
 
