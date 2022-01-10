@@ -218,14 +218,27 @@ Taking a /16 subnet and splititng it 16 ways will make a /20
 
 ### Custom VPC
 
+![image](https://user-images.githubusercontent.com/33827177/148708817-cf30641a-fd2e-41fe-8cfe-fcb36fdb1b28.png)
+
+We will also be creating an Internet Gateway which will give resources in the VPC public access. We also be creating NAT Gateways private instances outgoing only access. We also be creating a Bastion Host which lets us connect securely into the VPC. We also be looking to Network Access Control List (NACL) to secure the VPC as well data transfer cost for any data that moves in and around the VPC.
+
+VPCs are regionally isolated and regionally reselient. Meaning a VPC is created in a region and it operates from all of the AZs in that region. It lets you create isolated networks in AWS. Meaning even in a single region you can have multiple isolated networks.
+
+Default VPC setup by AWS have the same static structure i.e. 1 subnet per AZ using the same IP address ranges and require no configuration. Custom VPC are the exact opposite.
+Custom VPC also Hybrid Networking.
+
+You can pick Default or Dedicated Tenancy Model: This control whether the resources created in the VPC have shared hardware or dedicated
+
+![image](https://user-images.githubusercontent.com/33827177/148709346-c4ab33d7-5a1e-4dae-8698-a7e8b4613d22.png)
+
 - Regional Service - All AZs in that region
 - Allows isolated networks inside AWS
 - Nothing IN or OUT without explicit configuration
 - Flexible configuration - simple or multi-tier
 - Allow connection to other cloud or on-prem networking
 - Default or Dedicated Tenancy
-  - Default allows on a per resource decision later on
-  - Dedicated locks any resourced created in that VPC to be on dedicated
+  - Default allows on a per resource decision later on when you provision resources as to whether is goes on Dedicated Hardware or Shared Hardware.
+  - Dedicated locks any resourced created in that VPC to be on dedicated always! Meaning its locked in to be Dedicated Always
   hardware which comes at a cost premium.
   - Should pick default most of the time
 
