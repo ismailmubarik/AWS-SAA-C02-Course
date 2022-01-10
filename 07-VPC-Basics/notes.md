@@ -227,8 +227,9 @@ We will also be creating an Internet Gateway which will give resources in the VP
 
 VPCs are regionally isolated and regionally reselient. Meaning a VPC is created in a region and it operates from all of the AZs in that region. It lets you create isolated networks in AWS. Meaning even in a single region you can have multiple isolated networks.
 
-Default VPC setup by AWS have the same static structure i.e. 1 subnet per AZ using the same IP address ranges and require no configuration. Custom VPC are the exact opposite.
-Custom VPC also Hybrid Networking.
+Nothing is allowed IN or OUT of a VPC without explicit configuraiton. Its a network boundary and it provides an isolated Blast Radius. Meaning if you have a problem e.g. a resource or a set of resources inside a VPC are exploited the impact is limited to the VPC or anything connected to it...
+
+Default VPC setup by AWS have the same static structure i.e. 1 subnet per AZ using the same IP address ranges and require no configuration. Custom VPC are the exact opposite as they let you create networks with almost any configurations which can range from a simple VPC to a complex multi-tiered one. Custom VPC also support Hybrid Networking.
 
 You can pick Default or Dedicated Tenancy Model: This control whether the resources created in the VPC have shared hardware or dedicated
 
@@ -240,34 +241,32 @@ You can pick Default or Dedicated Tenancy Model: This control whether the resour
 - Flexible configuration - simple or multi-tier
 - Allow connection to other cloud or on-prem networking
 - Default or Dedicated Tenancy
-  - Default allows on a per resource decision later on when you provision resources as to whether is goes on Dedicated Hardware or Shared Hardware.
-  - Dedicated locks any resourced created in that VPC to be on dedicated always! Meaning its locked in to be Dedicated Always
-  hardware which comes at a cost premium.
-  - Should pick default most of the time
+  - ***Default*** allows on a per resource basis(decision later on when you provision resources) to go on Dedicated Hardware or Shared Hardware.
+  - ***Dedicated**** locks any resourced created in that VPC to be on dedicated always! Meaning if you choose Dedicated at VPC level then its locked in and resources will always be in on dedicated hardware
+  - Should pick default most of the time as hardware which comes at a cost premium.
 
 #### VPC Facts
 
-- Can use IPv4 Private CIDR block and public IPs
+- Can use IPv4 Private CIDR block and public IPs but the Private CIDR block is the main method of communicatio for the VPC. Use public when you want to make resources public. When you want the resources to communicate with public internet, or the AWS public zone or you want to allow connections to the resources from the public internent.
 - Allocated 1 mandatory primary private IPv4 CIDR blocks
   - Min /28 prefix (16 IP)
   - Max /16 prefix (65,536 IP)
-- Can add secondary IPv4 Blocks
+- Can add secondary IPv4 CIDR Blocks
   - Max of 5, can be increased with a support ticket
   - When thinking of VPC, it has a pool of private IPv4 addresses and can
   use public addresses when needed.
 - Another option is a single assigned IPv6 /56 CIDR block
-  - Still being matured, not everything works the same.
+  - Still being matured, not everything works the same level of features as it does for IPv4
   - With increasing use of IPv6, this should be thought of as default
   - Range is either allocated by AWS, or private addresses can be used
-  that are already owned.
-  - Don't have a different of private vs public, they are all routed as
-  public by default.
+  that are already owned. 
+  - IPv6 does not have the concept of private and public, they are all publicly routalbe by default as
+  public by default. But if you do use them in AWS you still have to explicitly allow connectivity to and from the public internet
 
 #### DNS
+AWS VPC also have a fully featured DNS. Provided by Route 53
 
-Provided by Route 53
-
-Available on the base IP address of the VPC + 2
+Available on the base IP address of the VPC + 2.
 
 If the VPC is 10.0.0.0 then the DNS IP will be 10.0.0.2
 
@@ -277,11 +276,13 @@ These are found in the actions area of a VPC
 - enableDnsHostnames: **Edit DNS hostnames**
   - Indicates whether instances with public IP addresses
 in a VPC are given public DNS hostnames. If this is set to true, instances
-will get get public DNS hostnames.
+will get get public DNS hostnames and viceversa.
 - enableDnsSupport: **Edit DNS resolution**
   - indidcates if DNS resolution is enabled or disabled in the VPC
   - If True: instances in the VPC can use the dns ip address. **VPC + 2**
   - If False this is not available
+
+If in the world or real exam there is a scenario where you have issues with DNS, these two should be the settings and Turn ON/OFF as appropriate.
 
 ### VPC Subnets
 
