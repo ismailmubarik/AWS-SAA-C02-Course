@@ -286,45 +286,59 @@ If in the world or real exam there is a scenario where you have issues with DNS,
 
 ### VPC Subnets
 
-This is what services run from inside VPCs.
+This is what services run from inside VPCs. They add structure, functionality and reselience to VPC.
+
+![image](https://user-images.githubusercontent.com/33827177/148855684-1c348b55-8290-4a1a-a0eb-b3f91da93bb3.png)
+
+This is where we will start which is basically a VPC skeleton. And the goal is to turn the above into what we have given below:
+
+![image](https://user-images.githubusercontent.com/33827177/148856162-bea26fac-4531-4382-8e3b-e4d39ebad790.png)
+
+You will notice that the Web Tier subnets are blue whereas they were green in the figure before that. That is because the Web Tier subnets are Private subnets right now. In
+AWS blue stands for Private and Green for Public subnets. This is because subnets in AWS VPC start of as private and they need to be configured to become public.
+
+***Exam PowerUp***
 
 AZ Resilient subnetwork of a VPC. This runs within a particular AZ.
 
 Runs inside of an AZ. If the AZ fails, the subnet and services also fail.
 
-We put different components of our infrastructure into different AZs.
+We put different components of our infrastructure into different AZs. So if the AZ fails only that component like Web, Database, etc. fail...
 
-1 subnet can only have 1 AZ
-1 AZ can have zero or many subnets
+***1 subnet can only be only in 1 AZ
+1 AZ can have zero or many subnets***
 
-IPv4 CIDR is a subset of the VPC CIDR block.
+A subnet by default has IPv4 networking and is allocated and IPv4 CIDR
+This IPv4 CIDR is a subset of the VPC CIDR block.
 
 Cannot overlap with any other subnets in that VPC
 
-Subnet can optionally be allocated IPv6 CIDR block
-(256 /64 subnets can fit in the /56 VPC)
+Subnet can optionally be allocated IPv6 CIDR block as long as the VPC is also enabled for IPv6
+(The range that is allocated for individual subnets is /64 range and it is a subset of /56 VPC. /56 can have 256 /64 subnets)
 
-Subnets can communicate with other subnets in the VPC by default.
+Subnets can by default communicate with other subnets in the VPC by default.
 
 #### Reserved IP addresses
 
 There are five IP addresses within every VPC subnet that you cannot use.
 Whatever size of the subnet, the IP addresses are five less than you expect.
 
-10.16.16.0/20 (10.16.16.0 - 10.16.31.255)
+Lets assume that the subnet we are talking about is 10.16.16.0/20 (Range: 10.16.16.0 - 10.16.31.255 (So a total of 16 IPs)
 
-- Network address: 10.16.16.0
+- Network address: 10.16.16.0 --> This isn't just true for AWS its true for any IP network
 - Network + 1: 10.16.16.1 - VPC Router
 - Network + 2: 10.16.16.2 - Reserved for DNS
 - Network + 3: 10.16.16.3 - Reserved for future AWS use
-- Broadcast Address: 10.16.31.255 (Last IP in subnet)
+- Broadcast Address: 10.16.31.255 (Last IP in subnet) (Broadcast is not supported inside a VPC but nevertheless the 255 address is reserved. 
 
-Keep this in mind when making smaller VPCs and subnets.
+Keep this in mind when making smaller VPCs and subnets. Because the subnet has a total of 16 IPs but only 11 are available
 
 VPC has a configuration object applied to it called DHCP Option Set.
 This is how computing devices recieve IP addresses automatically. There is
 one option set applied to a VPC at one time and this flows through
 to subnets.
+
+![image](https://user-images.githubusercontent.com/33827177/148858360-59165729-bda7-43a4-b4b9-8e4dbb445805.png)
 
 - This can be changed, can create new ones, but you cannot edit one.
 - If you want to change the settings
@@ -332,7 +346,7 @@ to subnets.
   - Change the VPC allocation to the new one
   - Delete the old one
 
-Can also define
+On every Subnet you can also define 2 different IP allocation options:
 
 - Auto Assign IPv4 address
   - This will create a public IP address in addition to their private subnet
@@ -342,14 +356,16 @@ Can also define
 These are defined at the subnet level and flow down.
 
 ### VPC Routing and Internet Gateway
+The Internet Gateway within the VPC enables communication from and to the VPC from the AWS Public Zone and the Public internet.
 
-VPC Router
+A VPC Router is a highly available device which is present in every VPC both default and custom. It moves traffic from and to VPC.
 
 Highly available device available in every VPC which moves traffic from
 somewhere to somewhere else.
 
-Router has a network interface in every subnet in the VPC. **network + 1**
-Routes traffic between subnets.
+Router has a network interface in every subnet in the VPC. **network + 1** address of the subnet.
+By default Routers withou any custom configurations only routes traffic between subnets. For example, if an EC2 instance in one subnet wants
+to communicate to another node in another subnet, the VPC router will route the traffic.
 
 Controlled by 'route tables' defines what the VPC router will do with traffic
 when data leaves that subnet.
@@ -363,7 +379,23 @@ associated at a time, but one route table can be associated by many subnets.
 
 #### Route Tables
 
-The higher the prefix, the more specific the route, thus higher priority
+![image](https://user-images.githubusercontent.com/33827177/148867677-cd2100f5-a491-4ad9-94f7-deff1306102a.png)
+
+A route table is just a list of routes. When traffic leaves a subnet that the a route table is associated with, the VPC router reviews the IP packet and looks for the destination address. It looks at the Route Table and it identifies all of the routes which match the destination address. The destination field on the route table can match a 
+exactly 1 specific IP address i.e. an IP with /32 prefix (Remeber the higher the prefix the higher the priority). The destination can also be a network match meaning a whole network of which an destination IP is a part. It can also be a default route. i.e. 0.0.0.0/0 destination. If traffic packets leaving a subnet has a destination which matches exactly 1 IP, then it is selected. If multiple routes match meaning /32 IP match or a /16 network match and there is of course 0.0.0.0/0 match then the prefix is used a priority i.e. the higher prefix one is selectted.
+
+Once a single field in a route table is selected i.e. the  route with the highest priority, the router forward the traffic to that destination which is determined by the target field on the route. The target field will either point at the AWS Gateway or will say 'Local' (destination is in the VPC itself in which case the VPC will direct the traffic to the destination directly).
+
+All route tables have at least one route i.e. the local route which matches the VPC CIDR range and it lets the VPC router know that the any packet with IP destination within the CIDR range is a local IP and hence the packets can be delivered directly.
+
+***Exam PowerUp***
+A route table are attached to Zero or more subnets. A subnet has to have a route table. Its either the VPC's Main Route Table or a custom one.
+
+The local routes can never be updated. They always take priority. THey cannot be changed or edited. They match the VPC CIDR range. They are exception to the rule according to which the more specific/higher the IP prefix is the more priority it is given. Local route always take priority.
+
+If the VPC is also IPv6 enabled, they it will also another local route matching the IPv6 CIDR range.
+
+The higher the prefix, the more specific the route, thus higher priority. 
 
 When target says **local** that means the VPC can route to the VPC itself.
 
@@ -371,34 +403,47 @@ Local routes always take priorty and can never be updated.
 
 #### Internet Gateway
 
-Regional resilient gateway attached to a VPC.
+Regional resilient gateway attached to a VPC. You do not need an internet gateway per availibility zone. It is regionally resilient by design and one IGW will cover all the AZs which they VPC is using
 
 DO NOT NEED one per AZ. One IGW will cover all AZ's in a region
 
-1 VPC can have no IGW or it can have 1 IGW
+1 VPC can have no IGW which would make it entierly prviate or it can have 1 IGW
+
+![image](https://user-images.githubusercontent.com/33827177/148868126-6867b245-ae76-4fdc-bf42-13480fee0e5e.png)
 
 A IGW can be created and attached to no VPC, but it can only be attached
-to one VPC at a time.
+to one VPC at a time at which point it is valid in all the AZ that the VPC uses.
 
-Runs from within the AWS public zone
+The IGW Runs from the border of the VPC and the AWS public zone
 
-It is what allows gateway traffic between the VPC and the internet or AWS
+It is what allows Gateway traffic between the VPC and the internet or AWS
 Public Zones (S3, SQS, SNS, etc.)
 
-It is a managed gateway to AWS handles the performance.
+It is a managed gateway so AWS handles the performance and from your perspective it simply works.
 
 #### Using IGW
 
+![image](https://user-images.githubusercontent.com/33827177/148869295-7fdace63-a018-44d5-8585-c21f404b79bd.png)
+
+Once an IGW is created and attached to VPC it is available for use inside the VPC and we can use it as a target in the route tables. We then create a custom route table and attach it with the Web subnet (Note: We have different subnets like Web, App, etc.). Then we add IPv4 and IPv6 default routes to the route table with the target being the IGW. And finally we configure the subnet to allocate IPv4 and IPv6 (optional) addresses be default. 
+At the end of the above steps, the subnet is now classified as a public subnet.
+
+
+***Exam Scenario***
 In this example, an EC2 instance has:
 
 - Private IP address of 10.16.16.20
 - Public address of 43.250.192.20
 
-The public address is not public and connected to the EC2 instance itself.
+![image](https://user-images.githubusercontent.com/33827177/148869744-3c0d769c-0319-4386-9d15-2eeb97f0fbf7.png)
+
+***The public address is not public and not really connected to the EC2 instance itself. 
+The EC2 instance or any node within a subnet is never aware of its public IP. Don't fall 
+for exam questions that tries to convince you otherwise***
 Instead, the IGW creates a record that links the instance's private IP
 to the public IP. This is why when an EC2 instance is created it only
-sees the private IP address. This is IMPORTANT. For IPv4 it is not configured
-in the OS with the public address.
+sees the private IP address. This is IMPORTANT. ***For IPv4 it is not configured
+in the OS with the public address.***
 
 When the linux instance wants to communicate with the linux update service,
 it makes a packet of data.
@@ -417,8 +462,10 @@ pushes that packet on the public internet.
 On the return, the inverse happens. As far as it is concerned it does not know
 about the private address and instead uses the instance's public IP address.
 
+![image](https://user-images.githubusercontent.com/33827177/148870202-395aa6f2-d34a-4c3d-8b05-ae47869dedf9.png)
+
 If the instance uses an IPv6 address, that public address is good to go. The IGW
-does not translate the packet and only pushes it to a gateway.
+does not translate the packet and only pushes it to an internet server and then back again.
 
 #### Bastion Host / Jumpbox
 
@@ -432,7 +479,12 @@ Used as a management point or as an entry point at a private VPC.
 
 This is an inbound management point. Can be configured to only allow
 specific IP addresses or to authenticate with SSH. It can also integrate
-with your on premise identification service.
+with your on premise identification service. You can configure them exactly
+how you need but they are generally the only entry point to a highly secure
+VPC.
+
+Historically, they were the only way to manage private EC2 instance. There are now
+alternative ways to do that now.
 
 ### Network Access Control List (NACL)
 
