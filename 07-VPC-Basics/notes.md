@@ -501,16 +501,12 @@ There are 2 things to consider when dealing with Firewall rules:
 
 A Stateless Firewall doesn't understand the state of connections. It seas the connection from Client to the Server and the Response Connections from Server to the Client as two individual parts. And to allow or deny a connection/request you need two rules.
 
-![image](https://user-images.githubusercontent.com/33827177/149037112-806989ee-43d5-44f6-a495-be4ed65910d0.png)
-
 Two important points about Stateless Firewalls:
 
 1. For Any Servers that accept connections and initiate connections (common for servers that accept connections from clients but also need to do software updates) you will need two rules for the inbound and outbound connections and they will need to be inverse of each other. And Similarly, there will be two rules for connections between the Server and the Update Server
 
 
 3. The request connection to a server will always be to a well know port but the request connection to the client will always be to an unknown ephemeral port. And since the firewall is stateless and it has no way to know which port is used for the response, you will therefore have to allow a full range of ephemeral ports for respone connections.
-
-![image](https://user-images.githubusercontent.com/33827177/149037214-527861fa-4122-47d7-9794-7cab90a0b8a6.png)
 
 For Stateful Firewalls you don't need to allow a a full range of ephemeral ports for respone connections because the Firwall can identify which post is being used and allow it based on it being a response to a request.
 
