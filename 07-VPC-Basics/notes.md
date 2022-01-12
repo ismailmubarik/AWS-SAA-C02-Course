@@ -798,7 +798,9 @@ Uses Elastic IPs (Static IPv4 Public)
 - Don't change
 - Allocated to your account
 
-AZ resilient service (HA in that AZ)
+![image](https://user-images.githubusercontent.com/33827177/149058434-87a6a56e-42db-41d7-bc1f-e0c9de6c8a00.png)
+
+NATGW are AZ resilient service (HA in that AZ). THEY ARE NOT REGIONALLY RESILIENT. So you need a NATGW in each AZ in the above example. An IGW in comparison Regionally Resilient.
 
 For a fully region resillient service, you must deploy
 one NATGW in each AZ
@@ -813,6 +815,13 @@ NATGW is highly available in **one** AZ. If that AZ fails, there is
 no recovery. You must deploy one in each AZ you use for region resillience.
 
 #### Nat Instance vs NATGW
+
+NAT used to be provided by NAT instances that are just EC2 instances to provide NAT functionality. It essentially all data on its NIC when that NIC is not either the source or destination. So if NAT instance is running it will possibly receive some data with source other than itself meaning some other instance or resource in the VPC and the destination will be a host on the internet. So by default the traffic would be dropped.
+***If you need to allow an EC2 instance to function as a NAT instance, then you need to disable a feature called 'Source/Destination Checks'--> Can be disable using the Console UI, the CLI or the API.***
+
+***Exam Power Up:*** If you ever need to use a NAT instance, by default an EC2 instance filters all the traffic it sends or receives.
+
+![image](https://user-images.githubusercontent.com/33827177/149058759-db882b80-2eb4-48c3-b78b-fc9b12e1fc00.png)
 
 NATGW should be the default for most situations.
 NATGW cannot do port forwarding or be a bastion server.
