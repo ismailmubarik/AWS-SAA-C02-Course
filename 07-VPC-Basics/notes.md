@@ -639,6 +639,44 @@ before another rule with a higher rule number.
 
 ### Security Groups
 
+Security Groups (SGs) are another security feature of AWS VPC ... only unlike NACLs they are attached to AWS resources, not VPC subnets.
+
+SGs offer a few advantages vs NACLs in that they can recognize AWS resources and filter based on them, they can reference other SGs and also themselves.
+
+But.. SGs are not capable of explicitly blocking traffic - so often require assistance from NACLs
+
+Security Groups operate above the NACL on the OSI Layer so they have more features.
+
+SGs are not attached to instances or subnets butr rather to Elastic Network Insterfaces (ENIs). So even if you see that a SG is being attached to an instance
+what is actually happening is that it is being attached to the Network Interface of that instance
+
+![image](https://user-images.githubusercontent.com/33827177/149043496-ffc44657-8c75-4b7d-85cf-dc4eccaf6084.png)
+
+We have a public subnet containing a EC2 instance with an ENI. Consider a SG as sth that surrounds a NI. It has inbound and outbound rules like a NACL.
+
+![image](https://user-images.githubusercontent.com/33827177/149044418-837df106-ab3c-4cdf-828d-f859e6890e8a.png)
+
+SGs cannot explicitly block traffic. For example, in the scenario above if you are allowing 0.0.0.0/0 to access the instance on TCP port 443 meaning the whole IPv4 internet. Then you can't block anything specific. What if Bob is a Bad actor but you can't block him since you can't explicitly Deny an IP.
+
+Security Groups are capable of using Logical Referencing. 
+
+A VPC with a public WEB subnet and a prviate APP subnet. Inside the Web Subnet is the Catagram Web Instance and inside the APP subnet is the application backend instance.
+Both of these are protected by SGs. i.e. A4L/APP & A4L/WEB.
+
+![image](https://user-images.githubusercontent.com/33827177/149045617-f19b2537-2088-4075-afd9-7118e33a73cd.png)
+
+To enable communication b/w APP and WEB we reference the WEB SG. The APP inbound rule allows the port 1337 but it references as the source a Logical resource i.e. the A4L-Web SG. Using a logical resource in this way actually referencesanything which has the SG asociated with it. So this means that anything which has A4L-WEB attache to them can access whatever has A4L-APP attache to them using TCP port 1337.
+
+This means we don't have to worry about IPs or CIDR ranges. Another benefit is that it scales really well. So any instances added to APP or WEB subnet will automatically have the SG assigned automatically.
+
+![image](https://user-images.githubusercontent.com/33827177/149045746-cc4a0e9a-92b5-41e0-99fd-5d492e1e4684.png)
+
+![image](https://user-images.githubusercontent.com/33827177/149046410-53b18086-0e99-4ea4-9e47-a59e5a56c830.png)
+
+Logical Referencing allows even more functionality. They allow self-referencing. For example, we have a private subnet with an ever changing number of APP instances. Right now its 3 but might be 3, 30 or 1. We can create a SG that allows incoming communication Port 1337 from the Web SG (So the Web Instance can connect). But it also has a self-referential rule which allows all traffic. Sof if this rule is attached to all instances can receive all traffic from all other instances in the SG. IP changes are handled automatically which is useful if the instances are within an AutoScaling Group that is provisioning/terminating resources based on the load. Also simplifies intra-app communications.
+
+Important to remeber that while NACL allows to explicitly deny traffic SGs dont. So you would generally, use to block traffic from Bad actors and use SGs to allow traffic to your VPC based resources because of its capability to use Logical Based and Self Referencing.
+
 An EC2 instance has one more more attached network interfaces.
 The network interfaces and not the IP itself is given the private ip addresses.
 
