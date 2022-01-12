@@ -823,5 +823,29 @@ NAT used to be provided by NAT instances that are just EC2 instances to provide 
 
 ![image](https://user-images.githubusercontent.com/33827177/149058759-db882b80-2eb4-48c3-b78b-fc9b12e1fc00.png)
 
-NATGW should be the default for most situations.
-NATGW cannot do port forwarding or be a bastion server.
+Architecturaly NAT instances and NATGWs are kind of the same. Both need apublic IP and need to run in a public subnet. They both need a functional IGW.
+
+NATGW should be the default for most situations as a NAT EC2 instance is not recommended by AWS. But there are scenarios where you might consider using a NAT instance:
+
+***Exam Powerup:***
+
+Performance Criteria:
+If you value availibility, Bandwidth, low maintenance and high performance then use NATGW. Its custom design to do Network Address Translation and it scales well
+NAT instance is limited by the performance of the EC2 instance it is running on. Since it is running on a general EC2 instance it isnt able to achieve the same lelvel of performance as a NATGW. 
+
+Availibility Criteria: A NAT instance is running a single EC2 instance running inside an AZ. If the EC2 hardware, storage, netowrk, etc. fails, the NAT would fail. And it will fail if the AZ entirely fails. So A NATGW has some benefits over a NAT instance in terms of availibility. Inside a single AZ its HA. It can automatically recover. It can automatically scale. So it removes risks of outage. The only way a NATGW fails is if the entire AZ fails (So provision multiple NATGW across different AZs to ensure availibility. For max availibility one NATGW in every AZ in a public subnet).
+ 
+Cost Criteria: A NAT instance can be cheaper if cost is a consideration. At high volumes of data it can be significantly cheaper. Or at really low volume or if yours is a test VPC. You can use a Free-Tier instance for low volume or test scenarios. A NATGW scales automatically so if your data volumes increases the bill will increase automatically. But if you want to put a limit you can use a limited EC2 instance with known and low specs to contain the bills. A NATGW is also not free-tier eligible.
+
+You can connect to a NAT instance like any other EC2 instance. You can multipurpose them like using it both as a NAT instance and Bastion Host. You can also use them for port forwarding. So you can have a port on the instance externally that can be connected to over the public internet and have it forwarded onto an instance inside the VPC.
+
+***NATGW cannot do port forwarding or be a bastion server***
+
+NAT instances are just EC2 instances so you can filter traffic using the network ACL on the subnet that the instance is in or through SG associated with that instance.
+
+Important For Exam:
+***NATGW don't support SG. You can only use NACL with NATGW*** Important For Exam
+
+Any IPv6 IP can communicate directly with the AWS Public Zone and the Public Internet as long as you don't have any NACL or SGs
+
+![image](https://user-images.githubusercontent.com/33827177/149062812-d07624b8-48b3-48e9-9884-10f76c1248de.png)
