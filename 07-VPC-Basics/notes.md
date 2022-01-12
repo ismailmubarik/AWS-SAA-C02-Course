@@ -849,3 +849,11 @@ Important For Exam:
 Any IPv6 IP can communicate directly with the AWS Public Zone and the Public Internet as long as you don't have any NACL or SGs
 
 ![image](https://user-images.githubusercontent.com/33827177/149062812-d07624b8-48b3-48e9-9884-10f76c1248de.png)
+
+### SSH Agent Forwarding
+
+![image](https://user-images.githubusercontent.com/33827177/149233801-2c67d031-5d43-4662-9890-4a902f79dd99.png)
+
+![image](https://user-images.githubusercontent.com/33827177/149235001-1fc1a8b9-7833-40db-bccd-0ef28fa8184b.png)
+
+
