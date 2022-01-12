@@ -735,10 +735,17 @@ that boundary. If they are in the same subnet, it will not do anything
 
 ### Network Address Translation (NAT) gateway
 
-Set of different processes that can address IP packets by changing
+![image](https://user-images.githubusercontent.com/33827177/149051608-a3be5adc-26e2-4019-b3f4-8acbe580d466.png)
+
+Set of different processes that can adjust IP packets by changing
 their source or destination addresses.
 
-IP masquerading, hides CIDR block behind one IP. This is many private
+The IGW actually performs a type of NAT called Static NAT. It is how
+a resource can be allocated with a private IPv4 address and when the packet
+passes through the IGW it is given a public address and sent forth. The reverse is
+done on return. And this is how an IGW implements Public IPv4 Addressing.
+
+IP masquerading, hides entire CIDR block behind one IP. This is many private
 IPs attached to one public IP.
 
 This gives private CIDR range **outgoing** internet access.
@@ -746,9 +753,45 @@ This gives private CIDR range **outgoing** internet access.
 Incoming connections don't work. Outgoing connections can get a response
 wrapped together, but incoming cannot initiate.
 
+Two ways to provide NAT:
+
+1. Configure an EC2 instance to provide NAT 
+2. Managed NAT Gateway by AWS
+
+So how do we enable the instance inside the Private APP subnet to peform certain functions that requires access to public newtorking for example, software updates. We can make the subnet public but we might now want to do architecturally. We can host a software update server inside the VPC. but that comes with an admin overhead.
+
+![image](https://user-images.githubusercontent.com/33827177/149052901-a7840334-f373-4d18-b9a4-0464aa659daa.png)
+
+NAT offers a 3rd option. We provision a NAT inside a public subnet. A public subnet allows public IP addresses. The public subnet has a default Route Table attached to it which provides default public version IPv4 routes pointing the IGW. So the NAT Gateway has a public IP that is routable across the public internet and so it is able to send data out and get data back in.
+The privte subnet can also have a Rout Table but it can be different than the Public Subnet one. We can configure the Route Table in the Private Subnet to point at the NAT Gateway.
+
+Lets say instance one generates some data e.g. it is looking for software updates. It has a source and destination IP. The packet is routed to the NAT Gateway (NATGW). The NATGW makes a record of this data packets. It source the destination the packet is for. The source IP address of the instance sending the packet and other details lie ports, etc. that will help it identify this specific communication in the future. All this data is stored in a Translation Table. The NATGW then changes the sources address of the packet to its own address (i.e. the source address of NATGW). Now if this was a network other than AWS it would have instead assigned a public IP address to it. But nothing inside an AWS VPC has a public IP directly attached to it. This function is performed by the IGW. So the NATGW has a default route pointing at the IGW. And so the packet is sent to the IGW by the VPC router. The IGW knows that the packetis from the NATGW and the NATGW has a public IPv4 IP associated with it. So the IGW changes the source address to the NATGW's public IPv4 address.
+
+![image](https://user-images.githubusercontent.com/33827177/149054267-e580f067-ec12-4191-b826-11ff851d4fd8.png)
+
+![image](https://user-images.githubusercontent.com/33827177/149054311-4cc22b96-6934-47b1-a968-493f29d6a503.png)
+
+![image](https://user-images.githubusercontent.com/33827177/149054173-2b6fbf26-5c3c-43be-8602-d0b515a00655.png)
+
+The job of the NATGW is to allow multiple private IPs to masquerade behind a single IP.
+
+A NATGW uses a special type of IPv4 address called Elastic IPs. These are IPv4 IPs that are static as in they don't change. These IP addresses are allocated to your account in a region. 
+
+NATGW are AZ resilient. They can recover from a HW failure inside an AZ but if an AZ entirely fails then the NATGW fails.
+
+![image](https://user-images.githubusercontent.com/33827177/149054912-8ef495fc-00a4-477e-b679-8a704e7a19c8.png)
+
+NATGW can get costly if you have one in each AZ of a region. So its important to think about optimal VPC design.
+
+You can have multiple NATGW and split your subnets across multiple provisoned products in the same AZ.
+
+For NATGW you are chared an houryly rate multiplied by the number of NATGW you have. 
+
+***Exam PowerUp***: They have 2 charges. Hourly charges (Partial hours are counted as full hours) i.e. 4 c/hr. There is also a data processing charge i.e. 4 c/GB. 
+
 #### Key facts
 
-Must run from a public subnet to allow for public IP address
+Must run from a public subnet to allow for public IP address. They can be used for whatever you want until they are de-allocated.
 
 Uses Elastic IPs (Static IPv4 Public)
 
