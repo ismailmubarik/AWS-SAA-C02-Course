@@ -521,29 +521,48 @@ Network Access Control Lists (NACLs) are a type of security filter
 All VPCs have a default NACL, this is associated with all subnets of that VPC
 by default.
 
+NACLs are stateless which means they don't know if traffic is request or response, its all about direction.
+
+NACLs acan explicitly ALLOW or DENY traffic.
+
+![image](https://user-images.githubusercontent.com/33827177/149039434-eea77e41-891b-4605-a3ec-6ebc7065a5a4.png)
+
+Rules are processed in order .First the NACL determines if inbound or outbound rules apply. Then it starts from
+the lowest rule number, it evaluates traffic against each indvidual rule until there is a match. Then rule is either
+allowed or denined based on that rule and then processing stops. Its important to understand that if there is a DENY
+and ALLOW rule which matches the same traffic but if the DENY rule comes first then the allow rule might never be processed
+  
 NACLs are used when traffic enters or leaves a subnet.
 Since they are attached to a subnet and not a resource, they only filter
 data as it crosses in
 
-If two EC2 instances in a VPC communicate, the NACL does nothing because
-it is not involved.
+![image](https://user-images.githubusercontent.com/33827177/149039776-c2db4f93-cf0b-464e-b50f-be1b07e0fb07.png)
 
-NACLs have two sets of rules
+Lets say Bob initiates a connection to the WEB server. If we have NACL around the WEB subnet we will need inbound and outbound rule on the WEB NACL.
+The Web Server might want to communicate witht the APP server. And in this case the traffic will cross two TCP subnet boundaries. The Web subnet and
+the APP subnet boundary. So we are going to need an Outbound rule on the Web Outbound boundary and inbound rule at the App subnet boundary. For the response
+from the APP to the WEB will also need two rules because it crosses two subnet boundaries (Outbound Rule on the App Subnet Boundary and Inbound Rule on the Web
+Subnet boundary).
 
-- inbound rule set
-- outbound rule setset
+![image](https://user-images.githubusercontent.com/33827177/149040524-01f2e4bb-1e3f-488a-9c02-8f9d3fa1884b.png)
+
+VPC has a Default NACL. All traffic is allowed because because it has a default Allow and a Deny. So they aren't used and they do nothing.
+
+![image](https://user-images.githubusercontent.com/33827177/149040769-9d312e6c-ce08-48ad-b05c-80f78a38d542.png)
+
+![image](https://user-images.githubusercontent.com/33827177/149040809-c5ddc02b-5af7-4df9-965f-8fd1ee8d02f1.png)
+
+If two EC2 instances in a VPC communicate, it is not involved because the NACL is not used for intra subnet communications.
+
+NACL are not aware of any logical resources. They only allow or deny IPs/CIDR, Ports and protocols.
+
+![image](https://user-images.githubusercontent.com/33827177/149041232-a56cc341-028f-48bc-afc9-eb7240d43a47.png)
 
 You are trying to ssh into the bastion host
 
 - the traffic leaves the machine
 - crosses the internet
 - uses **inbound** rules
-
-When a specific rule set has been called, the one with the lowest
-rule ## first.
-
-As soon as one rule, inbound or outbound, then the processing stops for
-that particular piece of traffic.
 
 The action can be for the traffic to **cross** or **deny** the traffic.
 
