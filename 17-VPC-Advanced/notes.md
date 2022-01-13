@@ -2,40 +2,83 @@
 
 ### VPC Flow Logs
 
-Capture packet metadata, not packet contents. Things like source IP,
-destination IP, and packet size. Anything which could be observed
-from the outside of the packet.
+Capture packet metadata, not packet contents. Things like source and
+destination Is, source and destiantion ports, and packet size, etc.. Anything which could be observed
+from the outside of the packet. Anything related to the flow of data through a VPC. If you need to capture 
+packet data you might want to install a Packet Sniffer on an EC2 instance.
 
-Capture data at various different monitoring points.
+![image](https://user-images.githubusercontent.com/33827177/149243531-562be8c4-e865-42e3-9f66-d78912f5b0a1.png)
 
-- VPC : all interfaces in that vpc
-- Subnets : interfaces in that subnet
-- Interface directly
+Flow Logs works by attaching virtual monitors within a VPC. These can be applied at three different levels:
+
+- VPC Level : Monitors all ENIs in every subnet within in that VPC
+- Subnets Level: Monitors ENIs in that subnet
+- Interface Level: Monitors ENIs directly
 
 VPC flow logs are not realtime.
 
-Desination can be S3 or CloudWatch logs.
+Flow Logs capture what are called Flow Log Records.
+
+Desination can be S3 or CloudWatch logs. Each of this comes with a trade-off.
+If you use S3 you are able to access the Flow Logs directly and  integrate it with 
+a 3rd-party monitoring solution. If you use Cloudwatch Logs you can stream that data
+into different locations and you can access it either promgmatically or using CW Logs console.
+You can use Athena to query Flow Logs stored in S3 using SQL like language.
+
+![image](https://user-images.githubusercontent.com/33827177/149243787-42cb89c6-9ce9-4344-bc43-b4fbdc257926.png)
+
+Visually the flow log works as show above. We have a VPC with a private (Blue) a subnet and public (Green) subnet. Our Catagram 
+application server is running in the public subnet. The application's database is in the private subnet which has a primary instance
+and a duplicated standby instance. Flow Logs can be at VPC, Subnet, and Interface levels.
 
 Childs of interfaces inherit the flow low monitoring from higher groups.
 
 The packet will always have source followed by destination.
 
+![image](https://user-images.githubusercontent.com/33827177/149244723-76700b8c-da3b-49ac-ab70-088caf8a36db.png)
+
+Shown above are 2 Flow Log Records. In the first one, Bob's IP address is in pink and the application servers private 
+IP is in blue. The order is always source and then destination in both the IP and port nummber. Since this is a PING
+we don't have source and destination port numbers directly after the source/destination IPs which is usually the case.
+The Highlighed 1 is a protocol number.
+The second to last item shows if traffic was accepted or rejected. This basically shows if the traffic was accepted or rejected
+(i.e. whether the traffic was blocked or not by the SG and NACL). As can be show in the first Flow Log record it was
+accepted. IF its a SG then only one line will show in Flow Log. Remember a SG is Stateful and so if anything is allowed the Response
+is automatically allowed. But if we have a NACL on the instances subnet which allows inbound but blocks outbound then it can cause a
+second line like in the case above i.e. a reject.
+If in the exam we have Flow Log Records for the same traffic flow and we have an Accept followed by a Reject then it means that
+a SG and NACL  has been used and they are restricting traffic.
+
 ### Egress-Only Internet Gateway
+
+Its a type of IGW that only allows connection initiated from inside the VPC to outside
 
 IPv4 addresses are private or public
 
 NAT allows private IPs to access public networks. It will not allow externally
 initiated connections.
 
-Using IPv6, all IPs are public.
+![image](https://user-images.githubusercontent.com/33827177/149246291-c5a894a1-d701-44d6-9fad-890495cd80a8.png)
+
+Using IPv6, all IPs are public. ***And NAT isn't usable with IPv6. and so how do
+we restrict outbound connectivity for IPv6 instances***
 
 Internet Gateway (IPv6) allows all IPs **in** and **out**
 
 Egress-only is **outbound only** for IPv6. It is exactly the same as
 NAT, only outbound only.
 
+![image](https://user-images.githubusercontent.com/33827177/149246806-62a80fc5-db51-4479-bd3a-067186f7aed4.png)
+
 To configure the Egress-only gateway, you must add default IPv6 route ::/0
 added to RT with eigw-id as target.
+
+Any Response traffic will be allowed because the Egress-Only IGW are stateful devices. What will not be allowed
+is inbound traffic.
+
+You can use a traditiona IGW for PIv4 instances with a public version IPv4 IP and IPv6 but in this case the traffic 
+will be both In bound and Outbound in a bi-directional way. If you want to restrict in bound traffic for IPv6 instances
+you need to use Egress_nly IGW like you would use NATGW for IPv4.
 
 ### VPC Endpoints (Gateway)
 
