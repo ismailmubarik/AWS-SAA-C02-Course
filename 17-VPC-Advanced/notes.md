@@ -149,33 +149,64 @@ nor through IGW
 
 ### VPC Endpoints (Interface)
 
-Provide private access to AWS Public Services
-Anything EXCEPT S3 and DynamoDB
+Provide private access to AWS Public Services. So instances that are private or inside private only VPCs
+Anything EXCEPT S3 and DynamoDB historically. But now S3 is supported. So for S3 you can use either Interface Endpoint
+or Gatewy Endpoint.
 
-These are not HA by default and are added to specific subnets.
+These are not HA by default and are added to specific subnets inside a VPC. One subnet as you know means
+one AZ. So if the AZ fails functionality provided by the Interface Endpoint inside that AZ fails.
 
 Must add one endpoint for one subnet per AZ
 
-Network access controlled via security groups.
+Since Interface Endpoints are just interraces inside the VPC you are able to use Security Groups to
+control access to that Network Interface from a networking perspective.
 
-You can use Endpoint policies to restrict what can be accessed with
-the endpoint.
+You can use Endpoint policies to restrict what can be accessed using
+the Interface Endpoint.
 
-ONLY TCP and IPv4 at the moment.
+*** Interface Enpoints currently ONLY supports TCP and IPv4 at the moment.***
 
-Behind the scenes, it uses PrivateLink.
+![image](https://user-images.githubusercontent.com/33827177/149256608-171290e9-2e7e-466e-a1f2-f5f12110ae9f.png)
 
-Endpoint provides a **NEW** service endpoint DNS
+Behind the scenes, it uses PrivateLink which is product that allows external 
+(AWS or 3rd-party) services to be injected into your VPC and be given Network
+Interfaces inside the VPC subnet. This enables instances inside private VPCs to
+access 3rd party external services
+
+Interface Endpoints primarily use DNS. Interface Endpoints are just Network Interfaces
+inside your VPC. They have a private IP within the range of the subnet.
+
+The way this works is that when you create an Interface Endpoints in particular for a particular service you get a
+new DNS name for that service. And that DNS name can be used to access that service via the interface Endpoints.
 
 e.g. vpce-123-xyz.sns.us-east-1.vpce.amazonaws.com
 
-- Endpoint : Regional DNS
-- Endpoint : Zonal DNS
+You can configure your applications to use the above given DNS name for accessing the service.
+
+Interface Endpoints are given multiple DNS names:
+
+- Regional DNS Name: Which is 1 single DNS name for whatever AZ to access the interface Endpoint. Good for HA
+- Zonal DNS Name: Which resolves to 1 specific interace within the specific AZ.
 
 Either of those two points of endpoints can be used
 
-PrivateDNS overrides the default DNS for services.
+Interface Endpoints also offers PrivateDNS and what it does is associate a  Route53 private hosted zone with you VPC.
+This private hsoted zone carries a replacement DNS record for the default service endpoint DNS name. It basically
+overrides the default DNS with a new version that points at your Interface Endpoint. This option is now enabled by default.
+And it means that your application can now use Interface Endpoints without being modified.
 
+Without using Interface Endpoints accessing a service like SNS from within a public subnet inside a VPC would work like this: The instance using the SNS
+would resolve the default service endpoint which is sns.useeast-1.amazonaws.com. It would resolve this name to a public space IP address
+and the traffic would be routed via the VPC router via the IGW and out to the SNS service.
+Private Instances would also work like this but without having access to a public IP address they wouldnt be able to get past the IGW
+
+![image](https://user-images.githubusercontent.com/33827177/149259084-92cd49a9-9cbe-41f9-94c3-2dcceef23eee.png)
+
+IF we change this architecture and add a Interface Endpoint, then if private DNS isn't used the services which continue to use the service default DNS
+would still leave the VPC via VPC routed and then the IGW. But the services which choose to use the endpoint specific DNS name, they would resolve 
+that name the interface endpoint private address
+
+Watch Again....
 ### VPC Peering
 
 Direct encrypted network link between two VPCs
