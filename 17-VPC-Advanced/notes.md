@@ -82,33 +82,70 @@ you need to use Egress_nly IGW like you would use NATGW for IPv4.
 
 ### VPC Endpoints (Gateway)
 
-Provide private access to S3 and DynamoDB.
+Provide private access to S3 and DynamoDB. Meaning they allow a private only resource inside a VPC or any resource
+inside a private only VPC to access S3 and DynamoDB. Remember S3 and DynamoDB are public services.
 
-Normally when you want to access a public service through a VPC, you
-need infrastructure to make this happen.
+Normally when you want to access a public service fomr with a VPC, you
+need infrastructure and configuration to make this happen. Meaning Normally
+this is an internet Gateway created and attached to the VPC. And then for the resources
+inside the VPC you need to grant them a public IPv4 address and an IPv6 address or use a NATGW for instances with
+private addresses to access public services.
 
-When you allocate a gateway endpoint to a subnet, a prefix list is added
-to the route table.
+A Gateway Endpoint allows you access these public services i.e. S3 and DynamoDB without implementing the infrastructure
+just mentioned.
 
-The target is the gateway endpoint.
+The way this works is that you create a Gateway Endpoint and these are created per service per region (what does it mean??).
+For example, you create a Gateway Endpoint for an S3 in us-east-1 Northern Virginia region and associate with 1 or more subnets
+in a particular VPC.
 
-Any traffic destined for S3, goes via the gateway endpoint. The gateway
-endpoint is highly available for all AZs in a region by default.
+A Gateway Endpoint does not actually go into a VPC. What happens is that when you allocate a gateway endpoint to a subnet, a prefix 
+list is added to the route table as a destination. And the target of the Prefix List is the Gateway Endpoint. A prefix List is just like what you would
+find on an normal route. But its an object, a logical entity that reprsents a service like S3 or DynamoDB
+
+Any traffic destined for S3, goes via the gateway endpoint. ***The gateway
+endpoint is highly available for all AZs in a region by default. It DOES NOT
+go into a VPC***
 
 With a gateway endpoint you set which subnet will be used with it and
-it will configure automatically.
+it will configure automatically the route on the route table for those subnets
+with these prefix lists.
 
-A gateway endpoint is a VPC endpoint object.
+A gateway endpoint is a VPC endpoint object. Repeat: It is HA. Does not go into a VPC and is highly AZ
 
-Endpoint policy is used to control what things can be accessed by the endpoint.
+Endpoint policy is used to control what things can be accessed by the endpoint. For example a particular subset
+of S3 buckets. This is an ideal solution for A private VPC and you want the instances inside the VPC to access
+certain S3 buckets only.
 
 Gateway endpoints can only be used to access services in the same region.
-Can't access cross-region services.
+Can't access cross-region services. For example, can't access S3 bucket
+in southeast-2 region from/through a Gateway Endpoint in use-east-1 regions. 
 
-S3 buckets can be set to private only by allowing access ONLY from
-a gateway endpoint. For anything else, the implicit deny will apply.
+In Summary a Gateway Endpoint supports two use cases:
 
-They are only accessible from inside that specific VPC.
+1. A private VPC and you want instances to access certain S3 or DynamoDB buckets only.
+
+S3 can be set to private only by allowing access ONLY from
+a specific gateway endpoint. For anything else, the implicit deny will apply. This will be done by
+applying a bucket policy.
+
+***Limitation of Gateway Endpoint: They are only accessible from inside that specific VPC. They are logical
+objects and you can access logical VPC created inside a VPC inside that VPC***
+
+![image](https://user-images.githubusercontent.com/33827177/149252580-d5836153-a050-4caa-92d7-3c8302862483.png)
+
+The problem with giving access to private IP addresses via the NATGW is that the resources within the private instances
+have access to public internet access eithe directly or indirectly. If you want resources inside the VPC to access certain
+S3 buckets and not the public internet then it is not possible with NATGW. 
+
+![image](https://user-images.githubusercontent.com/33827177/149253083-46abce21-97cb-40d8-8dd0-f913b12556e3.png)
+
+So if you are in a highly regulated industry for which you need to create a Private VPC with no access to public internet but
+require access to say an S3 bucket, then you need to use Gateway Endpoints. And so Gateway Endpoint will be associated with a subnet.
+A Prefix List will be added to the Route Table attached to the subnet. The private instance within the private subnet will access the
+Gateway Endpoint via the VPC router and to the S3 bucket. Note: A public IP address won't be used in this case i.e. neither through NATGW 
+nor through IGW
+
+![image](https://user-images.githubusercontent.com/33827177/149253588-9a9dafc3-804b-4290-ac5b-28632cb02fc3.png)
 
 ### VPC Endpoints (Interface)
 
