@@ -2,36 +2,74 @@
 
 ### AWS Site-to-Site VPN
 
+The quickets way to create a network link b/w an AWS environment and sth that is not on AWS (on-premises, another cloud environment or a data centre)
+
 A logical connection between a VPC and on-premise network encrypted
 using IPSec, running over the public internet.
 
-This can be full High Availability if you design it correctly
+***This can be full High Availability if you design it correctly***
 
 Quick to provision, less than an hour.
 
 VPNs connect VPCs and on-prem
 
-Virtual Private Gateway (VGW) is the target on one or more route tables
+Virtual Private Gateway (VGW) another logical gateway object is the target on one or more route tables.
+It is something you create and associate with a single VPC and is a target of one or more route tables (associatd with subnets)
 
-Customer Gateway (CGW)
+Customer Gateway (CGW). Can refer to two different things
 
-- logical configuration on AWS
-- also the thing that configuration mentions
+- logical configuration within AWS
+- also the thing that configuration represent i.e. the physical on-premises router which the VPC connects to
 
-VPN connection itself stores the config and connects the VGW and CGW
+So when you see CGW it can actually refer to any of the two above.
+
+VPN connection between the VGW and CGW itself which stores the config and is linked to VGW and CGW
+
+### AWS Site-to-Site VPN
+We have A4L VPC with three private subnets in the AZs. We have AWS Public Zone where AWS public services operate from. We have a Public Internet connected to AWS Public Zone and then the Corporate office of A4L using an IP range of 192168.10.0/24.
+Step-1 to create a VPN connecion is to gather information like the IP address range of the VPC, IP range of the on-premises network and the IP address of the physical route on the customer premises. Once we have all this information we will create a VGW and attach it to the A4L VP.
+Our physical router would have an external IP address and for this router we will create a logical gateway object i.e. CGW. This is a logical configuration entity that refences the physical router in the A4L corporate office. In this case we need to define its public IP address so that logical CGW entity matches the physical router. 
+
+![image](https://user-images.githubusercontent.com/33827177/149440312-9df113a3-439e-4989-8198-05a8c64fb47e.png)
+
+(The VGW is a HA gateway object and behind the scenes it has physical endpoints in different AZs with public IPv4 addresses. It means one end point can fail but other endpoints and hence  VGW will continue to provide service. *** But that doesn't mean that the VGW is HA ??? ***)
+
+The next step is to create a VPN connection inside AWS. There are both static and dynamic VPNs. We shown above is a static VPN. When creating a VPN you need to link it to a VGW. This means that it can use the end points which the VGW provides. We also need to specify the customer gateways that we will be using and when we do 2 VPN tunnels are created. One b/w each Endpoint and the physical on-premises router. As long at keast connection between the VPN and an Endpoint is active the connection between the VPC and the on-premise router will be active. So this a partially HA design. If one AZ on the AWS side fail the other AZ endpoint will continue work and so the conneciton will be active.
+
+A VPN tunnel is an ecnrypted channel through which data can flow between a VPC and a on-premise network.
+
+Since shown above is a static VPC we have to manually configure the VPN connection with IP addressing information. Meaning we have to tell AWS the ip range used on the on-premise corporate A4L network and we have  to configure the on-premises side so that it knows the IP range used by the AWS VPC.
+
+So why is this arhcitecture partially HA and not fully HA>? Well the fault is on the side of the onpremises network. If the physical router fails the VPC connectionf fails. So it is highly available on the customer side but not on the customer side. 
+
+So how do you make it HA? Add a redundant router with a separate inernet connection and ideally placing it in a separate building. This will creatre a separate VPN connection and the VGW will have separate endpoints in each AZ
+
+![image](https://user-images.githubusercontent.com/33827177/149440731-30d599ef-2990-4b1e-90c6-e51b1e705e29.png)
+
+***Static vs Dunamic VPN***
+The dynamic VPN uses a protocol called BGP i.e. Border Gateway Protocol. But if the customer router doesn't support BGP then Dynamic VPN cannot be supported.
+
+The benefit of the Static VPN is that it is simple and just uses IPSec and works alomost anywhere i.e. with any routers.
+But with Static VPN you are restriced on things like Load-Balancing and multi-connection failover. So if you need advanced HA or you a multiple connections, if the VPNs need
+to work with Direct Connect then you need to use Dynamic VPN
+
+With BGP AWS VPC and the routers can exchange information about their multiple links (talk to each about which networks are on the AWS side and which are on the customer side)  on the fly. In addition they can exchange information about the state of each link and adjust routing on the fly. This allows multiple links to be used at once b/w the two locations. And hence the Dynamic VPN offer a more robust and HA architecture.
+
+With Dynamic Routes you can still add routes to the route table statically. Or you can make the whole architecture dynamic by enabling Route Propagation.
 
 #### Considerations
 
-Speed Cap on VPN 1.25Gbps
+![image](https://user-images.githubusercontent.com/33827177/149442658-ad16cbb3-bc1a-4068-811c-043ed365d3b0.png)
 
-Latency Considerations - this is inconsistent because it uses the public
-internet.
+ A single VPN Connection with two tunnels: Speed Cap on VPN 1.25Gbps (This is the speed that AWS supports. The real speed will also depend on the speed at the customer side because there is an overhead of encryption and decryption (VPN uses encryption IPSec) the overhead can be significant. For exams if a speed greater than 1.25 Gbps is required then you can't use VPN.
+
+Latency Considerations - this is inconsistent because it uses the public internet. SO in exam if low latency is required then may be use Direct Connect and not VPN
 
 Cost - AWS hourly, GB out cost, data cap
 
 Setup of hours or less
 
-Great as a backup especially for Direct Connect (DX)
+Great as a backup especially for Direct Connect (DX). We can also start with the VPN since it is quick to provision and request a DX which sometime takes weeks or months and when the DX is ready termiante the VPN or keep using it as a backup.
 
 ### AWS Direct Connect (DX)
 
