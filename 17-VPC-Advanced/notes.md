@@ -208,26 +208,40 @@ that name the interface endpoint private address
 
 Watch Again....
 ### VPC Peering
+VPC Peering a service that lets you create a Direct Encrypted Network link between two VPCs.
 
-Direct encrypted network link between two VPCs
+***One peering connections only links two and only two VPCs.***
 
-Works in the same or cross region and in the same or across accounts.
+Works in the same or cross region (Some limitations when connecting cross region VPCs) and in the same or across accounts.
 
 VPC peers have the option to allow Public Hostnames to resolve to
-private IPs.
+private interal IP addresses.
 
-Same region SG's can reference peer security groups. This allows for the
-same nesting of security groups within that region.
+Same region VPC can reference each other by using  SG ID. So you can do the same efficient refercing and nesting that you can do when two isntanes are in the same VPC.
+This allows for the same nesting of security groups within that region. Only work with same Region VPCs though
 
-In different regions, you need to reference IP peers.
+In different regions, you can still utilize SGs but you will need to reference IP addresses ir IP ranges.
+
+IF VPC peers are within the same region then you can do the logical referencing of the entire SG and that massively improves efficiency of the security of VPC peers.
 
 VPC peering connects **ONLY TWO**
 
-VPC Peering does not support **transitive peering**
+VPC Peering ***DOES NOT*** support **transitive peering**
 
 If you want to connect 3 VPCs, you need 3 connections. You can't route
-through interconnected VPCs.
+through interconnected VPCs. i.e. if you have a VPC A peered to VPC B and the VPC B peered to C that does not mean that VPC A and C are also peered.
 
-You are creating a logical gateway object in one VPC.
+When you create a VPC peering connection between two VPCs, you are creating a logical gateway object inside of both of the VPCs. And to fully configure 
+connectivity between thoe VPCs you need to configure routing i.e. route tables with routes on them pointing at the remote VPC IP address range and using the 
+VPC peering connection gateway object as the target.
 
-VPC Peering Connections CANNOT be created with overlapping VPC CIDRs
+To ensure free flow of traffic b/w VPC we need to ensure that SGs and NACLs are configured to allow the flow
+
+***VPC Peering Connections CANNOT be created with overlapping VPC CIDRs***
+
+![image](https://user-images.githubusercontent.com/33827177/149428512-5db2209c-a1c9-47d3-8f2e-6dbea1753da8.png)
+
+When a VPC peering connection is established between 2 VPCs a logical gateway object is created inside each VPC. Step 2 is to configure routing tables within each VPC and associate these tables with subnets. These routing tables have the remote VPC CIDR and as the target the VPC peering gateway object. So when instance in VPC A wants to communicate with an instance in VPC B it would send the traffic to VPC Logical Gateway object. If we want to allow bi-directional communication this configurations of route tables + targets would need to be done in all route tables of the VPCs.
+
+
+
