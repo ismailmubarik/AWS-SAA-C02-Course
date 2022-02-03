@@ -218,10 +218,25 @@ Private Instances would also work like this but without having access to a publi
 ![image](https://user-images.githubusercontent.com/33827177/149259084-92cd49a9-9cbe-41f9-94c3-2dcceef23eee.png)
 
 IF we change this architecture and add a Interface Endpoint, then if private DNS isn't used the services which continue to use the service default DNS
-would still leave the VPC via VPC routed and then the IGW. But the services which choose to use the endpoint specific DNS name, they would resolve 
-that name the interface endpoint private address
+would still leave the VPC via VPC router and then the IGW and so on. But the services which choose to use the endpoint specific DNS name, they would resolve 
+that name to the interface endpoint's private address. The endpoint is a private interface to the service that is configured for in this case SNS. ANd so the 
+traffic could then flow via the interface endpoint service without requiring IPv4 public addressing. Its as if the SNS service has been injected into the VPC in
+a secure way.
 
-Watch Again....
+![image](https://user-images.githubusercontent.com/33827177/152273469-b461efe9-b893-425d-9d8c-c26beb7454de.png)
+
+If we utilize private DNS, it makes it even easier...The private DNS replaces the services default DNS. So even clients which haven't been reconfigured to use the
+endpoint specific DNS (and so they are still using service default DNS name) will not go via the interface endpoint. So in the example below using private DNS overrides
+the default SNS service endpoint name. So sns.us-east-1.amazonaws.com rather than resolving to a public IP address belonging to the SNS service, its overriden and it will
+now resolved to the 'private IP address of the Interface Endpoint'. The advantage is that is that services that cannot be modified to use the endpoint specific DNS name will
+also utilize the interface endpoint
+
+![image](https://user-images.githubusercontent.com/33827177/152274590-d51d08a8-cdca-4595-8c75-82d3e5889a09.png)
+
+### Exam Top Up
+1. Gateway Endpoints work using prefix lists and route tables so they never require making changes to the applications. The application thinks that it is essentially communicating directly with S3 or DynamoDB. All we are doing by using a GW endpoint is the route that traffic flow uses. Instead of using an Internet GW and requiring a public IP addresses ot goes via a GW endpoint and keeps using a Private IP address.
+2. Interface endpoint uses a DNS and a private IP address for the interface endpoint. You can use the endpoint specific DNS name which would require to make changes to the application so that it uses the DNS name (which would resolve to the private address of the Interface Endpoint to access the public service like SNS) or you can enable private DNS which overrides the default and allows unmodified applications to access the services using the Interface Endpoint. Interface Endpoint don't use routing, they use DNS. The DNS name resolves to the private IP address of the interface endpoint and that is used for connectivity with the public service
+
 ### VPC Peering
 VPC Peering a service that lets you create a Direct Encrypted Network link between two VPCs.
 
