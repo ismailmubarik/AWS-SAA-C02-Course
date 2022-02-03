@@ -136,7 +136,7 @@ a specific gateway endpoint. For anything else, the implicit deny will apply. Th
 applying a bucket policy.
 
 ***Limitation of Gateway Endpoint: They are only accessible from inside that specific VPC. They are logical
-objects and you can access logical VPC created inside a VPC inside that VPC***
+GW objects and you can access logical GWs created inside a VPC from  that VPC***
 
 ![image](https://user-images.githubusercontent.com/33827177/149252580-d5836153-a050-4caa-92d7-3c8302862483.png)
 
