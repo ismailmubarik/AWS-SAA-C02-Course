@@ -49,6 +49,13 @@ second line like in the case above i.e. a reject.
 If in the exam we have Flow Log Records for the same traffic flow and we have an Accept followed by a Reject then it means that
 a SG and NACL  has been used and they are restricting traffic.
 
+VPC Flow Logs dont log all kinds of traffic. The following are excluded:
+
+1. Metadata Service: Any access to the meta data service such as the one running in EC2 instance
+2. Time Server Request: 169.254.169.123
+3. DHCP
+4. AWS DNS Server
+
 ### Egress-Only Internet Gateway
 
 Its a type of IGW that only allows connection initiated from inside the VPC to outside
