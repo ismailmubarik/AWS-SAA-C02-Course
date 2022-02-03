@@ -165,20 +165,23 @@ one AZ. So if the AZ fails functionality provided by the Interface Endpoint insi
 
 Must add one endpoint for one subnet per AZ
 
-Since Interface Endpoints are just interraces inside the VPC you are able to use Security Groups to
-control access to that Network Interface from a networking perspective.
+Since Interface Endpoints are just interfaces inside the VPC and so you are able to use Security Groups to
+control access to that Network Interface from a networking perspective. This is something you can't do with Gateway Endpoints
 
-You can use Endpoint policies to restrict what can be accessed using
+You still have the options to use Endpoint policies to restrict what can be accessed using
 the Interface Endpoint.
 
 *** Interface Enpoints currently ONLY supports TCP and IPv4 at the moment.***
 
 ![image](https://user-images.githubusercontent.com/33827177/149256608-171290e9-2e7e-466e-a1f2-f5f12110ae9f.png)
 
-Behind the scenes, it uses PrivateLink which is product that allows external 
+Behind the scenes, it uses PrivateLink which is a product that allows external 
 (AWS or 3rd-party) services to be injected into your VPC and be given Network
-Interfaces inside the VPC subnet. This enables instances inside private VPCs to
-access 3rd party external services
+Interfaces inside the VPC subnet. Private link is how Interface Endpoints operate but it is also how you can deploy
+3rd party application and services directly into your VPC. This especially useful if you are in a heavily regulated 
+industry where you want to access to 3rd-party services (like update services) inside a private VPC. You can do it 
+without creating any additional infrastructure, you just use Private Link and inject that service's network interface
+directly into the private VPC
 
 Interface Endpoints primarily use DNS. Interface Endpoints are just Network Interfaces
 inside your VPC. They have a private IP within the range of the subnet.
