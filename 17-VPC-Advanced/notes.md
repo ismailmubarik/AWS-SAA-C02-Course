@@ -183,30 +183,35 @@ industry where you want to access to 3rd-party services (like update services) i
 without creating any additional infrastructure, you just use Private Link and inject that service's network interface
 directly into the private VPC
 
-Interface Endpoints primarily use DNS. Interface Endpoints are just Network Interfaces
-inside your VPC. They have a private IP within the range of the subnet.
+Interface Endpoints don't work like Gateway Endpoints. They provide similar type of functionality but via a different mechanism
+Gateway endpoints use a prefix list which is a logical representation of a service and the prefix list is added to the route table.
+Interface Endpoints primarily use DNS. Interface Endpoints are just Network Interfaces inside your VPC. They have a private IP within 
+the range of the subnet they are placed in...
 
-The way this works is that when you create an Interface Endpoints in particular for a particular service you get a
+The way this works is that when you create an Interface Endpoints in particular region for a particular service you get a
 new DNS name for that service. And that DNS name can be used to access that service via the interface Endpoints.
 
 e.g. vpce-123-xyz.sns.us-east-1.vpce.amazonaws.com
 
-You can configure your applications to use the above given DNS name for accessing the service.
+The above address resolved to the private IP address of the interface endpoint. 
+You can configure your applications to use the above given end-point specific DNS name for accessing the service directly without requiring public
+IP addressing.
 
-Interface Endpoints are given multiple DNS names:
+Interface Endpoints are actually given multiple DNS names:
 
 - Regional DNS Name: Which is 1 single DNS name for whatever AZ to access the interface Endpoint. Good for HA
-- Zonal DNS Name: Which resolves to 1 specific interace within the specific AZ.
+- Zonal DNS Name: Which resolves to 1 specific interace within the 1 specific AZ.
 
 Either of those two points of endpoints can be used
 
-Interface Endpoints also offers PrivateDNS and what it does is associate a  Route53 private hosted zone with you VPC.
-This private hsoted zone carries a replacement DNS record for the default service endpoint DNS name. It basically
-overrides the default DNS with a new version that points at your Interface Endpoint. This option is now enabled by default.
-And it means that your application can now use Interface Endpoints without being modified.
+Interface Endpoints also offers PrivateDNS and what it does is associate a Route53 private hosted zone with your VPC.
+This private hosted zone carries a replacement DNS record for the default service endpoint DNS name. It basically
+overrides the default service DNS with a new version that points at your Interface Endpoint. This option is now enabled by default.
+And it means that your application can now use Interface Endpoints without being modified?? So this makes it much easier for applications
+running a VPC to use interface Endpoints (But How??) 
 
 Without using Interface Endpoints accessing a service like SNS from within a public subnet inside a VPC would work like this: The instance using the SNS
-would resolve the default service endpoint which is sns.useeast-1.amazonaws.com. It would resolve this name to a public space IP address
+would resolve the default service endpoint which is sns.useeast-1.amazonaws.com. It would resolve this name to a public space IP address (instance)
 and the traffic would be routed via the VPC router via the IGW and out to the SNS service.
 Private Instances would also work like this but without having access to a public IP address they wouldnt be able to get past the IGW
 
