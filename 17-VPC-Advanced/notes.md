@@ -238,6 +238,9 @@ also utilize the interface endpoint
 2. Interface endpoint uses a DNS and a private IP address for the interface endpoint. You can use the endpoint specific DNS name which would require to make changes to the application so that it uses the DNS name (which would resolve to the private address of the Interface Endpoint to access the public service like SNS) or you can enable private DNS which overrides the default and allows unmodified applications to access the services using the Interface Endpoint. Interface Endpoint don't use routing, they use DNS. The DNS name resolves to the private IP address of the interface endpoint and that is used for connectivity with the public service
 
 ### VPC Peering
+
+![image](https://user-images.githubusercontent.com/33827177/152661977-9eae7789-ee16-4802-abd8-0ce9ce1cb36b.png)
+
 VPC Peering a service that lets you create a Direct Encrypted Network link between two VPCs.
 
 ***One peering connections only links two and only two VPCs.***
@@ -272,6 +275,3 @@ To ensure free flow of traffic b/w VPC we need to ensure that SGs and NACLs are 
 ![image](https://user-images.githubusercontent.com/33827177/149428512-5db2209c-a1c9-47d3-8f2e-6dbea1753da8.png)
 
 When a VPC peering connection is established between 2 VPCs a logical gateway object is created inside each VPC. Step 2 is to configure routing tables within each VPC and associate these tables with subnets. These routing tables have the remote VPC CIDR and as the target the VPC peering gateway object. So when instance in VPC A wants to communicate with an instance in VPC B it would send the traffic to VPC Logical Gateway object. If we want to allow bi-directional communication this configurations of route tables + targets would need to be done in all route tables of the VPCs.
-
-
-
