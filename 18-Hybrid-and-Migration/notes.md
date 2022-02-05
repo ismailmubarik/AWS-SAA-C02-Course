@@ -4,6 +4,8 @@
 
 The quickets way to create a network link b/w an AWS environment and sth that is not on AWS (on-premises, another cloud environment or a data centre)
 
+![image](https://user-images.githubusercontent.com/33827177/152662370-5b23e550-2507-4f49-b4d9-b49d2a94a324.png)
+
 A logical connection between a VPC and on-premise network encrypted
 using IPSec, running over the public internet.
 
@@ -27,24 +29,26 @@ VPN connection between the VGW and CGW itself which stores the config and is lin
 
 ### AWS Site-to-Site VPN
 We have A4L VPC with three private subnets in the AZs. We have AWS Public Zone where AWS public services operate from. We have a Public Internet connected to AWS Public Zone and then the Corporate office of A4L using an IP range of 192168.10.0/24.
-Step-1 to create a VPN connecion is to gather information like the IP address range of the VPC, IP range of the on-premises network and the IP address of the physical route on the customer premises. Once we have all this information we will create a VGW and attach it to the A4L VP.
+Step-1 to create a VPN connecion is to gather information like the IP address range of the VPC, IP range of the on-premises network and the IP address of the physical router on the customer premises. Once we have all this information we will create a VGW and attach it to the A4L VP.
 Our physical router would have an external IP address and for this router we will create a logical gateway object i.e. CGW. This is a logical configuration entity that refences the physical router in the A4L corporate office. In this case we need to define its public IP address so that logical CGW entity matches the physical router. 
 
 ![image](https://user-images.githubusercontent.com/33827177/149440312-9df113a3-439e-4989-8198-05a8c64fb47e.png)
 
-(The VGW is a HA gateway object and behind the scenes it has physical endpoints in different AZs with public IPv4 addresses. It means one end point can fail but other endpoints and hence  VGW will continue to provide service. *** But that doesn't mean that the VGW is HA ??? ***)
+(The VGW is a HA gateway object and behind the scenes it has physical endpoints in different AZs with public IPv4 addresses meaning the VGW is HA by design. It means one end point can fail but other endpoints and hence VGW will continue to provide service. *** But that doesn't mean that the 'whole thing' is HA ??? ***)
 
 The next step is to create a VPN connection inside AWS. There are both static and dynamic VPNs. We shown above is a static VPN. When creating a VPN you need to link it to a VGW. This means that it can use the end points which the VGW provides. We also need to specify the customer gateways that we will be using and when we do 2 VPN tunnels are created. One b/w each Endpoint and the physical on-premises router. As long at keast connection between the VPN and an Endpoint is active the connection between the VPC and the on-premise router will be active. So this a partially HA design. If one AZ on the AWS side fail the other AZ endpoint will continue work and so the conneciton will be active.
 
 A VPN tunnel is an ecnrypted channel through which data can flow between a VPC and a on-premise network.
 
-Since shown above is a static VPC we have to manually configure the VPN connection with IP addressing information. Meaning we have to tell AWS the ip range used on the on-premise corporate A4L network and we have  to configure the on-premises side so that it knows the IP range used by the AWS VPC.
+Since shown above is a static VPN we have to statitcally configure the VPN connection with IP addressing information. Meaning we have to tell AWS the ip range used on the on-premise corporate A4L network and we have to configure the on-premises side so that it knows the IP range used by the AWS VPC.
 
-So why is this arhcitecture partially HA and not fully HA>? Well the fault is on the side of the onpremises network. If the physical router fails the VPC connectionf fails. So it is highly available on the customer side but not on the customer side. 
+So why is this arhcitecture partially HA and not fully HA?? Well the fault is on the side of the on-premises network. If the physical router fails the VPC connection fails. So it is highly available on the customer side but not on the customer side. 
 
-So how do you make it HA? Add a redundant router with a separate inernet connection and ideally placing it in a separate building. This will creatre a separate VPN connection and the VGW will have separate endpoints in each AZ
+![image](https://user-images.githubusercontent.com/33827177/152662678-bf2cc8bf-fc4c-4afd-8c49-2b9f92adda65.png)
 
-![image](https://user-images.githubusercontent.com/33827177/149440731-30d599ef-2990-4b1e-90c6-e51b1e705e29.png)
+So how do you make it HA? Add a redundant router with a separate inernet connection and ideally placing it in a separate building. This will creatre a separate VPN connection and the VGW will have addtional separate endpoints in each AZ for this redundant VPN which will then connect with the redundant router on the customer end.
+
+![image](https://user-images.githubusercontent.com/33827177/152662729-4a8decff-ca73-4d10-a777-e4b5ab27a440.png)
 
 ***Static vs Dunamic VPN***
 The dynamic VPN uses a protocol called BGP i.e. Border Gateway Protocol. But if the customer router doesn't support BGP then Dynamic VPN cannot be supported.
