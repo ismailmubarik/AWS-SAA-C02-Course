@@ -1,5 +1,29 @@
 ## Hybrid Enviroment and Migration
 
+### Border Gateway Protocol (BGP)
+BGP is a routing protocol used to control how data flows from points A to points B and then C and arrives at the destination D. Both AWS Direct Connect and Dynamic VPN utilize BGP.
+BGP as a system is made up of lots of self-managing networks known as Autonomous Systems. These are like black boxes onlcy concerned with network routing in and out of the AS.
+
+BGP Operates over TCP and port 179 thus ensuring Error Correction and Flow Control
+
+Not Automatic - Meaning peering connection between two AS of the BGP have to manually configured abd once configured these two AS and communicate with each other information about Network Topologies.
+
+An AS will learn Network Topology information fron all the peering connections it has and it will also communicate this learnt informationw to all its peers. This is how the BGP scales up like a ripple...
+
+![image](https://user-images.githubusercontent.com/33827177/153313817-d6737ebb-d114-43bf-8c0d-0891add37888.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153314713-ea97bacd-8035-4ca4-8a39-93400f5a3e78.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153314723-664a951c-58d8-4b70-aa75-22302734c928.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153314831-1c875fd8-718c-47e3-b4b3-e4d79cffacd2.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153315362-5a9140a4-86bb-4f20-a925-ddfc991af3e4.png)
+
+BGP always considers the shortest path not the speed/latency. AS path prepending can be used if one path is prefered due to say speed/latency.
+
+![image](https://user-images.githubusercontent.com/33827177/153315461-079773ff-94f5-4354-a1b6-0becd91ad0b0.png)
+
 ### AWS Site-to-Site VPN
 
 The quickets way to create a network link b/w an AWS environment and sth that is not on AWS (on-premises, another cloud environment or a data centre)
@@ -81,27 +105,34 @@ Great as a backup especially for Direct Connect (DX). We can also start with the
 
 ### AWS Direct Connect (DX)
 
-This is a 1 Gpbs or 10 Gbps Network Port into AWS
+AWS Direct Connect is an actual physical connection into the AWS network.
 
-This is at a DX Location (1000-Base-LX or 10GBASE-LR)
+This is a 1 Gpbs or 10 Gbps Network Port into AWS. A DX is not a connection to be precise, it is a port assigned to an AWS account
 
-This is a cross connect to your customer router (requires VLANS/BGP)
+This is at a DX Location (1000-Base-LX or 10GBASE-LR) which are located in Data Centers globally.
 
-You can connect to a partner router if extending to your location.
+For Larger Organizations, the DX is a cross connect meaning a direct connection to your customer router (also inside a DX Location but how??)i.e. from the DX port location 
+to your router (and this requires your router to support VLANS/BGP)
+
+For smaller Organizations, you can connect to a partner router if extending to your location.
 
 The port needs to be arranged to connect somewhere else and connect to
 your hardware.
 
-This is a single fiber optic cable from the DX port to your network.
+Conceptually (not actually) think of this as a single fiber optic cable from the DX port to your network.
 
-VIFS are multiple virtual interfaces (VIFS) over one DX
+VIFS are multiple virtual interfaces (VIFS) over one DX. Each VIFs is a VLAN and a BGP connection between your router and the AWS DX router
 
-- Private VIF (VPC)
-- Public VIF (Public Zone Services)
+- Private VIF (VPC): are associated with VPGW and connect to a single VPC and they are used to provide connectivity between a VPC and your private network. You can have as many private VIFS on top of a DX connections as you want.
+- Public VIF (Public Zone Services): Provides direct connections to AWS public services like AWS S3, DynamoDB, SNS, SQS, etc.
 
-Has one physical cable with no high availability and no encryption.
+![image](https://user-images.githubusercontent.com/33827177/153317808-b1d62f9a-5edc-4042-a723-1bcddcfeb583.png)
 
-Can take weeks or month for physica cable to be installed.
+**Has one physical cable with no high availability and no encryption.**
+
+![image](https://user-images.githubusercontent.com/33827177/153318293-065056db-7fd6-440a-b9e5-83532dfa135e.png)
+
+Can take weeks or month for physical cable to be installed.
 
 **Public VIF** is only public services, not public internet.
 
@@ -111,28 +142,48 @@ DX Port Provisioning is likely quick, the cross-connect takes longer.
 
 Generally use a VPN first then bring a DX in and leave VPN as backup.
 
-40 Gbps with aggregation
+40 Gbps with aggregation i.e. 4 10 GB ports
 
 It does not use public internet and provides consistently low latency.
 
 DX provides NO ENCRYPTION and needs to be managed on a per application basis.
 
+![image](https://user-images.githubusercontent.com/33827177/153318617-6f23662b-6bb6-4419-9e2f-48bbdbfc01d3.png)
+
+### Direct Connection Resilience
+
+![image](https://user-images.githubusercontent.com/33827177/153323983-3744928f-e0e8-4767-aad7-dd963f88311d.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153324222-eb877df6-4211-4569-9ef2-151f6ebc5b63.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153324381-abd4c59e-22e5-4349-bcc6-1bca6cb0b94d.png)
+
+![image](https://user-images.githubusercontent.com/33827177/153325266-b71b825d-f0b4-487b-a8c0-45d2572d2f76.png)
+
 ### AWS Transit Gateway (TGW)
 
-Network transit hub to connect VPCs to on premises networks
+![image](https://user-images.githubusercontent.com/33827177/153325685-914335c2-0886-4d1d-af43-d68a28c938ad.png)
 
-Significantly reduces network complexity.
+Network transit hub to connect VPCs to on premises networks using site to site VPNs and DX
 
-There is a single network object which makes it HA and scalable.
+Significantly reduces network complexity within AWS
 
-Attachment to other network types.
+This is a single network object which makes it HA and scalable.
+
+Attachment to other network objects within AWS and on-premises network
+
+![image](https://user-images.githubusercontent.com/33827177/153325912-4ef74aa1-0977-4c5e-8098-d8e6cc2a1ab1.png)
 
 VPC attachments are configured with a subnet in each AZ where service
 is required.
 
+![image](https://user-images.githubusercontent.com/33827177/153326965-99cae7ae-45a7-4b56-a707-1795dba9876a.png)
+
 You can use these for cross-region peering attachment.
 
-Can share between accounts using AWS RAM
+Can share between accounts using AWS Resource Access Manager (RAM) which is an AWS service that allows you to share products and services b/w different accounts
+
+![image](https://user-images.githubusercontent.com/33827177/153327257-c0093d94-a3c9-44e4-b7c1-a3c0bbbaacb5.png)
 
 ### Storage Gateway
 
